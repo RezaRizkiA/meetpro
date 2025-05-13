@@ -8,12 +8,12 @@
           Expert Help in One Place
         </h2>
         <div class="d-flex align-items-center gap-6">
-          <a href="{{route('expert')}}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
+          <a href="{{route('home')}}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
             MeetPro
           </a>
           <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
           <a href="#" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
-            Client #1
+            Client
           </a>
         </div>
       </div>
@@ -27,7 +27,7 @@
       <div class="card data-shadow rounded-3 overflow-hidden mb-7">
         <div class="row">
           <div class="col-lg-6 order-last order-lg-first">
-            <div class="p-7 p-lg-5 flex-grow-1">
+            <div class="p-4 p-lg-5 flex-grow-1">
               <div class="py-lg-4 d-flex flex-column gap-3">
                 <a href="{{route('expert')}}">
                   <h2 class="fw-bolder fs-8">

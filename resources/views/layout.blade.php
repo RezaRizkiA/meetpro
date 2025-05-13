@@ -20,7 +20,7 @@
 
   @include('header')
 
-  <div class="main-wrapper overflow-hidden">
+  <div class="main-wrapper overflow-hidden min-vh-87">
     @yield('top')
     
     @yield('content')
