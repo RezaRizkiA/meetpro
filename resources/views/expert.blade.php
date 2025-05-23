@@ -9,7 +9,7 @@
         </h2>
         <div class="d-flex align-items-center gap-6">
           <a href="{{route('home')}}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
-            MeetPro
+            Home
           </a>
           <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
           <a href="#" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
@@ -32,6 +32,7 @@
           <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y text-dark ms-3"></i>
         </form>
       </div>
+
       <div class="row">
         <div class="col-md-3">
           <a href="{{route('expert_detail')}}" class="card overflow-hidden">
@@ -61,3 +62,6 @@
   </section>
 @endsection
 
+@section('footer')
+    @include('partials/footer')
+@endsection

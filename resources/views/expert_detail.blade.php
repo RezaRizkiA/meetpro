@@ -5,8 +5,8 @@
       <div class="container-fluid">
         <div class="text-center">
           <div class="d-flex align-items-center justify-content-center gap-6">
-            <a href="{{route('home')}}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
-              MeetPro
+            <a href="{{route('expert')}}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
+              List Profesional
             </a>
             <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
             <a href="#" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
@@ -26,7 +26,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-4 mb-7 mb-lg-0">
-            <div class="d-flex flex-column gap-3 bg-white p-7 rounded-3">
+            <div class="d-flex flex-column gap-2 bg-white p-7 rounded-3">
               <div class="d-flex gap-3 pb-3 border-bottom ">
                 <div>
                   <img src="{{asset('image/kirdi-putra.jpeg')}}" alt="user" class="rounded-circle" width="44px" height="44px">
@@ -36,14 +36,13 @@
                   <p class="mb-0 fs-3 fw-bold">Microexpression expert</p>
                 </div>
               </div>
-              <div class="py-9 d-flex flex-column gap-3 border-bottom">
-                <h4 class="fs-3 fw-bold text-uppercase text-muted mb-0 ">Detail Profile</h4>
-                <a href="#experience" class="text-dark fs-4 fw-semibold link-primary">Experience</a>
-                <a href="#expertise" class="text-dark fs-4 fw-semibold link-primary">Expertise</a>
-                <a href="#galery" class="text-dark fs-4 fw-semibold link-primary">Galery</a>
+              <div class="py-9 d-flex flex-column gap-2 border-bottom">
+                <a href="#biography" class="text-dark fs-3 fw-semibold link-primary">Biography</a>
+                <a href="#experience" class="text-dark fs-3 fw-semibold link-primary">Experience</a>
+                <a href="#licenced" class="text-dark fs-3 fw-semibold link-primary">Licence Expert</a>
               </div>
-              <button class="btn bg-primary-subtle text-primary mb-3 w-100">Add Appointment</button>
-              <div class="py-9">
+              <a href="{{route('appointment')}}" class="btn bg-primary-subtle text-primary mb-3 w-100">Make Appointment</a>
+              <div class="pt-9">
                 <h4 class="text-uppercase fs-3 fw-bold">Social Media</h4>
                 <div class="d-flex gap-6">
                   <a href="#" class="border rounded-circle round-40 hstack justify-content-center" data-bs-toggle="tooltip" data-bs-title="Facebook">
@@ -61,62 +60,72 @@
                 </div>
               </div>
             </div>
+
+            <div class="card p-7 mt-3">
+              <h4 class="fw-semibold mb-3">Galery Photos</h4>
+              <div class="row">
+                <div class="col-3">
+                  <img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="matdash-img" class="rounded-1 img-fluid mb-9">
+                </div>
+                <div class="col-3">
+                  <img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="matdash-img" class="rounded-1 img-fluid mb-9">
+                </div>
+                <div class="col-3">
+                  <img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="matdash-img" class="rounded-1 img-fluid mb-9">
+                </div>
+                <div class="col-3">
+                  <img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="matdash-img" class="rounded-1 img-fluid mb-9">
+                </div>
+                <div class="col-3">
+                  <img src="{{asset('assets/images/profile/user-1.jpg')}}" alt="matdash-img" class="rounded-1 img-fluid mb-9">
+                </div>
+              </div>
+            </div>
           </div>
           <div class="col-lg-8">
             <div class="d-flex flex-column gap-sm-4 gap-3 bg-white rounded-3 p-7">
-              <div class="">
-                <p class="fs-4 mb-sm-4 mb-3 text-muted">
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labor facere tenetur error consequuntur iam incidunt, voluptate delectus facilis ipsum inventore voluptatem! Dolor, dolore! Praesentium, illum consequatur. Sapiente, veritatis optio! Incidunt libero eaque harum at, ab dolorem recusandae voluptatem sint? Architecto explicabo, nobis quod tenetur cumque eum. Enim aliquam, voluptas culpa deleniti odio, maiores tempore aut animi suscipit non asperiores.
+              <div class="" id="biography">
+                <h3 class="fs-7 fw-bolder mb-sm-4 mb-3">Biography</h3>
+                <p class="card-subtitle">
+                  Kirdi Putra is a highly skilled microexpression expert with over 10 years of experience in the field of behavioral analysis. Specializing in detecting hidden emotions through subtle facial expressions, John has worked with law enforcement agencies, corporate leaders, and therapists to enhance communication, detect deception, and resolve conflicts more effectively. His work has been featured in renowned psychological journals and he has been a sought-after speaker at various national and international conferences.
                 </p>
-                <p class="fs-4 mb-0 text-muted">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus suscipit veritatis eaque, dolore cumque deserunt distinctio voluptatibus autem qui officiis.
+                <p class="card-subtitle">
+                  Kirdi's unique ability to decode human emotions has helped numerous organizations identify hidden truths and improve interpersonal communication. His expertise has proven invaluable in high-stakes situations such as interviews, negotiations, and conflict resolution. With his passion for understanding human behavior, John continues to mentor future professionals in this fascinating field.
                 </p>
               </div>
               <div class="" id="experience">
                 <h3 class="fs-7 fw-bolder mb-sm-4 mb-3">
                   Experience
                 </h3>
-                <p class="fs-4 mb-0 text-muted">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis, facilis voluptatibus enim ullam temporibus doloremque culpa aliquam, quo quam quia sunt voluptate dolorum deleniti, ex ut incidunt sed magni. Velit, quibusdam. Nostrum iusto repudiandae repellat commodi quia asperiores suscipit fuga recusandae, ducimus placeat vel aliquid nam dolore perferendis ipsum magni!
-                </p>
+                <div class="mb-3">
+                  <h5>Microexpression Expert</h5>
+                  <p><strong>Organization:</strong> Behavioral Insights Group</p>
+                  <p><strong>Years:</strong> 2013 - Present</p>
+                  <p>
+                    As a Microexpression Expert, John has conducted workshops to train professionals in detecting microexpressions, interpreting body language, and understanding emotional cues. He works with various organizations to improve communication strategies and has helped organizations navigate difficult conversations with emotional intelligence.
+                  </p>
+                </div>
+                <div class="mb-3">
+                  <h5>Consultant for Law Enforcement</h5>
+                  <p><strong>Organization:</strong> National Police Academy</p>
+                  <p><strong>Years:</strong> 2015 - 2020</p>
+                  <p>
+                    John worked closely with law enforcement agencies, training officers to identify and analyze facial expressions during interrogations. His work has enhanced the accuracy of identifying deception and improved the interviewing techniques of officers.
+                  </p>
+                </div>
+                
               </div>
               <div class="" id="expertise">
                 <h3 class="fs-7 fw-bolder mb-sm-4 mb-3">
-                  Expertise
+                  Expertise license
                 </h3>
-                <p class="fs-4 mb-0 text-muted">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis quidem quod veniam ratione beatae quam accusamus? Accusantium earum ex praesentium repudiandae dolorum, deleniti, sit, culpa corrupti minus inventore dolorem incidunt.
-                </p>
-              </div>
-              <div class="" id="galery">
-                <h3 class="fs-7 fw-bolder mb-sm-4 mb-3">
-                  Galery
-                </h3>
-                <div class="row fs-4 mb-sm-4 mb-3 text-muted">
-                  <div class="col-lg-3 col-md-6">
-                    <div class="card overflow-hidden">
-                      <div class="el-card-item pb-1">
-                        <div class=" el-card-avatar mb-1 el-overlay-1 w-100 overflow-hidden position-relative text-center">
-                          <img src="../assets/images/blog/blog-img3.jpg" class="d-block position-relative w-100" alt="user">
-                        </div>
-                        <div class="el-card-content text-center my-0">
-                          <h4 class="mb-0 card-title">title</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-3 col-md-6">
-                    <div class="card overflow-hidden">
-                      <div class="el-card-item pb-1">
-                        <div class=" el-card-avatar mb-1 el-overlay-1 w-100 overflow-hidden position-relative text-center">
-                          <img src="../assets/images/blog/blog-img3.jpg" class="d-block position-relative w-100" alt="user">
-                        </div>
-                        <div class="el-card-content text-center my-0">
-                          <h4 class="mb-0 card-title">title</h4>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div class="mb-3">
+                  <p><strong>Certified Microexpression Analyst (CMA)</strong></p>
+                  <p>This certification is awarded to professionals who have demonstrated proficiency in analyzing microexpressions and emotional cues. The certification is issued by the International Body of Behavioral Experts.</p>
+                </div>
+                <div class="mb-3">
+                  <p><strong>Certified Behavioral Analyst (CBA)</strong></p>
+                  <p>This certification is awarded by the Behavioral Science Certification Institute to professionals with extensive training in behavioral analysis and non-verbal communication.</p>
                 </div>
               </div>
             </div>
@@ -124,5 +133,9 @@
         </div>
       </div>
     </section>
+@endsection
+
+@section('footer')
+    @include('partials/footer')
 @endsection
 

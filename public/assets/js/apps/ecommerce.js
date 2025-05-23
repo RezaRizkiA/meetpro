@@ -1,5 +1,4 @@
 $(function () {
-  // Checkout
   $(function () {
     $(".billing-address").click(function () {
       $(".billing-address-content").hide();

@@ -1,5 +1,9 @@
 @extends('layout')
 
+@section('header')
+    @include('partials/header')
+@endsection
+
 @section('top')
 <section class="py-5 bg-light-gray">
     <div class="container-fluid">
@@ -398,4 +402,8 @@
       {{-- <img src="{{asset('assets/images/frontend-pages/screenshot-2.png')}}" alt="image" class="d-xxl-block d-none"> --}}
     </div>
   </section>
+@endsection
+
+@section('footer')
+    @include('partials/footer')
 @endsection

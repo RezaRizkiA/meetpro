@@ -19,7 +19,7 @@
             <a class="nav-link fs-4 fw-bold text-dark link-primary" href="">Contact</a>
           </li>
         </ul>
-        <a href="" class="btn btn-dark btn-sm py-2 px-9">Log In</a>
+        <a href="{{route('login')}}" class="btn btn-dark btn-sm py-2 px-9">Log In</a>
       </div>
     </div>
   </nav>

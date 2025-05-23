@@ -7,45 +7,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
+  <link rel="stylesheet" href="{{asset('assets/libs/quill/dist/quill.snow.css')}}">
+  <link rel="stylesheet" href="{{asset('assets/libs/@claviska/jquery-minicolors/jquery.minicolors.css')}}">
+
   <link rel="stylesheet" href="{{asset('assets/css/styles.css')}}" />
 
   <title>MeetPro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/css/bootstrap-material-datetimepicker.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="{{asset('assets/libs/owl.carousel/dist/assets/owl.carousel.min.css')}}" />
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
   <div class="preloader">
     <img src="{{asset('assets/images/logos/favicon.png')}}" alt="loader" class="lds-ripple img-fluid" />
   </div>
 
-  @include('header')
+  @yield('header')
 
-  <div class="main-wrapper overflow-hidden min-vh-87">
+  <main class="flex-fill">
     @yield('top')
     
     @yield('content')
-  </div>
+  </main>
 
-  <footer class="bg-dark">
-    <div class="container-fluid">
-      <div class="d-flex justify-content-between flex-md-nowrap flex-wrap py-13 border-top border-dark-subtle">
-        <div class="d-flex gap-3">
-          <img src="{{asset('assets/images/logos/logo-icon-white.svg')}}" alt="logo">
-          <p class="text-white opacity-50 mb-0">All rights reserved {{ date('Y') }}</p>
-        </div>
-        <div>
-          <p class="text-white mb-0">
-            <span class="opacity-50">Produced by</span>
-            <a href="" class="text-white link-primary">Kastara Parama Nusantara</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <a href="javascript:void(0)" class="top-btn btn btn-primary d-flex align-items-center justify-content-center round-54 p-0 rounded-circle">
-    <i class="ti ti-arrow-up fs-7"></i>
-  </a>
+  @yield('footer')
 
   <script src="{{asset('assets/js/vendor.min.js')}}"></script>
   <!-- Import Js Files -->
@@ -54,11 +40,26 @@
   <script src="{{asset('assets/js/theme/app.init.js')}}"></script>
   <script src="{{asset('assets/js/theme/theme.js')}}"></script>
   <script src="{{asset('assets/js/theme/app.min.js')}}"></script>
+  <script src="{{asset('assets/js/theme/sidebarmenu.js')}}"></script>
 
+  <script src="{{asset('assets/js/apps/chat.js')}}"></script>
+
+  <script src="{{asset('assets/libs/quill/dist/quill.min.js')}}"></script>
+  <script src="{{asset('assets/js/forms/quill-init.js')}}"></script>
+
+  <script src="{{asset('assets/libs/jquery-asColor/dist/jquery-asColor.min.js')}}"></script>
+  <script src="{{asset('assets/libs/jquery-asGradient/dist/jquery-asGradient.min.js')}}"></script>
+  <script src="{{asset('assets/libs/jquery-asColorPicker/dist/jquery-asColorPicker.min.js')}}"></script>
+  <script src="{{asset('assets/libs/@claviska/jquery-minicolors/jquery.minicolors.min.js')}}"></script>
+  <script src="{{asset('assets/js/plugins/colorpicker-init.js')}}"></script>
   <!-- solar icons -->
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
   <script src="{{asset('assets/libs/owl.carousel/dist/owl.carousel.min.js')}}"></script>
   <script src="{{asset('assets/js/frontend-landingpage/homepage.js')}}"></script>
+
+  <script src="{{asset('assets/js/extra-libs/moment/moment.min.js')}}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-datetimepicker/2.7.1/js/bootstrap-material-datetimepicker.min.js"></script>
+  <script src="{{asset('assets/js/forms/material-datepicker-init.js')}}"></script>
 </body>
 
 </html>
