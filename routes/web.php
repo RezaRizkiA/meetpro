@@ -11,7 +11,12 @@ Route::get('profile', function () {
 })->name('profile')->middleware('auth');
 
 Route::middleware('auth')->group(function () {
-    Route::get('register-expert', [AuthController::class, 'register_expert'])->name('register_expert');
+    Route::get('register-expert', [AuthController::class, 'register'])->name('register_expert');
+
+    Route::get('register-client', [AuthController::class, 'register'])->name('register_client');
+    Route::post('register-client', [AuthController::class, 'register_client_post'])->name('register_client_post');
+
+
 
     Route::post('renew-password', [AuthController::class, 'renew_password'])->name('renew_password');
     Route::post('renew-picture', [AuthController::class, 'renew_picture'])->name('renew_picture');

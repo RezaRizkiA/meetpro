@@ -71,7 +71,7 @@ class AuthController extends Controller
         return redirect()->route('profile');
     }
 
-    public function register_expert(){
+    public function register(){
         $expertise_categories = ExpertiseCategory::with('expertises')->get();
         return view('expert/expert_action', compact('expertise_categories'));
     }
@@ -121,9 +121,11 @@ class AuthController extends Controller
         }
 
         // Menyimpan gambar baru ke S3
-        $image = $request->file('picture');
-        $filename = 'avatars/' . uniqid() . '.' . $image->getClientOriginalExtension();
-        Storage::disk('s3')->put($filename, file_get_contents($image), 'public');
+        if($request->hasFIle('picture')){
+          $image = $request->file('picture');
+          $filename = 'avatars/' . uniqid() . '.' . $image->getClientOriginalExtension();
+          Storage::disk('s3')->put($filename, file_get_contents($image), 'public');
+        }
 
         // Simpan path gambar baru ke database
         $user->picture = $filename;
@@ -162,5 +164,11 @@ class AuthController extends Controller
         $user->save();
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully.');
+    }
+
+    public function register_client_post(Request $request){
+      dd($request->all());
+      $client = Client::create($request->all());
+
     }
 }

@@ -32,18 +32,23 @@
               <span class="d-none d-md-block">Account</span>
             </button>
           </li>
+          @if(Route::currentRouteName() == 'register_expert')
           <li class="nav-item" role="presentation">
             <button class="nav-link position-relative rounded-0 d-flex align-items-center justify-content-center bg-transparent fs-3 py-3" id="pills-expert-tab" data-bs-toggle="pill" data-bs-target="#pills-expert" type="button" role="tab" aria-controls="pills-expert" aria-selected="false">
               <i class="ti ti-article me-2 fs-6"></i>
               <span class="d-none d-md-block">Register Expert</span>
             </button>
           </li>
+          @endif
+
+          @if(Route::currentRouteName() == 'register_client')
           <li class="nav-item" role="presentation">
             <button class="nav-link position-relative rounded-0 d-flex align-items-center justify-content-center bg-transparent fs-3 py-3" id="pills-client-tab" data-bs-toggle="pill" data-bs-target="#pills-client" type="button" role="tab" aria-controls="pills-client" aria-selected="false">
               <i class="ti ti-article me-2 fs-6"></i>
               <span class="d-none d-md-block">Register Client</span>
             </button>
           </li>
+          @endif
         </ul>
         <div class="card-body p-3 p-md-4">
           <div class="tab-content" id="pills-tabContent">
@@ -146,6 +151,7 @@
                 </div>
               </div>
             </div>
+
             <div class="tab-pane fade" id="pills-expert" role="tabpanel" aria-labelledby="pills-expert-tab" tabindex="0">
               <div class="row">
                 <div class="col-lg-8">
@@ -226,7 +232,7 @@
                             @foreach ($category->expertises as $expertise)
                             <fieldset>
                               <div class="form-check py-0">
-                                <input type="checkbox" value="x" name="styled_checkbox" required="" class="form-check-input" id="expertise{{$expertise->id}}" aria-invalid="false">
+                                <input type="checkbox" value="x" name="styled_checkbox" class="form-check-input" id="expertise{{$expertise->id}}" aria-invalid="false">
                                 <label class="form-check-label" for="expertise{{$expertise->id}}">{{$expertise->name}}</label>
                               </div>
                             </fieldset>
@@ -247,8 +253,9 @@
                 </div>
               </div>
             </div>
+
             <div class="tab-pane fade" id="pills-client" role="tabpanel" aria-labelledby="pills-client-tab" tabindex="0">
-              <div class="row">
+              <form action="{{ route('register_client_post') }}" method="POST" class="row" enctype="multipart/form-data">@csrf
                 <div class="col-lg-8">
                   <div class="mb-4">
                     <label class="form-label">Section Hero</label>
@@ -270,7 +277,7 @@
                         <p class="fs-2 mb-2">Set a banner author</p>
                       </div>
                       <div class="col-md-6">
-                        <input class="form-control" type="file">
+                        <input class="form-control" type="file" name="file_author">
                         <p class="fs-2 mb-2">Set author profile</p>
                       </div>
                     </div>
@@ -292,7 +299,7 @@
                         <p class="fs-2 mb-2">Set a footer color</p>
                       </div>
                       <div class="col-md-6">
-                        <input class="form-control" type="file">
+                        <input class="form-control" name="logo" type="file">
                         <p class="fs-2 mb-2">Set logo</p>
                       </div>
                     </div>
@@ -320,7 +327,7 @@
                             @foreach ($category->expertises as $expertise)
                             <fieldset>
                               <div class="form-check py-0">
-                                <input type="checkbox" value="x" name="styled_checkbox" required="" class="form-check-input" id="expert{{$expertise->id}}" aria-invalid="false">
+                                <input type="checkbox" value="{{$expertise->id}}" name="expertise_id[]" class="form-check-input" id="expert{{$expertise->id}}" aria-invalid="false">
                                 <label class="form-check-label" for="expert{{$expertise->id}}">{{$expertise->name}}</label>
                               </div>
                             </fieldset>
@@ -331,16 +338,15 @@
                       </div>
                     </div>
                   </div>
-
                 </div>
 
                 <div class="col-12">
                   <div class="d-flex align-items-center justify-content-end mt-4 gap-6">
-                    <button class="btn btn-primary">Save</button>
-                    <button class="btn bg-danger-subtle text-danger">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="{{ route('profile') }}" class="btn bg-danger-subtle text-danger">Cancel</a>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
