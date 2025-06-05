@@ -1,15 +1,12 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    protected $table = 'users';
+    protected $table   = 'users';
     protected $guarded = ['id'];
 
     protected $hidden = [
@@ -18,10 +15,14 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'roles' => 'array',
+        'roles'             => 'array',
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password'          => 'hashed',
     ];
 
-    
+    public function client()
+    {
+        return $this->hasOne(Client::class, 'user_id');
+    }
+
 }

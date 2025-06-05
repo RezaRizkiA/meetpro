@@ -1,405 +1,510 @@
 @extends('layout')
 
 @section('top')
-<section class="py-4 py-md-5 bg-light-gray">
-    <div class="container-fluid">
-      <div class="d-flex justify-content-between flex-md-nowrap flex-wrap">
-        <h2 class="fs-13 fw-bolder ">
-          User Profile
-        </h2>
-        <div class="d-flex align-items-center gap-6">
-          <a href="{{route('home')}}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
-            Home
-          </a>
-          <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
-          <a href="#" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
-            User
-          </a>
+    <section class="py-4 py-md-5 bg-light-gray">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-md-nowrap flex-wrap">
+                <h2 class="fs-13 fw-bolder ">
+                    User Profile
+                </h2>
+                <div class="d-flex align-items-center gap-6">
+                    <a href="{{ route('home') }}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
+                        Home
+                    </a>
+                    <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
+                    <a href="#" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
+                        User
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 @endsection
 
 @section('content')
-  <section class="pt-5 pt-md-14 pb-4 pb-md-5">
-    <div class="container-fluid">
-      <div class="card border-1">
-        <ul class="nav nav-pills user-profile-tab" id="pills-tab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link position-relative rounded-0 active d-flex align-items-center justify-content-center bg-transparent fs-3 py-3" id="pills-account-tab" data-bs-toggle="pill" data-bs-target="#pills-account" type="button" role="tab" aria-controls="pills-account" aria-selected="true">
-              <i class="ti ti-user-circle me-2 fs-6"></i>
-              <span class="d-none d-md-block">Account</span>
-            </button>
-          </li>
-          @if(Route::currentRouteName() == 'register_expert')
-          <li class="nav-item" role="presentation">
-            <button class="nav-link position-relative rounded-0 d-flex align-items-center justify-content-center bg-transparent fs-3 py-3" id="pills-expert-tab" data-bs-toggle="pill" data-bs-target="#pills-expert" type="button" role="tab" aria-controls="pills-expert" aria-selected="false">
-              <i class="ti ti-article me-2 fs-6"></i>
-              <span class="d-none d-md-block">Register Expert</span>
-            </button>
-          </li>
-          @endif
+    <section class="pt-5 pt-md-14 pb-4 pb-md-5">
+        <div class="container-fluid">
+            <div class="card border-1">
+                <ul class="nav nav-pills user-profile-tab" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button
+                            class="nav-link position-relative rounded-0 active d-flex align-items-center justify-content-center bg-transparent fs-3 py-3"
+                            id="pills-account-tab" data-bs-toggle="pill" data-bs-target="#pills-account" type="button"
+                            role="tab" aria-controls="pills-account" aria-selected="true">
+                            <i class="ti ti-user-circle me-2 fs-6"></i>
+                            <span class="d-none d-md-block">Account</span>
+                        </button>
+                    </li>
+                    @if (Route::currentRouteName() == 'register_expert')
+                        <li class="nav-item" role="presentation">
+                            <button
+                                class="nav-link position-relative rounded-0 d-flex align-items-center justify-content-center bg-transparent fs-3 py-3"
+                                id="pills-expert-tab" data-bs-toggle="pill" data-bs-target="#pills-expert" type="button"
+                                role="tab" aria-controls="pills-expert" aria-selected="false">
+                                <i class="ti ti-article me-2 fs-6"></i>
+                                <span class="d-none d-md-block">Register Expert</span>
+                            </button>
+                        </li>
+                    @endif
 
-          @if(Route::currentRouteName() == 'register_client')
-          <li class="nav-item" role="presentation">
-            <button class="nav-link position-relative rounded-0 d-flex align-items-center justify-content-center bg-transparent fs-3 py-3" id="pills-client-tab" data-bs-toggle="pill" data-bs-target="#pills-client" type="button" role="tab" aria-controls="pills-client" aria-selected="false">
-              <i class="ti ti-article me-2 fs-6"></i>
-              <span class="d-none d-md-block">Register Client</span>
-            </button>
-          </li>
-          @endif
-        </ul>
-        <div class="card-body p-3 p-md-4">
-          <div class="tab-content" id="pills-tabContent">
-            <div class="tab-pane fade show active" id="pills-account" role="tabpanel" aria-labelledby="pills-account-tab" tabindex="0">
-              <div class="row">
-                <div class="col-lg-6 d-flex align-items-stretch">
-                  <div class="card w-100 border position-relative overflow-hidden">
-                    <div class="card-body p-4">
-                      <h4 class="card-title">Change Profile Picture</h4>
-                      <p class="card-subtitle mb-4">Change your profile picture from here</p>
-                      <form class="text-center" method="POST" action="{{route('renew_picture')}}" enctype="multipart/form-data"> @csrf
-                        <img src="{{urlpathSTORAGE(Auth::user()->picture)}}" alt="{{Auth::user()->name}}" id="imgPicture" class="img-fluid rounded-circle" width="120" height="120">
-                        <input class="form-control" type="file" name="picture" id="inputPicture">
-                        <div class="d-flex align-items-center justify-content-center my-4 gap-6">
-                          <button type="submit" class="btn btn-primary px-4" id="uploadPicture">Upload</button>
-                          <button class="btn bg-danger-subtle text-danger px-4" id="resetPicture">Reset</button>
-                        </div>
-                        <p class="mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 d-flex align-items-stretch">
-                  <div class="card w-100 border position-relative overflow-hidden">
-                    <div class="card-body p-4">
-                      <h4 class="card-title">Change Password</h4>
-                      <p class="card-subtitle mb-4">To change your password please confirm here</p>
-                      <form method="POST" action="{{route('renew_password')}}"> @csrf
-                        @if(Auth::user()->password)
-                        <div class="mb-3">
-                          <label for="current_password" class="form-label">Current Password</label>
-                          <input type="password" class="form-control" name="current_password" id="current_password">
-                        </div>
-                        @endif
-                        <div class="mb-3">
-                          <label for="new_password" class="form-label">New Password</label>
-                          <input type="password" class="form-control" name="new_password" id="new_password">
-                        </div>
-                        <div class="mb-3">
-                          <label for="confirm_password" class="form-label">Confirm Password</label>
-                          <input type="password" class="form-control" name="confirm_password" id="confirm_password">
+                    @if (Route::currentRouteName() == 'register_client')
+                        <li class="nav-item" role="presentation">
+                            <button
+                                class="nav-link position-relative rounded-0 d-flex align-items-center justify-content-center bg-transparent fs-3 py-3"
+                                id="pills-client-tab" data-bs-toggle="pill" data-bs-target="#pills-client" type="button"
+                                role="tab" aria-controls="pills-client" aria-selected="false">
+                                <i class="ti ti-article me-2 fs-6"></i>
+                                <span class="d-none d-md-block">Register Client</span>
+                            </button>
+                        </li>
+                    @endif
+                </ul>
+                <div class="card-body p-3 p-md-4">
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-account" role="tabpanel"
+                            aria-labelledby="pills-account-tab" tabindex="0">
+                            <div class="row">
+                                <div class="col-lg-6 d-flex align-items-stretch">
+                                    <div class="card w-100 border position-relative overflow-hidden">
+                                        <div class="card-body p-4">
+                                            <h4 class="card-title">Change Profile Picture</h4>
+                                            <p class="card-subtitle mb-4">Change your profile picture from here</p>
+                                            <form class="text-center" method="POST" action="{{ route('renew_picture') }}"
+                                                enctype="multipart/form-data"> @csrf
+                                                <img src="{{ urlpathSTORAGE(Auth::user()->picture) }}"
+                                                    alt="{{ Auth::user()->name }}" id="imgPicture"
+                                                    class="img-fluid rounded-circle" width="120" height="120">
+                                                <input class="form-control" type="file" name="picture" id="inputPicture">
+                                                <div class="d-flex align-items-center justify-content-center my-4 gap-6">
+                                                    <button type="submit" class="btn btn-primary px-4"
+                                                        id="uploadPicture">Upload</button>
+                                                    <button class="btn bg-danger-subtle text-danger px-4"
+                                                        id="resetPicture">Reset</button>
+                                                </div>
+                                                <p class="mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 d-flex align-items-stretch">
+                                    <div class="card w-100 border position-relative overflow-hidden">
+                                        <div class="card-body p-4">
+                                            <h4 class="card-title">Change Password</h4>
+                                            <p class="card-subtitle mb-4">To change your password please confirm here</p>
+                                            @if ($errors->any())
+                                                <div class="alert alert-danger">
+                                                    <ul>
+                                                        @foreach ($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
+
+                                            <form action="..." method="POST">
+                                                @csrf
+                                                {{-- field‐field form di sini --}}
+                                            </form>
+
+                                            <form method="POST" action="{{ route('renew_password') }}"> @csrf
+                                                @if (Auth::user()->password)
+                                                    <div class="mb-3">
+                                                        <label for="current_password" class="form-label">Current
+                                                            Password</label>
+                                                        <input type="password" class="form-control"
+                                                            name="current_password" id="current_password">
+                                                    </div>
+                                                @endif
+
+                                                <div class="mb-3">
+                                                    <label for="new_password" class="form-label">New Password</label>
+                                                    <input type="password" class="form-control" name="new_password"
+                                                        id="new_password">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="new_password_confirmation" class="form-label">Confirm
+                                                        Password</label>
+                                                    <input type="password" class="form-control" name="new_password_confirmation"
+                                                        id="new_password_confirmation">
+                                                </div>
+
+                                                <div class="text-center">
+                                                    <button type="submit" class="btn btn-primary">Change
+                                                        Password</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <h4 class="card-title">Personal Details</h4>
+                                    <p class="card-subtitle mb-4">To change your personal detail , edit and save from here
+                                    </p>
+                                    <form action="{{ route('renew_profile') }}" method="POST"> @csrf
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="mb-4">
+                                                    <label for="name" class="form-label">Your Name</label>
+                                                    <input type="text" name="name" class="form-control"
+                                                        id="name" placeholder="{{ Auth::user()->name }}"
+                                                        value="{{ Auth::user()->name }}">
+                                                </div>
+                                                <div class="mb-4">
+                                                    <label class="form-label" for="sex">Sex</label>
+                                                    <select class="form-select" aria-label="Biologis Jenis Kelamin"
+                                                        id="sex" name="gender">
+                                                        <option value="L"
+                                                            @if (Auth::user()->gender == 'L') selected @endif>Male</option>
+                                                        <option value="P"
+                                                            @if (Auth::user()->gender == 'P') selected @endif>Female
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-4">
+                                                    <label class="form-label">Email</label>
+                                                    <input type="email" class="form-control"
+                                                        placeholder="{{ Auth::user()->email }}" disabled>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="mb-4">
+                                                    <label for="slug" class="form-label">Unique URL</label>
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text">meetpro.com /</span>
+                                                        <input type="text" name="slug_name" class="form-control"
+                                                            id="slug" placeholder="{{ Auth::user()->slug }}"
+                                                            value="{{ Auth::user()->slug }}">
+                                                    </div>
+                                                </div>
+                                                <div class="mb-4">
+                                                    <label for="phone" class="form-label">Phone</label>
+                                                    <input type="text" class="form-control" name="phone"
+                                                        id="phone" placeholder="{{ Auth::user()->phone }}"
+                                                        value="{{ Auth::user()->phone }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div>
+                                                    <label for="address" class="form-label">Address</label>
+                                                    <input type="text" class="form-control" id="address"
+                                                        name="address" placeholder="{{ Auth::user()->address }}"
+                                                        value="{{ Auth::user()->address }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="d-flex align-items-center justify-content-end mt-4 gap-6">
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                    <a href="{{ route('profile') }}"
+                                                        class="btn bg-danger-subtle text-danger">Cancel</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="text-center">
-                          <button type="submit" class="btn btn-primary">Change Password</button>
+                        <div class="tab-pane fade" id="pills-expert" role="tabpanel" aria-labelledby="pills-expert-tab"
+                            tabindex="0">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="mb-4">
+                                        <label class="form-label">Biography</label>
+                                        <div class="editor_quill">
+                                        </div>
+                                        <p class="fs-2 mb-0">Set a biography to special expert.</p>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label">Experience</label>
+                                        <div class="mb-4">
+                                            <div data-repeater-list="repeater-group">
+                                                <div data-repeater-item class="row mb-2">
+                                                    <div class="col-12 col-md-4 mb-1">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Your job position" />
+                                                        <p class="fs-2 mb-2">Your job title or role</p>
+                                                    </div>
+                                                    <div class="col-6 col-md-4 mb-1">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Enter company name" />
+                                                        <p class="fs-2 mb-2">Company or organization name</p>
+                                                    </div>
+                                                    <div class="col-6 col-md-4 mb-1">
+                                                        <input type="text" class="form-control"
+                                                            placeholder="Your working years" />
+                                                        <p class="fs-2 mb-2">Enter the start to end year</p>
+                                                    </div>
+                                                    <div class="col-md-12 mb-1">
+                                                        <textarea class="form-control" placeholder="Main Activities" rows="3"></textarea>
+                                                        <p class="fs-2 mb-2">Main tasks and responsibilities</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" data-repeater-create=""
+                                                class="btn bg-primary-subtle text-primary py-0">
+                                                <span class="fs-4 me-1">+</span>
+                                                Add another experience
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label" for="">License</label>
+                                        <div data-repeater-list="repeater-group">
+                                            <div data-repeater-item class="row mb-2">
+                                                <div class="col-md-12 mb-1">
+                                                    <textarea class="form-control" placeholder="Sertifikasi" rows="2"></textarea>
+                                                    <p class="fs-2 mb-2">Your lecensed</p>
+
+                                                    <div class="d-flex align-items-center gap-6 py-1 ps-1 flex-nowrap">
+                                                        <i class="ti ti-file-description fs-6 d-block m-0"
+                                                            class="rounded-circle" width="33" height="33"></i>
+                                                        <input class="form-control form-control-sm" type="file"
+                                                            id="formFile">
+                                                    </div>
+                                                    <p class="fs-2 mb-2">Optional attachment</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" data-repeater-create=""
+                                            class="btn bg-primary-subtle text-primary py-0">
+                                            <span class="fs-4 me-1">+</span>
+                                            Add another license
+                                        </button>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label">Galery Photos</label>
+                                        <input class="form-control" type="file">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <label class="form-label">Choose Your Specialist Expert</label>
+                                        <div class="card border position-relative overflow-hidden mb-0">
+                                            <div class="card-body p-2" style="max-height: 900px; overflow-y: auto;">
+                                                @foreach ($expertise_categories as $category)
+                                                    <div class="mb-3 form-group validate">
+                                                        <label class="form-label">{{ $category->name }} <span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="controls">
+                                                            @foreach ($category->expertises as $expertise)
+                                                                <fieldset>
+                                                                    <div class="form-check py-0">
+                                                                        <input type="checkbox" value="x"
+                                                                            name="styled_checkbox"
+                                                                            class="form-check-input"
+                                                                            id="expertise{{ $expertise->id }}"
+                                                                            aria-invalid="false">
+                                                                        <label class="form-check-label"
+                                                                            for="expertise{{ $expertise->id }}">{{ $expertise->name }}</label>
+                                                                    </div>
+                                                                </fieldset>
+                                                            @endforeach
+                                                            <div class="help-block"></div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center justify-content-end mt-4 gap-6">
+                                        <button class="btn btn-primary">Save</button>
+                                        <button class="btn bg-danger-subtle text-danger">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </form>
+
+                        <div class="tab-pane fade" id="pills-client" role="tabpanel" aria-labelledby="pills-client-tab"
+                            tabindex="0">
+                            <form action="{{ route('register_client_post') }}" method="POST" class="row"
+                                enctype="multipart/form-data">@csrf
+                                <div class="col-lg-8">
+                                    <div class="mb-4">
+                                        <label class="form-label">Section Hero</label>
+                                        <textarea class="form-control" placeholder="Section Hero" rows="2" name="section_hero">{{ $client->section_hero }}</textarea>
+                                        <p class="fs-2 mb-0">Set a section hero / tagline</p>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label">Section Banner</label>
+                                        <input type="text" class="form-control" placeholder="Banner Title"
+                                            name="banner_title" value="{{ $client->banner_title }}" />
+                                        <p class="fs-2 mb-2">Set a banner title / message</p>
+
+                                        <textarea class="form-control" placeholder="Banner Description" rows="5" name="banner_desc">{{ $client->banner_desc }}</textarea>
+                                        <p class="fs-2 mb-2">Set a banner detail message</p>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control"
+                                                    placeholder="Banner Author Name" name="author_name"
+                                                    value="{{ $client->author_name }}" />
+                                                <p class="fs-2 mb-2">Set a banner author name</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input class="form-control" type="file" name="file_author_photo">
+                                                <p class="fs-2 mb-2">
+                                                    @if ($client->author_photo == null)
+                                                        Set author profile
+                                                    @else
+                                                        <a target="_blank" class="text-muted"
+                                                            href="{{ urlpathSTORAGE($client->author_photo) }}">Old
+                                                            Profile: {{ basename($client->author_photo) }}</a>
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <input class="form-control" type="file" name="file_banner_background">
+                                        <p class="fs-2 mb-2">
+                                            @if ($client->author_photo == null)
+                                                Set a background banner
+                                            @else
+                                                <a target="_blank" class="text-muted"
+                                                    href="{{ urlpathSTORAGE($client->banner_background) }}">Old
+                                                    Background: {{ basename($client->banner_background) }}</a>
+                                            @endif
+                                        </p>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label">Section Footer</label>
+                                        <input type="text" class="form-control" placeholder="Footer Title"
+                                            name="banner_footer" value="{{ $client->banner_footer }}" />
+                                        <p class="fs-2 mb-2">Set a footer title</p>
+
+                                        <textarea class="form-control" placeholder="Footer Description" rows="4" name="banner_footer_desc">{{ $client->banner_footer_desc }}</textarea>
+                                        <p class="fs-2 mb-2">Set a footer message</p>
+
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" id="hue-demo" class="form-control demo"
+                                                    data-control="hue" value="#ff6161" name="color" />
+                                                <p class="fs-2 mb-2">Set a footer color</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input class="form-control" type="file" name="file_logo">
+                                                <p class="fs-2 mb-2">Set logo
+                                                    @if ($client->author_photo == null)
+                                                        Set logo
+                                                    @else
+                                                        <a target="_blank" class="text-muted"
+                                                            href="{{ urlpathSTORAGE($client->logo) }}">Old
+                                                            Logo: {{ basename($client->logo) }}</a>
+                                                    @endif
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label">Section Page</label>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">meetpro.com /</span>
+                                            <input type="text" class="form-control" id="slug" name="slug_page"
+                                                value="{{ $client->slug_page }}">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <div class="mb-4">
+                                        <label class="form-label">Choose specialist you are showing</label>
+                                        <div class="card border position-relative overflow-hidden mb-0">
+                                            <div class="card-body p-2" style="max-height: 900px; overflow-y: auto;">
+                                                @foreach ($expertise_categories as $category)
+                                                    <div class="mb-3 form-group validate">
+                                                        <label class="form-label">{{ $category->name }} <span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="controls">
+                                                            @foreach ($category->expertises as $expertise)
+                                                                <fieldset>
+                                                                    <div class="form-check py-0">
+                                                                        <input type="checkbox"
+                                                                            value="{{ $expertise->id }}"
+                                                                            name="expertise_id[]" class="form-check-input"
+                                                                            id="expert{{ $expertise->id }}"
+                                                                            aria-invalid="false"
+                                                                            @if (in_array($expertise->id, $client->expertise_id)) checked @endif>
+                                                                        <label class="form-check-label"
+                                                                            for="expert{{ $expertise->id }}">{{ $expertise->name }}</label>
+                                                                    </div>
+                                                                </fieldset>
+                                                            @endforeach
+                                                            <div class="help-block"></div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center justify-content-end mt-4 gap-6">
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                        <a href="{{ route('profile') }}"
+                                            class="btn bg-danger-subtle text-danger">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                  </div>
                 </div>
-                <div class="col-12">
-                  <h4 class="card-title">Personal Details</h4>
-                  <p class="card-subtitle mb-4">To change your personal detail , edit and save from here</p>
-                  <form action="{{route('renew_profile')}}" method="POST"> @csrf
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <div class="mb-4">
-                          <label for="name" class="form-label">Your Name</label>
-                          <input type="text" name="name" class="form-control" id="name" placeholder="{{Auth::user()->name}}" value="{{Auth::user()->name}}">
-                        </div>
-                        <div class="mb-4">
-                          <label class="form-label" for="sex">Sex</label>
-                          <select class="form-select" aria-label="Biologis Jenis Kelamin" id="sex" name="gender">
-                            <option value="L" @if(Auth::user()->gender == 'L') selected @endif>Male</option>
-                            <option value="P" @if(Auth::user()->gender == 'P') selected @endif>Female</option>
-                          </select>
-                        </div>
-                        <div class="mb-4">
-                          <label class="form-label">Email</label>
-                          <input type="email" class="form-control" placeholder="{{Auth::user()->email}}" disabled>
-                        </div>
-                      </div>
-                      <div class="col-lg-6">
-                        <div class="mb-4">
-                          <label for="slug" class="form-label">Unique URL</label>
-                          <div class="input-group mb-3">
-                            <span class="input-group-text">meetpro.com /</span>
-                            <input type="text" name="slug_name" class="form-control" id="slug" placeholder="{{Auth::user()->slug}}" value="{{Auth::user()->slug}}">
-                          </div>
-                        </div>
-                        <div class="mb-4">
-                          <label for="phone" class="form-label">Phone</label>
-                          <input type="text" class="form-control" name="phone" id="phone" placeholder="{{Auth::user()->phone}}" value="{{Auth::user()->phone}}">
-                        </div>
-                      </div>
-                      <div class="col-12">
-                        <div>
-                          <label for="address" class="form-label">Address</label>
-                          <input type="text" class="form-control" id="address" name="address" placeholder="{{Auth::user()->address}}" value="{{Auth::user()->address}}">
-                        </div>
-                      </div>
-                      <div class="col-12">
-                        <div class="d-flex align-items-center justify-content-end mt-4 gap-6">
-                          <button type="submit" class="btn btn-primary">Save</button>
-                          <a href="{{route('profile')}}" class="btn bg-danger-subtle text-danger">Cancel</a>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
             </div>
-
-            <div class="tab-pane fade" id="pills-expert" role="tabpanel" aria-labelledby="pills-expert-tab" tabindex="0">
-              <div class="row">
-                <div class="col-lg-8">
-                  <div class="mb-4">
-                    <label class="form-label">Biography</label>
-                    <div class="editor_quill">
-                    </div>
-                    <p class="fs-2 mb-0">Set a biography to special expert.</p>
-                  </div>
-
-                  <div class="mb-4">
-                    <label class="form-label">Experience</label>
-                    <div class="mb-4">
-                      <div data-repeater-list="repeater-group">
-                        <div data-repeater-item class="row mb-2">
-                          <div class="col-12 col-md-4 mb-1">
-                            <input type="text" class="form-control" placeholder="Your job position" />
-                            <p class="fs-2 mb-2">Your job title or role</p>
-                          </div>
-                          <div class="col-6 col-md-4 mb-1">
-                            <input type="text" class="form-control" placeholder="Enter company name" />
-                            <p class="fs-2 mb-2">Company or organization name</p>
-                          </div>
-                          <div class="col-6 col-md-4 mb-1">
-                            <input type="text" class="form-control" placeholder="Your working years" />
-                            <p class="fs-2 mb-2">Enter the start to end year</p>
-                          </div>
-                          <div class="col-md-12 mb-1">
-                            <textarea class="form-control" placeholder="Main Activities" rows="3"></textarea>
-                            <p class="fs-2 mb-2">Main tasks and responsibilities</p>
-                          </div>
-                        </div>
-                      </div>
-                      <button type="button" data-repeater-create="" class="btn bg-primary-subtle text-primary py-0">
-                        <span class="fs-4 me-1">+</span>
-                        Add another experience
-                      </button>
-                    </div>
-                  </div>
-
-                  <div class="mb-4">
-                    <label class="form-label" for="">License</label>
-                    <div data-repeater-list="repeater-group">
-                      <div data-repeater-item class="row mb-2">
-                        <div class="col-md-12 mb-1">
-                          <textarea class="form-control" placeholder="Sertifikasi" rows="2"></textarea>
-                          <p class="fs-2 mb-2">Your lecensed</p>
-
-                          <div class="d-flex align-items-center gap-6 py-1 ps-1 flex-nowrap">
-                            <i class="ti ti-file-description fs-6 d-block m-0" class="rounded-circle" width="33" height="33"></i>
-                            <input class="form-control form-control-sm" type="file" id="formFile">
-                          </div>
-                          <p class="fs-2 mb-2">Optional attachment</p>
-                        </div>
-                      </div>
-                    </div>
-                    <button type="button" data-repeater-create="" class="btn bg-primary-subtle text-primary py-0">
-                      <span class="fs-4 me-1">+</span>
-                      Add another license
-                    </button>
-                  </div>
-
-                  <div class="mb-4">
-                    <label class="form-label">Galery Photos</label>
-                    <input class="form-control" type="file">
-                  </div>
-                </div>
-                
-                <div class="col-lg-4">
-                  <div class="mb-4">
-                    <label class="form-label">Choose Your Specialist Expert</label>
-                    <div class="card border position-relative overflow-hidden mb-0">
-                      <div class="card-body p-2" style="max-height: 900px; overflow-y: auto;">
-                        @foreach ($expertise_categories as $category)
-                        <div class="mb-3 form-group validate">
-                          <label class="form-label">{{$category->name}} <span class="text-danger">*</span></label>
-                          <div class="controls">
-                            @foreach ($category->expertises as $expertise)
-                            <fieldset>
-                              <div class="form-check py-0">
-                                <input type="checkbox" value="x" name="styled_checkbox" class="form-check-input" id="expertise{{$expertise->id}}" aria-invalid="false">
-                                <label class="form-check-label" for="expertise{{$expertise->id}}">{{$expertise->name}}</label>
-                              </div>
-                            </fieldset>
-                            @endforeach
-                          <div class="help-block"></div></div>
-                        </div>
-                        @endforeach
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <div class="d-flex align-items-center justify-content-end mt-4 gap-6">
-                    <button class="btn btn-primary">Save</button>
-                    <button class="btn bg-danger-subtle text-danger">Cancel</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tab-pane fade" id="pills-client" role="tabpanel" aria-labelledby="pills-client-tab" tabindex="0">
-              <form action="{{ route('register_client_post') }}" method="POST" class="row" enctype="multipart/form-data">@csrf
-                <div class="col-lg-8">
-                  <div class="mb-4">
-                    <label class="form-label">Section Hero</label>
-                    <textarea class="form-control" placeholder="Section Hero" rows="2"></textarea>
-                    <p class="fs-2 mb-0">Set a section hero / tagline</p>
-                  </div>
-
-                  <div class="mb-4">
-                    <label class="form-label">Section Banner</label>
-                    <input type="text" class="form-control" placeholder="Banner Title" />
-                    <p class="fs-2 mb-2">Set a banner title / message</p>
-
-                    <textarea class="form-control" placeholder="Banner Description" rows="5"></textarea>
-                    <p class="fs-2 mb-2">Set a banner detail message</p>
-
-                    <div class="row">
-                      <div class="col-md-6">
-                        <input type="text" class="form-control" placeholder="Banner Author" />
-                        <p class="fs-2 mb-2">Set a banner author</p>
-                      </div>
-                      <div class="col-md-6">
-                        <input class="form-control" type="file" name="file_author">
-                        <p class="fs-2 mb-2">Set author profile</p>
-                      </div>
-                    </div>
-                    <input class="form-control" type="file">
-                    <p class="fs-2 mb-2">Set a background banner</p>
-                  </div>
-
-                  <div class="mb-4">
-                    <label class="form-label">Section Footer</label>
-                    <input type="text" class="form-control" placeholder="Footer Title" />
-                    <p class="fs-2 mb-2">Set a footer title</p>
-
-                    <textarea class="form-control" placeholder="Footer Description" rows="4"></textarea>
-                    <p class="fs-2 mb-2">Set a footer message</p>
-
-                    <div class="row">
-                      <div class="col-md-6">
-                        <input type="text" id="hue-demo" class="form-control demo" data-control="hue" value="#ff6161" />
-                        <p class="fs-2 mb-2">Set a footer color</p>
-                      </div>
-                      <div class="col-md-6">
-                        <input class="form-control" name="logo" type="file">
-                        <p class="fs-2 mb-2">Set logo</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="mb-4">
-                    <label class="form-label">Section Page</label>
-                    <div class="input-group mb-3">
-                      <span class="input-group-text">meetpro.com /</span>
-                      <input type="text" class="form-control" id="slug" placeholder="smkn-1-ngawi">
-                    </div>
-                  </div>
-
-                </div>
-                
-                <div class="col-lg-4">
-                  <div class="mb-4">
-                    <label class="form-label">Choose specialist you are showing</label>
-                    <div class="card border position-relative overflow-hidden mb-0">
-                      <div class="card-body p-2" style="max-height: 900px; overflow-y: auto;">
-                        @foreach ($expertise_categories as $category)
-                        <div class="mb-3 form-group validate">
-                          <label class="form-label">{{$category->name}} <span class="text-danger">*</span></label>
-                          <div class="controls">
-                            @foreach ($category->expertises as $expertise)
-                            <fieldset>
-                              <div class="form-check py-0">
-                                <input type="checkbox" value="{{$expertise->id}}" name="expertise_id[]" class="form-check-input" id="expert{{$expertise->id}}" aria-invalid="false">
-                                <label class="form-check-label" for="expert{{$expertise->id}}">{{$expertise->name}}</label>
-                              </div>
-                            </fieldset>
-                            @endforeach
-                          <div class="help-block"></div></div>
-                        </div>
-                        @endforeach
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <div class="d-flex align-items-center justify-content-end mt-4 gap-6">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    <a href="{{ route('profile') }}" class="btn bg-danger-subtle text-danger">Cancel</a>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // Mendapatkan elemen-elemen dari DOM
-    const uploadButton = document.getElementById('uploadPicture');
-    const resetButton = document.getElementById('resetPicture');
-    const fileInput = document.getElementById('inputPicture');
-    const imgPreview = document.getElementById('imgPicture');
-    
-    // Disable tombol upload saat pertama kali halaman dimuat
-    uploadButton.disabled = true;
-    
-    // Sembunyikan input file dan reset tombol saat pertama kali dimuat
-    fileInput.style.display = 'none'; // Sembunyikan input file
-    
-    // Reset gambar dan menampilkan input file saat tombol Reset diklik
-    resetButton.addEventListener('click', function () {
-      // Hapus gambar preview
-      imgPreview.src = '';
-      
-      // Tampilkan input file untuk memilih gambar baru
-      fileInput.style.display = 'block'; // Menampilkan input file
-      imgPreview.style.display = 'none'; // Menampilkan input file
-      resetButton.disabled = true; // Disable tombol reset setelah di klik
-      uploadButton.disabled = false; // Enable tombol upload
-    });
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Mendapatkan elemen-elemen dari DOM
+            const uploadButton = document.getElementById('uploadPicture');
+            const resetButton = document.getElementById('resetPicture');
+            const fileInput = document.getElementById('inputPicture');
+            const imgPreview = document.getElementById('imgPicture');
 
-    // Ketika pengguna memilih gambar baru
-    fileInput.addEventListener('change', function () {
-      const file = fileInput.files[0]; // Ambil file yang dipilih
+            // Disable tombol upload saat pertama kali halaman dimuat
+            uploadButton.disabled = true;
 
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          // Perbarui gambar preview dengan gambar baru
-          imgPreview.src = e.target.result;
-        };
-        reader.readAsDataURL(file); // Baca file sebagai data URL
-      }
-    });
-  });
-</script>
+            // Sembunyikan input file dan reset tombol saat pertama kali dimuat
+            fileInput.style.display = 'none'; // Sembunyikan input file
 
+            // Reset gambar dan menampilkan input file saat tombol Reset diklik
+            resetButton.addEventListener('click', function() {
+                // Hapus gambar preview
+                imgPreview.src = '';
 
+                // Tampilkan input file untuk memilih gambar baru
+                fileInput.style.display = 'block'; // Menampilkan input file
+                imgPreview.style.display = 'none'; // Menampilkan input file
+                resetButton.disabled = true; // Disable tombol reset setelah di klik
+                uploadButton.disabled = false; // Enable tombol upload
+            });
 
+            // Ketika pengguna memilih gambar baru
+            fileInput.addEventListener('change', function() {
+                const file = fileInput.files[0]; // Ambil file yang dipilih
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Perbarui gambar preview dengan gambar baru
+                        imgPreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file); // Baca file sebagai data URL
+                }
+            });
+        });
+    </script>
 @endsection
 
 @section('footer')
-    @include('partials/footer')
+    @include('partials.footer')
 @endsection

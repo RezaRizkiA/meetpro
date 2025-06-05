@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/auth/google/redirect', [AuthController::class, 'google_redirect'])->name('google_redirect');
 Route::get('/auth/google/callback', [AuthController::class, 'google_callback'])->name('google_callback');
@@ -16,12 +17,12 @@ Route::middleware('auth')->group(function () {
     Route::get('register-client', [AuthController::class, 'register'])->name('register_client');
     Route::post('register-client', [AuthController::class, 'register_client_post'])->name('register_client_post');
 
-
-
     Route::post('renew-password', [AuthController::class, 'renew_password'])->name('renew_password');
     Route::post('renew-picture', [AuthController::class, 'renew_picture'])->name('renew_picture');
     Route::post('renew-profile', [AuthController::class, 'renew_profile'])->name('renew_profile');
 });
+
+Route::get('client-{slug_page}', [ClientController::class, 'home_client'])->name('home_client');
 
 Route::get('make-appointment', function () {
     return view('appointment');
@@ -40,5 +41,7 @@ Route::get('/expert-detail', function () {
 })->name('expert_detail');
 
 Route::get('/login', function () {
-    return view('authentication/login');
+    return view('authentication.login');
 })->name('login')->middleware('guest');
+
+Route::post('/login', [AuthController::class, 'login_post'])->name('login_post')->middleware('guest');

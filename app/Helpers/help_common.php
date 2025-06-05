@@ -24,3 +24,4 @@ function urlpathSTORAGE($path){
     return "{$endpoint}/{$bucket}/" . ltrim($path, '/');
   }
 }
+
