@@ -11,18 +11,18 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->nullable()->constrained('users')->onDelete('cascade');
-            $table->string('slug_page')->unique()->nullable();
             $table->string('section_hero')->nullable();
             $table->string('banner_title')->nullable();
             $table->text('banner_desc')->nullable();
+            $table->string('author_name')->nullable();
+            $table->string('author_photo')->nullable();
             $table->string('banner_background')->nullable();
-            $table->string('banner_profile')->nullable();
-            $table->string('banner_author')->nullable();
             $table->string('banner_footer')->nullable();
             $table->text('banner_footer_desc')->nullable();
-            $table->text('expertise_id')->nullable();
-            $table->string('logo')->nullable();
             $table->string('color')->nullable();
+            $table->string('logo')->nullable();
+            $table->string('slug_page')->unique()->nullable();
+            $table->text('expertise_id')->nullable();
             $table->timestamps();
         });
     }
