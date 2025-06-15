@@ -67,7 +67,7 @@ class ExpertSeeder extends Seeder
                 'licenses'     => [
                     [
                         'certification' => $certifications[array_rand($certifications)],
-                        'attachment'    => 'kosong saja',
+                        'attachment'    => NULL,
                     ],
                 ],
                 'gallerys'     => [],

@@ -14,10 +14,9 @@
                     </a>
                 </div>
             </div>
-            {{-- <div class="mt-5 d-lg-block d-none">
-                <img src="{{ asset('image/banner-detail-expert.jpg') }}" alt="blog detail banner"
-                    class="rounded-3 img-fluid h-25">
-            </div> --}}
+            <div class="mt-5 d-lg-block d-none">
+                <img src="{{ urlpathSTORAGE($expert->background) ?? asset('image/banner-detail-expert.jpg') }}" alt="{{ $expert->user->name }}" class="rounded-3 img-fluid h-25">
+            </div>
         </div>
     </section>
 @endsection
@@ -30,7 +29,7 @@
                     <div class="d-flex flex-column gap-2 bg-white p-7 rounded-3">
                         <div class="d-flex gap-3 pb-3 border-bottom ">
                             <div>
-                                <img src="{{ urlpathSTORAGE($expert->user->picture) }}" alt="user"
+                                <img src="{{ urlpathSTORAGE($expert->user->picture) ?? asset('assets/images/profile/user-3.jpg') }}" alt="user"
                                     class="rounded-circle" width="44px" height="44px">
                             </div>
                             <div class="">
@@ -95,8 +94,7 @@
                             @foreach ($expert->experiences as $experience)
                                 <div class="mb-3">
                                     <h5>{{ $experience['position'] ?? '-' }}</h5>
-                                    <p><strong>Organization:</strong> {{ $experience['company'] ?? '-' }}</p>
-                                    <p><strong>Years:</strong> {{ $experience['years'] ?? '-' }}</p>
+                                    <p class="mb-2"><strong>Organization:</strong> {{ $experience['company'] ?? '-' }} <strong class="ms-2">Years:</strong> {{ $experience['years'] ?? '-' }}</p>
                                     <p>
                                         {{ $experience['description'] ?? '-' }}
                                     </p>
@@ -105,27 +103,25 @@
                         </div>
                         <div class="" id="expertise">
                             <h3 class="fs-7 fw-bolder mb-sm-4 mb-3">
-                                Expertise license
+                                License
                             </h3>
                             <div class="row g-3">
                                 @foreach ($expert->licenses as $license)
-                                    <div class="col-6 col-md-4 d-flex flex-column">
-                                        <p class="mb-2"><strong>{{ $license['certification'] }}</strong></p>
-                                        <div class="rounded-2 overflow-hidden border "
-                                            style="width:180px; height:120px;">
-                                            <img src="{{ urlpathSTORAGE($license['attachment']) }}" alt="matdash-img"
-                                                class="w-100 h-100 object-fit-cover">
+                                <div class="col-12 col-md-6">
+                                    <div class="d-flex align-items-center justify-content-between pb-6 border-bottom">
+                                        <div>
+                                            <span class="text-muted fw-medium">{{ $license['certification'] }}</span>
+                                        </div>
+                                        <div class="text-end">
+                                            <a class="text-dark px-2 fs-5 bg-hover-primary nav-icon-hover" href="">
+                                                <i class="ti ti-file"></i>
+                                            </a>
                                         </div>
                                     </div>
+                                </div>
+                                
                                 @endforeach
                             </div>
-
-                            {{-- <div class="mb-3">
-                                <p><strong>Certified Behavioral Analyst (CBA)</strong></p>
-                                <p>This certification is awarded by the Behavioral Science Certification Institute to
-                                    professionals with extensive training in behavioral analysis and non-verbal
-                                    communication.</p>
-                            </div> --}}
                         </div>
                     </div>
                 </div>

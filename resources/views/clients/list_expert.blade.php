@@ -38,19 +38,15 @@
 
             <div class="row">
                 @foreach ($expertise->experts as $expert)
-                    {{-- {{ dd(urlpathSTORAGE($expert->user->picture) ) }} --}}
                     <div class="col-md-3">
-                        <a href="{{ route('expert_detail', ['expert_id' => $expert->id]) }}?back={{ urlencode(request()->fullUrl()) }}"
-                            class="card overflow-hidden">
-                            <div class="position-relative">
-                                {{-- <img src="{{ urlpathSTORAGE($expert->user->picture) }}" alt="leader" class="w-100"> --}}
-                                <img src="{{ urlpathSTORAGE($expert->user->picture) }}"
-                                    data-name="{{ $expert->user->name }}" class="avatar-img" alt="Avatar">
-                                <div
-                                    class="position-absolute start-50 translate-middle-x bottom-5 bg-white rounded shadow py-3 px-2 text-center w-90">
-                                    <h4 class="fs-5 fw-bold mb-8">{{ $expert->user->name }}</h4>
-                                    <p class="fs-3 mb-0">{{ $expert->expertise }}</p>
+                        <a href="{{ route('expert_detail', ['expert_id' => $expert->id]) }}?back={{ urlencode(request()->fullUrl()) }}" class="card mb-0 h-100">
+                            <div class="card-body border-light p-3 text-center">
+                                <div class="position-relative overflow-hidden d-inline-block">
+                                    <img src="{{ urlpathSTORAGE($expert->user->picture) ?? asset('assets/images/profile/user-3.jpg')}}" alt="{{ $expert->user->name }}" class="img-fluid mb-4 rounded-circle position-relative" width="140">
+                                    {{-- <span class="badge round-20 text-bg-danger fs-2 position-absolute top-0 end-0 d-flex align-items-center justify-content-center me-3 mt-2">1</span> --}}
                                 </div>
+                                <h5 class="fw-semibold fs-5 mb-2">{{ $expert->user->name }}</h5>
+                                <p class="mb-0">{{ $expert->expertise }}</p>
                             </div>
                         </a>
                     </div>
