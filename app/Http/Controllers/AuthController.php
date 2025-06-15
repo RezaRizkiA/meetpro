@@ -79,15 +79,8 @@ class AuthController extends Controller
         $expertises = Expertise::whereNull('parent_id')->orderBy('order')->with('childrensRecursive')->get();
         $client = $user->client;
         $expert = $user->expert;
-        return view('register.register_action', compact('expertises', 'client', 'expert'));
-    }
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('login');
+        return view('register.register_action', compact('expertises', 'client', 'expert'));
     }
 
     public function logout(Request $request)

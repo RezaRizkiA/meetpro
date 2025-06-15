@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('client-{slug_page}', [ClientController::class, 'home_client'])->name('home_client');
-Route::get('client-{slug_page}/category-expert-{slug}', [ClientController::class, 'list_conselor'])->name('list_conselor');
+Route::get('client-{slug_page}/expertise-{slug}', [ClientController::class, 'list_conselor'])->name('list_conselor');
 
 Route::get('/expert-detail-{expert_id}', [ClientController::class, 'expert_detail'])->name('expert_detail');
 

@@ -66,9 +66,9 @@
             </div>
             <div class="row">
 
-                @foreach ($categories as $category)
+                @foreach ($expertises as $expertise)
                     <div class="col-lg-4 col-md-6">
-                        <a href="{{ route('list_conselor', [$client->slug_page, $category->slug]) }}"
+                        <a href="{{ route('list_conselor', [$client->slug_page, $expertise->slug]) }}"
                             class="card rounded-3 overflow-hidden">
                             <div class="position-relative">
                                 <img src="{{ asset('assets/images/frontend-pages/blog-1.jpg') }}" alt="blog image"
@@ -82,21 +82,18 @@
                                 <div class="d-flex gap-3 flex-column h-100 justify-content-between">
                                     <div class="d-flex">
                                         <p class="fs-3 px-2 rounded-pill bg-muted bg-opacity-25 text-dark mb-0">
-                                            {{ $category->name }}
+                                            {{ $expertise->name }}
                                         </p>
                                     </div>
-                                    <p class="fs-5 fw-bolder text-truncate">
-                                        {{ $category->desc }}
-                                    </p>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="d-flex gap-9">
                                             <div class="d-flex gap-1">
                                                 <i class="ti ti-message fs-5 text-dark"></i>
-                                                <p class="mb-0 fs-2 fw-bold">{{ $category->selected_expertise_count }} Expertises</p>
+                                                <p class="mb-0 fs-2 fw-bold">{{  $expertise->parent->name }} Expertises</p>
                                             </div>
                                             <div class="d-flex gap-1">
                                                 <i class="ti ti-users fs-5 text-dark"></i>
-                                                <p class="mb-0 fs-2 fw-bold">{{ $category->total_expert_in_category }} Experts</p>
+                                                <p class="mb-0 fs-2 fw-bold">{{ $expertise->experts_count }} Experts</p>
                                             </div>
                                         </div>
                                     </div>

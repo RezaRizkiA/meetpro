@@ -8,7 +8,8 @@
                     Explore Profesional Expert
                 </h2>
                 <div class="d-flex align-items-center gap-6">
-                    <a href="{{ route('home_client', $client->slug_page) }}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
+                    <a href="{{ route('home_client', $client->slug_page) }}"
+                        class="text-muted fw-bolder link-primary fs-3 text-uppercase">
                         Home
                     </a>
                     <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
@@ -26,7 +27,7 @@
         <div class="container-fluid">
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h3 class="mb-3 mb-sm-0 fw-semibold d-flex align-items-center">Expert <span
-                        class="badge text-bg-secondary fs-2 rounded-4 py-1 px-2 ms-2">{{ $experts->count() }}</span>
+                        class="badge text-bg-secondary fs-2 rounded-4 py-1 px-2 ms-2">{{ $expertise->experts_count }}</span>
                 </h3>
                 <form class="position-relative">
                     <input type="text" class="form-control search-chat py-2 ps-5" id="text-srh"
@@ -36,11 +37,15 @@
             </div>
 
             <div class="row">
-                @foreach ($experts as $expert)
+                @foreach ($expertise->experts as $expert)
+                    {{-- {{ dd(urlpathSTORAGE($expert->user->picture) ) }} --}}
                     <div class="col-md-3">
-                        <a href="{{ route('expert_detail', ['expert_id' => $expert->id]) }}?back={{ urlencode(request()->fullUrl()) }}" class="card overflow-hidden">
+                        <a href="{{ route('expert_detail', ['expert_id' => $expert->id]) }}?back={{ urlencode(request()->fullUrl()) }}"
+                            class="card overflow-hidden">
                             <div class="position-relative">
-                                <img src="{{ urlpathSTORAGE($expert->user->picture) }}" alt="leader" class="w-100">
+                                {{-- <img src="{{ urlpathSTORAGE($expert->user->picture) }}" alt="leader" class="w-100"> --}}
+                                <img src="{{ urlpathSTORAGE($expert->user->picture) }}"
+                                    data-name="{{ $expert->user->name }}" class="avatar-img" alt="Avatar">
                                 <div
                                     class="position-absolute start-50 translate-middle-x bottom-5 bg-white rounded shadow py-3 px-2 text-center w-90">
                                     <h4 class="fs-5 fw-bold mb-8">{{ $expert->user->name }}</h4>
@@ -57,4 +62,13 @@
 
 @section('footer')
     @include('partials.footer')
+@endsection
+
+@section('script')
+<script>
+    Initials.init({
+        nameAttribute: 'data-name',
+        selector: '.avatar-img'
+    });
+</script>
 @endsection
