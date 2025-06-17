@@ -29,4 +29,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Expert::class, 'user_id');
     }
+
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->roles ?? [], true);
+    }
 }

@@ -32,8 +32,12 @@
                                 data-bs-toggle="dropdown" aria-expanded="true">
                                 <i class="ti ti-dots"></i>
                             </a>
-                            <ul class="dropdown-menu" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 30px);" data-popper-placement="bottom-start">
-                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('update_profile') }}"><span><i class="ti ti-settings fs-4"></i></span>Setting</a></li>
+                            <ul class="dropdown-menu"
+                                style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 30px);"
+                                data-popper-placement="bottom-start">
+                                <li><a class="dropdown-item d-flex align-items-center gap-2"
+                                        href="{{ route('update_profile') }}"><span><i
+                                                class="ti ti-settings fs-4"></i></span>Setting</a></li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -76,8 +80,10 @@
                             <div class="mt-n5">
                                 <div class="d-flex align-items-center justify-content-center mb-2">
                                     <div class="d-flex align-items-center justify-content-center round-110">
-                                        <div class="border border-4 border-white rounded-circle overflow-hidden" style="width: 110px; height: 110px;">
-                                            <img src="{{ urlpathSTORAGE(Auth::user()->picture) ?? asset('assets/images/profile/user-3.jpg') }}" alt="profile-img" class="w-100 h-100 object-fit-cover rounded-circle">
+                                        <div class="border border-4 border-white rounded-circle overflow-hidden"
+                                            style="width: 110px; height: 110px;">
+                                            <img src="{{ urlpathSTORAGE(Auth::user()->picture) ?? asset('assets/images/profile/user-3.jpg') }}"
+                                                alt="profile-img" class="w-100 h-100 object-fit-cover rounded-circle">
                                         </div>
                                     </div>
                                 </div>
@@ -94,7 +100,10 @@
                                     @php
                                         $socialConfig = [
                                             'facebook' => ['class' => 'btn-primary', 'icon' => 'ti ti-brand-facebook'],
-                                            'instagram' => ['class' => 'btn-secondary','icon' => 'ti ti-brand-instagram',],
+                                            'instagram' => [
+                                                'class' => 'btn-secondary',
+                                                'icon' => 'ti ti-brand-instagram',
+                                            ],
                                             'youtube' => ['class' => 'btn-danger', 'icon' => 'ti ti-brand-youtube'],
                                             'linkedin' => ['class' => 'btn-info', 'icon' => 'ti ti-brand-linkedin'],
                                         ];
@@ -129,14 +138,14 @@
                     <ul class="nav nav-pills user-profile-tab justify-content-end mt-2 bg-primary-subtle rounded-2 rounded-top-0"
                         id="pills-tab" role="tablist">
                         @if (in_array('administrator', Auth::user()->roles ?? []))
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link hstack gap-2 rounded-0 fs-12 py-6" id="pills-expertise-tab"
-                                data-bs-toggle="pill" data-bs-target="#pills-expertise" type="button" role="tab"
-                                aria-controls="pills-expertise" aria-selected="true">
-                                <i class="ti ti-settings fs-5"></i>
-                                <span class="d-none d-md-block">Expertises</span>
-                            </button>
-                        </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link hstack gap-2 rounded-0 fs-12 py-6" id="pills-expertise-tab"
+                                    data-bs-toggle="pill" data-bs-target="#pills-expertise" type="button" role="tab"
+                                    aria-controls="pills-expertise" aria-selected="true">
+                                    <i class="ti ti-settings fs-5"></i>
+                                    <span class="d-none d-md-block">Expertises</span>
+                                </button>
+                            </li>
                         @endif
 
                         <li class="nav-item" role="presentation">
@@ -170,115 +179,140 @@
             </div>
             <div class="tab-content" id="pills-tabContent">
                 @if (in_array('administrator', Auth::user()->roles ?? []))
-
-                <div class="modal fade" id="expertise-modal">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header align-items-start">
-                                <div class="">
-                                    <p class="small mb-0">Skill Under</p>
-                                    <h5 class="modal-title" id="parent_name">
-                                        Business Management
-                                    </h5>
-                                </div>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form method="POST" enctype="multipart/form-data"> @csrf
-                                <div class="modal-body">
-                                    <div class="mb-4">
-                                        <label for="name" class="mb-1">Skill Name:</label>
-                                        <input type="text" name="name" class="form-control" id="name" required>
+                    <div class="modal fade" id="expertise-modal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header align-items-start">
+                                    <div class="">
+                                        <p class="small mb-0">Skill Under</p>
+                                        <h5 class="modal-title" id="parent_name">
+                                            Business Management
+                                        </h5>
                                     </div>
-                                    <div class="mb-4">
-                                        <label for="name" class="mb-1">Scope Skill:</label>
-                                        <div class="input-group">
-                                            <label class="input-group-text" for="parent_id">Under</label>
-                                            <select name="parent_id" class="form-select" id="parent_id" required>
-                                                <option value="">Core Skill</option>
-                                                @foreach ($expertises as $expertise)
-                                                    <option value="{{$expertise->id}}">{{$expertise->name}}</option>
-                                                    @foreach ($expertise->childrensRecursive as $expertise)
-                                                        <option value="{{$expertise->id}}">{{$expertise->name}}</option>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <form method="POST" enctype="multipart/form-data"> @csrf
+                                    <div class="modal-body">
+                                        <div class="mb-4">
+                                            <label for="name" class="mb-1">Skill Name:</label>
+                                            <input type="text" name="name" class="form-control" id="name"
+                                                required>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="name" class="mb-1">Scope Skill:</label>
+                                            <div class="input-group">
+                                                <label class="input-group-text" for="parent_id">Under</label>
+                                                <select name="parent_id" class="form-select" id="parent_id" required>
+                                                    <option value="">Core Skill</option>
+                                                    @foreach ($expertises as $expertise)
+                                                        <option value="{{ $expertise->id }}">{{ $expertise->name }}
+                                                        </option>
+                                                        @foreach ($expertise->childrensRecursive as $expertise)
+                                                            <option value="{{ $expertise->id }}">{{ $expertise->name }}
+                                                            </option>
+                                                        @endforeach
                                                     @endforeach
-                                                @endforeach
-                                            </select>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="file_ilustration_img mb-1" class="mb-1">Ilustration Img:</label>
+                                            <input name="file_ilustration_img" class="form-control" type="file"
+                                                id="file_ilustration_img">
+                                            <i class="fs-2"><b>File IMG</b> <a target="_blank" class="fw-bold"
+                                                    href="" id="ilustration_img"></a></i>
                                         </div>
                                     </div>
-                                    <div class="mb-4">
-                                        <label for="file_ilustration_img mb-1" class="mb-1">Ilustration Img:</label>
-                                        <input name="file_ilustration_img" class="form-control" type="file" id="file_ilustration_img">
-                                        <i class="fs-2"><b>File IMG</b> <a target="_blank" class="fw-bold" href="" id="ilustration_img"></a></i>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn bg-danger-subtle text-danger "
+                                            data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button type="submit" class="btn btn-success">
+                                            Submit Form
+                                        </button>
                                     </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn bg-danger-subtle text-danger " data-bs-dismiss="modal">
-                                        Close
-                                    </button>
-                                    <button type="submit" class="btn btn-success">
-                                        Submit Form
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-  
-                <div class="tab-pane fade" id="pills-expertise" role="tabpanel" aria-labelledby="pills-expertise-tab" tabindex="0">
-                    <div class="card card-body border">
-                        <div class="d-sm-flex align-items-center justify-space-between">
-                            <div class="ms-auto">
-                                <a type="button" data-bs-toggle="modal" data-bs-target="#expertise-modal" data-action="{{route('store_expertise')}}" data-parent_name="Core Skill" data-parent_id="" class="badge fw-bolder py-2 fs-2 bg-danger-subtle text-danger">
-                                    Create Core Skill
-                                </a>
+                                </form>
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table search-table align-middle text-nowrap">
-                                <thead class="header-item">
-                                    <th>Expertise Name</th>
-                                    <th class="text-center">Experts</th>
-                                    <th>Action</th>
-                                </thead>
-                                <tbody>
-                                    @foreach ($expertises as $expertise)
-                                        <tr class="search-items">
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                @php $color = $expertise->level == 1 ? 'primary' : ($expertise->level == 2 ? 'warning' : ($expertise->level == 3 ? 'success' : 'secondary')); @endphp
-                                                <span class="badge bg-{{$color}}-subtle text-{{$color}} fw-bolder">Lvl.{{$expertise->level}}</span>
-                                                <div class="ms-3">
-                                                    <h6 class="user-name mb-0 text-wrap" data-name="Emma Adams">{{$expertise->name}}</h6>
-                                                    <span class="user-work fs-3" data-occupation="Web Developer">{{ $expertise->parent ? "Skill under {$expertise->parent->name}" : 'Core Skill' }}</span>
-                                                </div>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <h5 class="fs-4 fw-semibold mb-0">1</h5>
-                                            </td>
-                                            <td>
-                                                <div class="action-btn d-flex align-items-center">
-                                                    <a type="button" data-bs-toggle="modal" data-bs-target="#expertise-modal" data-action="{{route('update_expertise', $expertise->id)}}" data-expertise="{{json_encode(['name'=>$expertise->name, 'ilustration_img'=>$expertise->ilustration_img])}}" data-parent_name="{{$expertise->parent->name ?? 'Core Skill'}}" data-parent_id="{{$expertise->parent_id}}" class="text-primary edit">
-                                                        <i class="ti ti-edit fs-5"></i>
-                                                    </a>
-                                                    <a href="{{route('destroy_expertise', $expertise->id)}}" class="text-dark delete ms-2">
-                                                        <i class="ti ti-trash fs-5"></i>
-                                                    </a>
+                    </div>
 
-                                                    @if($expertise->level != 3)
-                                                    <a type="button" data-bs-toggle="modal" data-bs-target="#expertise-modal" data-action="{{route('store_expertise')}}" data-parent_name="{{$expertise->name}}" data-parent_id="{{$expertise->id}}" class="badge fw-bold fs-2 bg-{{$color}}-subtle text-{{$color}} ms-2">
-                                                        Add Skill
-                                                    </a>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                    <div class="tab-pane fade" id="pills-expertise" role="tabpanel"
+                        aria-labelledby="pills-expertise-tab" tabindex="0">
+                        <div class="card card-body border">
+                            <div class="d-sm-flex align-items-center justify-space-between">
+                                <div class="ms-auto">
+                                    <a type="button" data-bs-toggle="modal" data-bs-target="#expertise-modal"
+                                        data-action="{{ route('store_expertise') }}" data-parent_name="Core Skill"
+                                        data-parent_id="" class="badge fw-bolder py-2 fs-2 bg-danger-subtle text-danger">
+                                        Create Core Skill
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table search-table align-middle text-nowrap">
+                                    <thead class="header-item">
+                                        <th>Expertise Name</th>
+                                        <th class="text-center">Experts</th>
+                                        <th>Action</th>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($expertises as $expertise)
+                                            <tr class="search-items">
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        @php $color = $expertise->level == 1 ? 'primary' : ($expertise->level == 2 ? 'warning' : ($expertise->level == 3 ? 'success' : 'secondary')); @endphp
+                                                        <span
+                                                            class="badge bg-{{ $color }}-subtle text-{{ $color }} fw-bolder">Lvl.{{ $expertise->level }}</span>
+                                                        <div class="ms-3">
+                                                            <h6 class="user-name mb-0 text-wrap" data-name="Emma Adams">
+                                                                {{ $expertise->name }}</h6>
+                                                            <span class="user-work fs-3"
+                                                                data-occupation="Web Developer">{{ $expertise->parent ? "Skill under {$expertise->parent->name}" : 'Core Skill' }}</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <h5 class="fs-4 fw-semibold mb-0">1</h5>
+                                                </td>
+                                                <td>
+                                                    <div class="action-btn d-flex align-items-center">
+                                                        <a type="button" data-bs-toggle="modal"
+                                                            data-bs-target="#expertise-modal"
+                                                            data-action="{{ route('update_expertise', $expertise->id) }}"
+                                                            data-expertise="{{ json_encode(['name' => $expertise->name, 'ilustration_img' => $expertise->ilustration_img]) }}"
+                                                            data-parent_name="{{ $expertise->parent->name ?? 'Core Skill' }}"
+                                                            data-parent_id="{{ $expertise->parent_id }}"
+                                                            class="text-primary edit">
+                                                            <i class="ti ti-edit fs-5"></i>
+                                                        </a>
+                                                        <a href="{{ route('destroy_expertise', $expertise->id) }}"
+                                                            class="text-dark delete ms-2">
+                                                            <i class="ti ti-trash fs-5"></i>
+                                                        </a>
+
+                                                        @if ($expertise->level != 3)
+                                                            <a type="button" data-bs-toggle="modal"
+                                                                data-bs-target="#expertise-modal"
+                                                                data-action="{{ route('store_expertise') }}"
+                                                                data-parent_name="{{ $expertise->name }}"
+                                                                data-parent_id="{{ $expertise->id }}"
+                                                                class="badge fw-bold fs-2 bg-{{ $color }}-subtle text-{{ $color }} ms-2">
+                                                                Add Skill
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endif
+
 
 
 
@@ -296,8 +330,13 @@
                                                 class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
                                         </form>
                                     </div>
+                                    @php
+                                        // apakah user login bertipe expert?
+                                        $isExpert = in_array('expert', Auth::user()->roles ?? [], true);
+                                    @endphp
                                     <div class="app-chat">
                                         <ul class="chat-users mh-n100 simplebar-scrollable-y" data-simplebar="init">
+
                                             <div class="simplebar-wrapper" style="margin: 0px;">
                                                 <div class="simplebar-height-auto-observer-wrapper">
                                                     <div class="simplebar-height-auto-observer"></div>
@@ -308,54 +347,45 @@
                                                             role="region" aria-label="scrollable content"
                                                             style="height: 100%; overflow: hidden scroll;">
                                                             <div class="simplebar-content" style="padding: 0px;">
-                                                                <li>
-                                                                    <a href="javascript:void(0)"
-                                                                        class="px-4 py-3 bg-hover-light-black d-flex align-items-start justify-content-between chat-user bg-light-subtle"
-                                                                        id="chat_user_1" data-user-id="1">
-                                                                        <div class="position-relative w-100 ms-2">
-                                                                            <div
-                                                                                class="d-flex align-items-center justify-content-between mb-2">
-                                                                                <h6 class="mb-0">Reza Khudhori</h6>
-                                                                            </div>
-                                                                            <h6 class="fw-normal text-muted">
-                                                                                Tema/masalah yang ingin di bicarakan
-                                                                            </h6>
-                                                                            <div
-                                                                                class="d-flex align-items-center justify-content-between">
-                                                                                <div class="d-flex align-items-center">
-                                                                                    <p class="mb-0 fs-2 text-muted">01 Juni
-                                                                                        2025</p>
+                                                                @forelse ($appointments as $idx => $app)
+                                                                    @php
+                                                                        // Tentukan siapa yang ditampilkan (klien vs expert)
+                                                                        $person = $isExpert
+                                                                            ? $app->user
+                                                                            : optional($app->expert)->user;
+                                                                        $dt = \Carbon\Carbon::parse($app->date_time);
+                                                                    @endphp
+                                                                    <li>
+                                                                        <a href="javascript:void(0)"
+                                                                            class="px-4 py-3 bg-hover-light-black d-flex align-items-start justify-content-between chat-user {{ $loop->first ? 'bg-light-subtle' : '' }}"
+                                                                            id="chat_user_{{ $idx }}"
+                                                                            data-user-id="{{ $idx }}">
+                                                                            <div class="position-relative w-100 ms-2">
+                                                                                <div
+                                                                                    class="d-flex align-items-center justify-content-between mb-2">
+                                                                                    <h6 class="mb-0">
+                                                                                        {{ $person->name ?? '-' }}</h6>
                                                                                 </div>
-                                                                                <p class="mb-0 fs-2 text-muted">05:40pm</p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </a>
-                                                                </li>
-
-                                                                <li>
-                                                                    <a href="javascript:void(0)"
-                                                                        class="px-4 py-3 bg-hover-light-black d-flex align-items-start justify-content-between chat-user"
-                                                                        id="chat_user_2" data-user-id="2">
-                                                                        <div class="position-relative w-100 ms-2">
-                                                                            <div
-                                                                                class="d-flex align-items-center justify-content-between mb-2">
-                                                                                <h6 class="mb-0">Ibnu Haris Al Mutaqin
+                                                                                <h6 class="fw-normal text-muted">
+                                                                                    Tema/masalah yang ingin di bicarakan
                                                                                 </h6>
-                                                                            </div>
-                                                                            <h6 class="fw-normal text-muted">
-                                                                                Tema/masalah yang ingin di bicarakan
-                                                                            </h6>
-                                                                            <div
-                                                                                class="d-flex align-items-center justify-content-between">
-                                                                                <div class="d-flex align-items-center">
-                                                                                    <p class="mb-0 fs-2 text-muted">12 Juni
-                                                                                        2025</p>
+                                                                                <div
+                                                                                    class="d-flex align-items-center justify-content-between">
+                                                                                    <div class="d-flex align-items-center">
+                                                                                        <p class="mb-0 fs-2 text-muted">01
+                                                                                            Juni
+                                                                                            2025</p>
+                                                                                    </div>
+                                                                                    <p class="mb-0 fs-2 text-muted">05:40pm
+                                                                                    </p>
                                                                                 </div>
-                                                                                <p class="mb-0 fs-2 text-muted">04:00pm</p>
                                                                             </div>
-                                                                        </div>
-                                                                    </a>
-                                                                </li>
+                                                                        </a>
+                                                                    </li>
+                                                                @empty
+                                                                    <li class="px-4 py-4 text-center text-muted">Tidak ada
+                                                                        appointment.</li>
+                                                                @endforelse
                                                             </div>
                                                         </div>
                                                     </div>
@@ -373,6 +403,7 @@
                                                     style="height: 498px; transform: translate3d(0px, 0px, 0px); display: block;">
                                                 </div>
                                             </div>
+
                                         </ul>
                                     </div>
                                 </div>
@@ -395,63 +426,44 @@
                                             <div class="position-relative overflow-hidden">
                                                 <div class="position-relative">
                                                     <div class="chat-box email-box mh-n100 p-9" data-simplebar="init">
-                                                        <div class="chat-list chat active-chat" data-user-id="1">
-                                                            <div
-                                                                class="hstack align-items-start mb-7 pb-1 align-items-center justify-content-between flex-wrap gap-6">
-                                                                <div class="d-flex align-items-center gap-2">
-                                                                    <img src="../assets/images/profile/user-8.jpg"
-                                                                        alt="user8" width="48" height="48"
-                                                                        class="rounded-circle">
-                                                                    <div>
-                                                                        <h6 class="fw-semibold mb-0">
-                                                                            Reza Khudhori
-                                                                        </h6>
-                                                                        <p class="mb-0">reza@narapatih.com</p>
+                                                        @foreach ($appointments as $idx => $app)
+                                                            @php
+                                                                $person = $isExpert
+                                                                    ? $app->user
+                                                                    : optional($app->expert)->user;
+                                                                $email = $person->email ?? '-';
+                                                                $name = $person->name ?? '-';
+                                                                // Badge status simpel
+                                                                $badgeClasses = [
+                                                                    'need_confirmation' => 'text-bg-warning',
+                                                                    'progress' => 'text-bg-primary',
+                                                                    'payment' => 'text-bg-danger',
+                                                                    'completed' => 'text-bg-success',
+                                                                ];
+                                                                $badgeClass =
+                                                                    $badgeClasses[$app->status] ?? 'text-bg-secondary';
+                                                            @endphp
+                                                            <div class="chat-list chat {{ $loop->first ? 'active-chat' : '' }}"
+                                                                data-user-id="{{ $idx }}">
+                                                                <div
+                                                                    class="hstack align-items-start mb-7 pb-1 align-items-center justify-content-between flex-wrap gap-6">
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <img src="../assets/images/profile/user-8.jpg"
+                                                                            alt="user8" width="48" height="48"
+                                                                            class="rounded-circle">
+                                                                        <div>
+                                                                            <h6 class="fw-semibold mb-0">
+                                                                                {{ $name }}</h6>
+                                                                            <p class="mb-0">{{ $email }}</p>
+                                                                        </div>
                                                                     </div>
+                                                                    <span class="badge {{ $badgeClass }}">{{ ucfirst(str_replace('_', ' ', $app->status)) }}</span>
                                                                 </div>
-                                                                <span class="badge text-bg-primary">Progress</span>
-                                                            </div>
-                                                            <div class="border-bottom pb-7 mb-7">
-                                                                <p class="mb-3 text-dark">
-                                                                    Lorem ipsum dolor sit amet, consectetur
-                                                                    adipiscing elit. Quisque bibendum
-                                                                    hendrerit lobortis. Nullam ut lacus eros.
-                                                                    Sed at luctus urna, eu fermentum diam. In
-                                                                    et tristique mauris.
-                                                                </p>
-                                                                <p class="mb-3 text-dark">
-                                                                    Ut id ornare metus, sed auctor enim.
-                                                                    Pellentesque nisi magna, laoreet a augue
-                                                                    eget, tempor volutpat diam.
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                        <div class="chat-list chat" data-user-id="2">
-                                                            <div
-                                                                class="hstack align-items-start mb-7 pb-1 align-items-center justify-content-between flex-wrap gap-6">
-                                                                <div class="d-flex align-items-center gap-2">
-                                                                    <img src="../assets/images/profile/user-5.jpg"
-                                                                        alt="user8" width="48" height="48"
-                                                                        class="rounded-circle">
-                                                                    <div>
-                                                                        <h6 class="fw-semibold mb-0">
-                                                                            Ibnu Haris Al Mutaqin
-                                                                        </h6>
-                                                                        <p class="mb-0">al@narapatih.com</p>
-                                                                    </div>
+                                                                <div class="border-bottom pb-7 mb-7">
+                                                                    <p class="mb-3 text-dark">{{ $app->appointment }}</p>
                                                                 </div>
-                                                                <span class="badge text-bg-danger">Payment</span>
                                                             </div>
-                                                            <div class="border-bottom pb-7 mb-7">
-                                                                <p class="mb-3 text-dark">
-                                                                    Lorem ipsum dolor sit amet, consectetur
-                                                                    adipiscing elit. Quisque bibendum
-                                                                    hendrerit lobortis. Nullam ut lacus eros.
-                                                                    Sed at luctus urna, eu fermentum diam. In
-                                                                    et tristique mauris.
-                                                                </p>
-                                                            </div>
-                                                        </div>
+                                                        @endforeach
                                                     </div>
                                                 </div>
                                             </div>
@@ -558,60 +570,62 @@
 @endsection
 
 @section('script')
-<script>
-    const modal = document.getElementById('expertise-modal');
+    <script>
+        const modal = document.getElementById('expertise-modal');
 
-    modal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
+        modal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
 
-        // Ambil semua data dari tombol
-        const action = button.getAttribute('data-action');
-        const parentName = button.getAttribute('data-parent_name') || 'Core Skill';
-        const parentId = button.getAttribute('data-parent_id');
-        const expertiseData = button.getAttribute('data-expertise');
+            // Ambil semua data dari tombol
+            const action = button.getAttribute('data-action');
+            const parentName = button.getAttribute('data-parent_name') || 'Core Skill';
+            const parentId = button.getAttribute('data-parent_id');
+            const expertiseData = button.getAttribute('data-expertise');
 
-        // Ambil form dan reset terlebih dahulu
-        const form = modal.querySelector('form');
-        form.reset();
+            // Ambil form dan reset terlebih dahulu
+            const form = modal.querySelector('form');
+            form.reset();
 
-        // Set action form
-        form.setAttribute('action', action);
+            // Set action form
+            form.setAttribute('action', action);
 
-        // Set nama parent di judul modal
-        modal.querySelector('#parent_name').textContent = parentName;
+            // Set nama parent di judul modal
+            modal.querySelector('#parent_name').textContent = parentName;
 
-        // Atur selected parent_id di dropdown
-        const select = modal.querySelector('#parent_id');
-        console.log(parentId);
-        select.value = parentId ?? ''; // fallback ke kosong kalau NULL
+            // Atur selected parent_id di dropdown
+            const select = modal.querySelector('#parent_id');
+            console.log(parentId);
+            select.value = parentId ?? ''; // fallback ke kosong kalau NULL
 
-        // Atur input dan link jika mode edit
-        if (expertiseData) {
-            try {
-                const data = JSON.parse(expertiseData);
-                modal.querySelector('input[name="name"]').value = data.name || '';
-                const ilustrationLink = modal.querySelector('#ilustration_img');
-                if (data.ilustration_img) {
-                    const { endpoint, bucket } = window.S3_CONFIG;
-                    const fullURL = `${endpoint}/${bucket}/${data.ilustration_img.replace(/^\/+/, '')}`;
-                    ilustrationLink.href = fullURL;
-                    ilustrationLink.textContent = data.ilustration_img;
-                } else {
-                    ilustrationLink.href = '';
-                    ilustrationLink.textContent = '';
+            // Atur input dan link jika mode edit
+            if (expertiseData) {
+                try {
+                    const data = JSON.parse(expertiseData);
+                    modal.querySelector('input[name="name"]').value = data.name || '';
+                    const ilustrationLink = modal.querySelector('#ilustration_img');
+                    if (data.ilustration_img) {
+                        const {
+                            endpoint,
+                            bucket
+                        } = window.S3_CONFIG;
+                        const fullURL = `${endpoint}/${bucket}/${data.ilustration_img.replace(/^\/+/, '')}`;
+                        ilustrationLink.href = fullURL;
+                        ilustrationLink.textContent = data.ilustration_img;
+                    } else {
+                        ilustrationLink.href = '';
+                        ilustrationLink.textContent = '';
+                    }
+
+                } catch (e) {
+                    console.error('Invalid JSON in data-expertise:', e);
                 }
-
-            } catch (e) {
-                console.error('Invalid JSON in data-expertise:', e);
+            } else {
+                // Kosongkan input & link jika bukan edit
+                modal.querySelector('input[name="name"]').value = '';
+                const ilustrationLink = modal.querySelector('#ilustration_img');
+                ilustrationLink.href = '';
+                ilustrationLink.textContent = '';
             }
-        } else {
-            // Kosongkan input & link jika bukan edit
-            modal.querySelector('input[name="name"]').value = '';
-            const ilustrationLink = modal.querySelector('#ilustration_img');
-            ilustrationLink.href = '';
-            ilustrationLink.textContent = '';
-        }
-    });
-</script>
-
+        });
+    </script>
 @endsection

@@ -1,11 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Expert;
-use App\Models\Appoinment;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
+use App\Models\Expert;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ExpertController extends Controller
@@ -35,7 +35,7 @@ class ExpertController extends Controller
 
         $expert = Expert::findOrFail($expert_id);
 
-        $appointment = Appoinment::create([
+        $appointment = Appointment::create([
             'user_id'    => Auth::user()->id,
             'expert_id'  => $expert_id,
             'appoinment' => $request->appoinment,
