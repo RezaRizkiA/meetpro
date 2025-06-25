@@ -251,7 +251,7 @@ class AuthController extends Controller
                 ->get();
         }
 
-        return view('profile', compact('expertises', 'appointments'));
+        return view('profile', compact('expertises', 'appointments', 'isExpert'));
 
     }
 

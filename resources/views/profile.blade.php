@@ -183,9 +183,9 @@
                         </li>
 
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link hstack gap-2 rounded-0 fs-12 py-6" id="pills-calender-tab"
-                                data-bs-toggle="pill" data-bs-target="#pills-calender" type="button" role="tab"
-                                aria-controls="pills-calender" aria-selected="false">
+                            <button class="nav-link hstack gap-2 rounded-0 fs-12 py-6" id="pills-calendar-tab"
+                                data-bs-toggle="pill" data-bs-target="#pills-calendar" type="button" role="tab"
+                                aria-controls="pills-calendar" aria-selected="false">
                                 <i class="ti ti-photo fs-5"></i>
                                 <span class="d-none d-md-block">Calendar</span>
                             </button>
@@ -344,10 +344,6 @@
                                                 class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
                                         </form>
                                     </div>
-                                    @php
-                                        // apakah user login bertipe expert?
-                                        $isExpert = in_array('expert', Auth::user()->roles ?? [], true);
-                                    @endphp
                                     <div class="app-chat">
                                         <ul class="chat-users mh-n100 simplebar-scrollable-y" data-simplebar="init">
 
@@ -361,45 +357,21 @@
                                                             role="region" aria-label="scrollable content"
                                                             style="height: 100%; overflow: hidden scroll;">
                                                             <div class="simplebar-content" style="padding: 0px;">
-                                                                @forelse ($appointments as $idx => $app)
-                                                                    @php
-                                                                        // Tentukan siapa yang ditampilkan (klien vs expert)
-                                                                        $person = $isExpert
-                                                                            ? $app->user
-                                                                            : optional($app->expert)->user;
-                                                                        $dt = \Carbon\Carbon::parse($app->date_time);
-                                                                    @endphp
-                                                                    <li>
-                                                                        <a href="javascript:void(0)"
-                                                                            class="px-4 py-3 bg-hover-light-black d-flex align-items-start justify-content-between chat-user {{ $loop->first ? 'bg-light-subtle' : '' }}"
-                                                                            id="chat_user_{{ $idx }}"
-                                                                            data-user-id="{{ $idx }}">
-                                                                            <div class="position-relative w-100 ms-2">
-                                                                                <div
-                                                                                    class="d-flex align-items-center justify-content-between mb-2">
-                                                                                    <h6 class="mb-0">
-                                                                                        {{ $person->name ?? '-' }}</h6>
-                                                                                </div>
-                                                                                <h6 class="fw-normal text-muted">
-                                                                                    Tema/masalah yang ingin di bicarakan
-                                                                                </h6>
-                                                                                <div
-                                                                                    class="d-flex align-items-center justify-content-between">
-                                                                                    <div class="d-flex align-items-center">
-                                                                                        <p class="mb-0 fs-2 text-muted">01
-                                                                                            Juni
-                                                                                            2025</p>
-                                                                                    </div>
-                                                                                    <p class="mb-0 fs-2 text-muted">05:40pm
-                                                                                    </p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </a>
-                                                                    </li>
+                                                                @forelse ($appointments as $idx => $appointment)
+                                                                    @include(
+                                                                        'components.appointment.item',
+                                                                        [
+                                                                            'appointment' => $appointment,
+                                                                            'index' => $idx,
+                                                                            'active' => $loop->first,
+                                                                            'isExpert' => $isExpert,
+                                                                        ]
+                                                                    )
                                                                 @empty
                                                                     <li class="px-4 py-4 text-center text-muted">Tidak ada
                                                                         appointment.</li>
                                                                 @endforelse
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -417,11 +389,11 @@
                                                     style="height: 498px; transform: translate3d(0px, 0px, 0px); display: block;">
                                                 </div>
                                             </div>
-
                                         </ul>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="w-100">
                                 <div class="chat-container h-100 w-100">
                                     <div class="chat-box-inner-part h-100">
@@ -440,45 +412,15 @@
                                             <div class="position-relative overflow-hidden">
                                                 <div class="position-relative">
                                                     <div class="chat-box email-box mh-n100 p-9" data-simplebar="init">
-                                                        @foreach ($appointments as $idx => $app)
-                                                            @php
-                                                                $person = $isExpert
-                                                                    ? $app->user
-                                                                    : optional($app->expert)->user;
-                                                                $email = $person->email ?? '-';
-                                                                $name = $person->name ?? '-';
-                                                                // Badge status simpel
-                                                                $badgeClasses = [
-                                                                    'need_confirmation' => 'text-bg-warning',
-                                                                    'progress' => 'text-bg-primary',
-                                                                    'payment' => 'text-bg-danger',
-                                                                    'completed' => 'text-bg-success',
-                                                                ];
-                                                                $badgeClass =
-                                                                    $badgeClasses[$app->status] ?? 'text-bg-secondary';
-                                                            @endphp
-                                                            <div class="chat-list chat {{ $loop->first ? 'active-chat' : '' }}"
-                                                                data-user-id="{{ $idx }}">
-                                                                <div
-                                                                    class="hstack align-items-start mb-7 pb-1 align-items-center justify-content-between flex-wrap gap-6">
-                                                                    <div class="d-flex align-items-center gap-2">
-                                                                        <img src="../assets/images/profile/user-8.jpg"
-                                                                            alt="user8" width="48" height="48"
-                                                                            class="rounded-circle">
-                                                                        <div>
-                                                                            <h6 class="fw-semibold mb-0">
-                                                                                {{ $name }}</h6>
-                                                                            <p class="mb-0">{{ $email }}</p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <span
-                                                                        class="badge {{ $badgeClass }}">{{ ucfirst(str_replace('_', ' ', $app->status)) }}</span>
-                                                                </div>
-                                                                <div class="border-bottom pb-7 mb-7">
-                                                                    <p class="mb-3 text-dark">{{ $app->appointment }}</p>
-                                                                </div>
-                                                            </div>
+                                                        @foreach ($appointments as $idx => $appointment)
+                                                            @include('components.appointment.detail', [
+                                                                'appointment' => $appointment,
+                                                                'index' => $idx,
+                                                                'active' => $loop->first,
+                                                                'isExpert' => $isExpert,
+                                                            ])
                                                         @endforeach
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -565,39 +507,15 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="pills-calender" role="tabpanel" aria-labelledby="pills-calender-tab"
+                <div class="tab-pane fade" id="pills-calendar" role="tabpanel" aria-labelledby="pills-calendar-tab"
                     tabindex="0">
-                    <div class="card card-body py-3">
-                        <div class="row align-items-center">
-                            <div class="col-12">
-                                <div class="d-sm-flex align-items-center justify-space-between">
-                                    <h4 class="mb-4 mb-sm-0 card-title">Calendar</h4>
-                                    <nav aria-label="breadcrumb" class="ms-auto">
-                                        <ol class="breadcrumb">
-                                            <li class="breadcrumb-item d-flex align-items-center">
-                                                <a class="text-muted text-decoration-none d-flex"
-                                                    href="../main/index.html">
-                                                    <iconify-icon icon="solar:home-2-line-duotone"
-                                                        class="fs-6"></iconify-icon>
-                                                </a>
-                                            </li>
-                                            <li class="breadcrumb-item" aria-current="page">
-                                                <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
-                                                    Calendar
-                                                </span>
-                                            </li>
-                                        </ol>
-                                    </nav>
-                                </div>
+                    <div class="card">
+                        <div class="card-body calendar-sidebar app-calendar">
+                            <div id="calendar">
+                                <h3>Calendar</h3>
                             </div>
                         </div>
                     </div>
-
-                    {{-- <div class="card">
-                        <div class="card-body calender-sidebar app-calendar">
-                            <div id="calendar"></div>
-                        </div>
-                    </div> --}}
 
                     {{-- <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel"
                         aria-hidden="true">

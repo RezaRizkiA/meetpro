@@ -36,13 +36,13 @@ class ExpertController extends Controller
         $expert = Expert::findOrFail($expert_id);
 
         $appointment = Appointment::create([
-            'user_id'    => Auth::user()->id,
-            'expert_id'  => $expert_id,
-            'appointment' => $request->appoinment,
-            'date_time'  => $dateTime,
-            'hours'      => $request->hours,
-            'price'      => $expert->price,
-            'status'     => 'need_confirmation',
+            'user_id'     => Auth::user()->id,
+            'expert_id'   => $expert_id,
+            'appointment' => $request->appointment,
+            'date_time'   => $dateTime,
+            'hours'       => $request->hours,
+            'price'       => $expert->price,
+            'status'      => 'need_confirmation',
         ]);
 
         return redirect()->route('profile');
