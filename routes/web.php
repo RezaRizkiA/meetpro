@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ExpertController;
@@ -10,6 +11,8 @@ Route::get('/auth/google/redirect', [AuthController::class, 'google_redirect'])-
 Route::get('/auth/google/callback', [AuthController::class, 'google_callback'])->name('google_callback');
 
 Route::middleware('auth')->group(function () {
+    Route::post('appointment/{id}/update-status', [AppointmentController::class, 'updateStatus'])->name('appointment.update_status');
+
     Route::get('register-expert', [AuthController::class, 'register'])->name('register_expert');
     Route::post('register-expert', [AuthController::class, 'register_expert_post'])->name('register_expert_post');
 

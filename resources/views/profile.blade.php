@@ -512,12 +512,14 @@
                     <div class="card">
                         <div class="card-body calendar-sidebar app-calendar">
                             <div id="calendar">
-                                <h3>Calendar</h3>
+                                <script>
+                                    window.calendarAppointmentsData = @json($calendarAppointments);
+                                </script>
                             </div>
                         </div>
                     </div>
 
-                    {{-- <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel"
+                    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel"
                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-scrollable modal-lg">
                             <div class="modal-content">
@@ -602,7 +604,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div> --}}
+                    </div>
                 </div>
             </div>
         </div>

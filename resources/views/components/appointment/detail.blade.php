@@ -25,5 +25,36 @@
     </div>
     <div class="border-bottom pb-7 mb-7">
         <p class="mb-3 text-dark">{{ $appointment->appointment }}</p>
+
+        <div class="d-flex justify-content-end gap-2">
+            @if ($isExpert)
+                @if ($appointment->status == 'need_confirmation')
+                    <form action="{{ route('appointment.update_status', $appointment->id) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="status" value="progress">
+                        <button type="submit" class="btn btn-sm btn-primary">Confirm</button>
+                    </form>
+                    <form action="{{ route('appointment.update_status', $appointment->id) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="status" value="declined">
+                        <button type="submit" class="btn btn-sm btn-danger">Decline</button>
+                    </form>
+                @elseif ($appointment->status == 'progress')
+                    <form action="{{ route('appointment.update_status', $appointment->id) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="status" value="completed">
+                        <button type="submit" class="btn btn-sm btn-success">Mark as Completed</button>
+                    </form>
+                @endif
+            @else
+                @if (in_array($appointment->status, ['need_confirmation', 'progress']))
+                    <form action="{{ route('appointment.update_status', $appointment->id) }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="status" value="canceled">
+                        <button type="submit" class="btn btn-sm btn-warning">Cancel</button>
+                    </form>
+                @endif
+            @endif
+        </div>
     </div>
 </div>

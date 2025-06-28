@@ -69,8 +69,8 @@
                                                 </div>
                                             </td>
                                             <td class="text-end border-bottom-0">
-                                                <h6 class="fs-4 fw-semibold mb-0" data-price="100000" id="priceDisplay">Rp.
-                                                    100.000</h6>
+                                                <h6 class="fs-4 fw-semibold mb-0" data-price="{{ $expert->price }}" id="priceDisplay">Rp.
+                                                    {{ number_format($expert->price, 0, ',', '.') }}</h6>
                                             </td>
                                         </tr>
                                     </tbody>
