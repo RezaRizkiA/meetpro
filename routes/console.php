@@ -9,5 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Jadwalkan perintah untuk membuat event Google Calendar
-Schedule::command('app:create-google-calendar-events')->dailyAt('05:00');
 Schedule::command('app:ipaymu-command')->dailyAt('05:00');

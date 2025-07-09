@@ -11,17 +11,21 @@
             <div class="card text-center border shadow-sm">
                 <div class="card-body p-4 p-md-5">
                     <h4 class="fw-bolder">Selesaikan Pembayaran Anda</h4>
-                    <p class="text-muted">Segera lakukan pembayaran sebelum tanggal kedaluwarsa: <br><strong class="text-danger">{{ $transaction->expired_date->format('d F Y, Pukul H:i') }} WIB</strong></p>
+                    <p class="text-muted">Segera lakukan pembayaran sebelum tanggal kedaluwarsa: <br><strong class="text-danger">{{ optional($transaction->expired_date)->translatedFormat('d F Y, l') }} Pukul {{ optional($transaction->expired_date)->format('H:i') }} WIB</strong></p>
 
                     <hr class="my-4">
 
                     <div class="mb-4">
                         <p class="mb-1 text-muted">Metode Pembayaran:</p>
-                        <h5 class="fw-bold">{{ $transaction->payment_name }}</h5>
+                        <h5 class="fw-bold">{{ $transaction->via }}</h5>
                     </div>
 
                     <div class="mb-4">
-                        <p class="mb-1 text-muted">Nomor Pembayaran / Virtual Account:</p>
+                        @if($transaction->via === 'QRIS')
+                            <p class="mb-1 text-muted">Kode QR Pembayaran:</p>
+                        @else
+                            <p class="mb-1 text-muted">Nomor Pembayaran:</p>
+                        @endif
                         <div class="d-flex justify-content-center align-items-center gap-2 bg-light p-3 rounded">
                             @if($transaction->via === 'QRIS')
                                 <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(700)->margin(2)->backgroundColor(255,255,255)->generate($transaction->paymentNo)) !!}" alt="QRIS" class="img-fluid" style="max-width: 150px;">

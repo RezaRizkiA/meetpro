@@ -98,7 +98,6 @@
                         <div class="col-lg-4 order-last">
                             <ul
                                 class="list-unstyled d-flex align-items-center justify-content-center justify-content-lg-end my-3 mx-4 gap-3">
-
                                 {{-- button sosmed expert --}}
                                 @if (in_array('expert', Auth::user()->roles ?? []))
                                     @php
@@ -139,7 +138,6 @@
                                         </li>
                                     @endforeach
                                 @endif
-
                                 {{-- button mypage client --}}
                                 @if (in_array('client', Auth::user()->roles ?? []))
                                     <li class="">

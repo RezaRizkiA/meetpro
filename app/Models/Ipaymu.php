@@ -9,6 +9,7 @@ class Ipaymu extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
     protected $table = 'ipaymu'; // Pastikan nama tabel benar
 
     protected $fillable = [

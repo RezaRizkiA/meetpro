@@ -44,7 +44,7 @@ return new class extends Migration
 
             $table->bigInteger('tax_system')->nullable()->default('0');
             $table->boolean('trx_chacking')->default('0')->nullable();
-            $table->boolean('trx_calender_process')->default('1')->nullable();
+            $table->boolean('trx_calender_process')->default('0')->nullable();
             $table->string('type')->nullable();
             $table->timestamps();
         });

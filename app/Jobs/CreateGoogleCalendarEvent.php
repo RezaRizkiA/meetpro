@@ -37,7 +37,7 @@ class CreateGoogleCalendarEvent implements ShouldQueue
         }
 
         // Ensure the appointment is paid
-        if ($this->appointment->payment_status !== 'paid') {
+        if ($this->appointment->payment_status !== 'berhasil') {
             Log::warning('Attempted to create Google Calendar event for unpaid appointment ' . $this->appointment->id);
             return;
         }

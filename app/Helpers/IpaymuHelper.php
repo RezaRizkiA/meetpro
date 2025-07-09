@@ -85,3 +85,40 @@ function randomCode()
     $randomCode  = $randomPart1 . '-' . $randomPart2 . '-' . $randomPart3 . '-' . $randomPart4 . '-' . $randomPart5;
     return $randomCode;
 }
+
+function checkTransactionIpaymu($id_trx)
+{
+    $body['transactionId'] = trim($id_trx);
+    $signature             = GenerateSignature($body, 'POST');
+    $response              = Http::withHeaders([
+        'Content-Type' => 'application/json',
+        'signature'    => $signature,
+        'va'           => config('ipaymu.va'),
+        'timestamp'    => Date('YmdHis'),
+    ])->POST(config('ipaymu.url_transaction'), [
+        'transactionId' => trim($id_trx),
+    ]);
+
+    $responseData = $response->json();
+    if ($response->failed() || $responseData['Status'] != 200 || ! $responseData['Success']) {
+        Log::error('Ipaymu payment error: ', $responseData);
+        return null;
+    }
+    return $responseData['Data'];
+}
+
+// function is_signature_valid(Request $request)
+// {
+//     $serverSignature = $request->header('X-Signature');
+//     if (! $serverSignature) {
+//         Log::warning('X-Signature header is missing in the request');
+//         return false;
+//     }
+
+//     // ambil raw body dari request
+//     $requestBody        = $request->getContent();
+//     $generatedSignature = hash_hmac('sha256', $requestBody, config('ipaymu.api_key'));
+//     // gunakan hash_equals untuk membandingkan signature, untuk menghindari timing attack
+//     $isValid = hash_equals($serverSignature, $generatedSignature);
+//     return $isValid;
+// }

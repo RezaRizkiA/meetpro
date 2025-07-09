@@ -7,6 +7,9 @@ use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Jobs\CreateGoogleCalendarEvent;
+
 
 class PaymentController extends Controller
 {
@@ -102,7 +105,7 @@ class PaymentController extends Controller
 
     public function transaction($sid_transaction)
     {
-        // Cari transaksi berdasarkan sid
+        // Cari transaksi berdasarkan sessionID
         $transaction = Transaction::where('sid', $sid_transaction)->firstOrFail();
 
         // Cek apakah transaksi sudah dibayar
@@ -117,4 +120,46 @@ class PaymentController extends Controller
         // Tampilkan halaman transaksi
         return view('payment.transaction', compact('transaction'));
     }
+
+    public function notify(Request $request)
+    {
+        // dd($request->all());
+
+        // terima dan catat semua data yang masuk
+        $dataNotify = $request->all();
+        Log::info('Payment Notification Received', $dataNotify);
+
+        if (! isset($dataNotify['trx_id'])) {
+            Log::error('Missing trx_id in payment notification');
+            return response()->json(['error' => 'Missing trx_id'], 400);
+        }
+
+        // cari transaksi berdasarkan kolom referenceId
+        $transaction = Transaction::where('transactionId', $dataNotify['trx_id'])->first();
+
+        if (! $transaction) {
+            Log::error('Transaction not found for trx_id: ' . $dataNotify['trx_id']);
+            return response()->json(['error' => 'Transaction not found'], 404);
+        }
+
+
+        if ($transaction->status !== 'berhasil') {
+            // validasi ulang
+            $checkTransaction = checkTransactionIpaymu($transaction->transactionId);
+            if($checkTransaction['StatusDesc'] === 'Berhasil') {
+                $transaction->update([
+                    'status'        => strtolower($checkTransaction['StatusDesc'] ?? 'berhasil'),
+                    'trx_id'        => $checkTransaction['TransactionId'] ?? $transaction->transactionId,
+                    'reference_id'  => $checkTransaction['ReferenceId'] ?? $transaction->reference_id,
+                    'payment_date'  => isset($checkTransaction['SuccessDate']) ? Carbon::parse($checkTransaction['SuccessDate']) : null,
+                ]);
+                $transaction->appointment->update(['payment_status' => 'berhasil']);
+                CreateGoogleCalendarEvent::dispatch($transaction->appointment);
+
+                return response()->json(['message' => 'Google Calendar event created successfully.']);
+            } else {
+            }
+                return response()->json(['message' => 'Transaksi belum berhasil']);
+            }
+        }
 }
