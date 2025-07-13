@@ -1,50 +1,47 @@
 <?php
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
+use App\Models\Appointment;
 use App\Models\Expert;
-use App\Models\Appoinment;
+// use App\Services\GoogleCalendarService; // Tidak lagi digunakan di sini
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class ExpertController extends Controller
 {
-    //
     public function make_appointment($expert_id)
     {
         $expert = Expert::with('user')->findOrFail($expert_id);
-
         return view('appointment', compact('expert'));
     }
 
-    public function make_appointment_post(Request $request, $expert_id)
+    public function make_appointment_post(Request $request, $expert_id) // GoogleCalendarService dihapus
     {
-        // (opsional tapi sangat disarankan)
         $request->validate([
-            'date' => 'required|date',            // 2025-06-14
-            'time' => 'required|date_format:H:i', // 23:28
+            'date' => 'required|date',
+            'time' => 'required|date_format:H:i',
         ]);
 
         $dateTime = Carbon::createFromFormat(
             'Y-m-d H:i',
             "{$request->date} {$request->time}",
-            config('app.timezone') // mis. Asia/Jakarta
+            config('app.timezone')
         );
-        // dd($dateTime);
-
-        $expert = Expert::findOrFail($expert_id);
-
-        $appointment = Appoinment::create([
-            'user_id'    => Auth::user()->id,
-            'expert_id'  => $expert_id,
-            'appoinment' => $request->appoinment,
-            'date_time'  => $dateTime,
-            'hours'      => $request->hours,
-            'price'      => $expert->price,
-            'status'     => 'need_confirmation',
+        $expert = Expert::with('user')->findOrFail($expert_id);
+        // Buat appointment dengan status pembayaran 'pending'
+        $appointment = Appointment::create([
+            'user_id'     => Auth::user()->id,
+            'expert_id'   => $expert_id,
+            'appointment' => $request->appointment,
+            'date_time'   => $dateTime,
+            'hours'       => $request->hours,
+            'price'       => $expert->price,
+            'status'      => 'need_confirmation',
+            'payment_status' => 'pending', // Status pembayaran awal
         ]);
 
-        return redirect()->route('profile');
+        // Arahkan ke halaman pembayaran
+        return redirect()->route('payment.show', ['appointment' => $appointment->id]);
     }
 }

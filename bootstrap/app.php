@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => Authenticate::class,
             'guest' => RedirectIfAuthenticated::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            '/payment-notify',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

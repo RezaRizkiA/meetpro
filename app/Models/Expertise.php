@@ -23,16 +23,16 @@ class Expertise extends Model
         return $this->childrens()->with('childrensRecursive');
     }
 
-    // Mendapatkan semua expert yang memiliki expertise ini (JSON)
-    public function getExpertsAttribute()
+    public function flattenAllDescendants()
     {
-        return Expert::whereJsonContains('expertise_id', (string) $this->id)->get();
-    }
-
-    // Jumlah expert yang punya expertise ini (JSON)
-    public function getExpertsCountAttribute()
-    {
-        return Expert::whereJsonContains('expertise_id', (string) $this->id)->count();
+        $flat = collect();
+        foreach ($this->childrensRecursive as $child) {
+            $flat->push($child);
+            if ($child->childrensRecursive->isNotEmpty()) {
+                $flat = $flat->merge($child->flattenAllDescendants());
+            }
+        }
+        return $flat;
     }
 
     // Mendapatkan semua expert yang memiliki expertise ini (JSON)

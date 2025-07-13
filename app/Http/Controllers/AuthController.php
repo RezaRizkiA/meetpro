@@ -1,93 +1,97 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Appointment;
 use App\Models\Expertise;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\ExpertiseCategory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
     public function google_redirect()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->scopes(config('google-calendar.scopes'))
+            ->with(['access_type' => 'offline', 'prompt' => 'consent'])
+            ->redirect();
     }
 
     public function google_callback(Request $request)
     {
-        if (session()->has('url.intended')) {
-            $redirectTo = session()->get('url.intended');
-        } else {
-            $redirectTo = false;
-        } //if intended url is available
+        try {
+            if (session()->has('url.intended')) {
+                $redirectTo = session()->get('url.intended');
+            } else {
+                $redirectTo = false;
+            } //if intended url is available
 
-        $google_user   = Socialite::driver('google')->user();
-        $avatarUrl     = $google_user->getAvatar();
-        $imageContents = file_get_contents($avatarUrl);
-        $filename      = 'avatars/' . uniqid() . '.png';
+            $google_user = Socialite::driver('google')->user();
+            $avatarUrl = $google_user->getAvatar();
+            $imageContents = file_get_contents($avatarUrl);
+            $filename = 'avatars/' . uniqid() . '.png';
 
-        if (User::where('email', $google_user->email)->exists()) {
             $user = User::where('email', $google_user->email)->first();
-            if ($user->google_id == null) {
+
+            if ($user) {
+                // Update existing user
                 $user->update([
                     'google_id' => $google_user->id,
+                    'google_access_token' => $google_user->token,
+                    'google_refresh_token' => $google_user->refreshToken,
+                    'google_token_expires_at' => now()->addSeconds($google_user->expiresIn),
                 ]);
-                Auth::login($user, true);
-            } elseif ($user->google_id == $google_user->id) {
-                Auth::login($user, true);
+            } else {
+                // Create new user
+                $user = User::create([
+                    'email' => $google_user->email,
+                    'name' => $google_user->name,
+                    'roles' => ['user'], // Set default role
+                    'google_id' => $google_user->id,
+                    'google_access_token' => $google_user->token,
+                    'google_refresh_token' => $google_user->refreshToken,
+                    'google_token_expires_at' => now()->addSeconds($google_user->expiresIn),
+                    'email_verified_at' => now(),
+                ]);
             }
-        } else {
-            $user = User::create([
-                'name'              => $google_user->name,
-                'roles'             => ['user'],
-                'email'             => $google_user->email,
-                'google_id'         => $google_user->id,
-                'email_verified_at' => now(),
-            ]);
+
             Auth::login($user, true);
-        }
 
-        $user->slug ??= slugName($user->name, $user->id);
-        if (! $user->picture) {
-            Storage::disk('s3')->put($filename, $imageContents, 'public');
-            $user->picture = $filename;
-        }
-        $user->save();
+            $user->slug ??= slugName($user->name, $user->id);
+            if (!$user->picture) {
+                Storage::disk('s3')->put($filename, $imageContents, 'public');
+                $user->picture = $filename;
+            }
+            $user->save();
 
-        $credentials = [
-            'user'      => Auth::user()->id,
-            'token_jwt' => Auth::user()->id,
-        ];
-        $request->session()->regenerate();
-        $request->session()->put('loggedUser', $credentials);
+            $credentials = [
+                'user' => Auth::user()->id,
+            ];
+            $request->session()->regenerate();
+            $request->session()->put('loggedUser', $credentials);
 
-        if ($redirectTo != false) {
-            session()->forget('url.intended');
-            return redirect($redirectTo);
+            if ($redirectTo != false) {
+                session()->forget('url.intended');
+                return redirect($redirectTo);
+            }
+            return redirect()->route('profile');
+        } catch (\Exception $e) {
+            return redirect()->route('login')->withErrors(['email' => 'Google authentication failed: ' . $e->getMessage()]);
         }
-        return redirect()->route('profile');
     }
 
     public function register()
     {
-        $user                 = Auth::user();
+        $user       = Auth::user();
         $expertises = Expertise::whereNull('parent_id')->orderBy('order')->with('childrensRecursive')->get();
-        $client = $user->client;
-        $expert = $user->expert;
-        return view('register.register_action', compact('expertises', 'client', 'expert'));
-    }
+        $client     = $user->client;
+        $expert     = $user->expert;
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('login');
+        return view('register.register_action', compact('expertises', 'client', 'expert'));
     }
 
     public function logout(Request $request)
@@ -214,7 +218,66 @@ class AuthController extends Controller
 
     public function profile()
     {
-        return view('profile');
+        $user  = Auth::user();
+        $roles = $user->roles ?? [];
+
+        $expertises = null;
+
+        if (in_array('administrator', $roles, true)) {
+            $roots = Expertise::whereNull('parent_id')
+                ->orderBy('order')
+                ->with('childrensRecursive')
+                ->get();
+
+            $expertises = collect();
+            foreach ($roots as $root) {
+                $expertises = $expertises
+                    ->merge([$root])                         // level-1
+                    ->merge($root->flattenAllDescendants()); // level-2 & 3
+            }
+        }
+
+        $isExpert = in_array('expert', $roles, true);
+        $appointmentsCount = 0;
+        if ($isExpert && optional($user->expert)->id) {
+
+            // ⇢ Login sebagai EXPERT  → tampilkan user
+            $appointments = Appointment::with([
+                'user:id,name,email',
+            ])
+                ->where('expert_id', $user->expert->id)
+                ->latest()
+                ->get();
+
+            $appointmentsCount = $appointments->count();
+
+        } else {
+            $appointments = Appointment::with([
+                // ambil data expert beserta user-nya dan email
+                'expert' => function ($q) {
+                    // harus include user_id agar relasi "user" bisa bekerja
+                    $q->select('id', 'user_id', 'expertise', 'price')
+                        ->with('user:id,name,email');
+                },
+            ])
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get();
+
+            $appointmentsCount = $appointments->count();
+        }
+
+        // dd($appointments);
+        $calendarAppointments = $appointments->map(function ($app) use ($isExpert) {
+            $person = $isExpert ? $app->user : optional($app->expert)->user;
+            return [
+                'title' => $person->name . ' (' . ucfirst(str_replace('_', ' ', $app->status)) . ')',
+                'start' => $app->date_time,
+            ];
+
+        });
+
+        return view('profile', compact('expertises', 'appointments', 'isExpert', 'calendarAppointments', 'appointmentsCount'));
     }
 
     public function register_client_post(Request $request)
@@ -260,6 +323,14 @@ class AuthController extends Controller
             }
         }
         $client->save();
+
+        $roles = $user->roles;
+        if (!in_array('client', $roles)) {
+            $roles[] = 'client';
+            $user->roles = $roles;
+            $user->save();
+        }
+
         return redirect()->route('profile');
     }
 
@@ -277,17 +348,22 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
+            $user = Auth::user();
+            $credentials = [
+                'user'      => $user->id,
+                'token_jwt' => $user->id,
+            ];
+            $request->session()->put('loggedUser', $credentials);
             return redirect()->route('profile');
         }
-        return redirect()->back()->withError([
+        return redirect()->back()->withErrors([
             'email' => 'Email atau Password Tidak Valid!!',
         ])->withInput();
     }
 
     public function register_expert_post(Request $request)
     {
-        $needProcesses = $request->only(['licenses', 'gallerys']);
-        $directProcess = $request->except(['licenses', 'gallerys', '_token']);
+        $directProcess = $request->except(['_token', 'licenses', 'gallerys', 'socials']);
 
         $user = Auth::user();
         if ($user->expert == null) {
@@ -297,9 +373,10 @@ class AuthController extends Controller
             $expert->update($directProcess); // data di perbarui
         }
 
+        $needProcesses = $request->only(['licenses', 'gallerys', 'socials']);
         foreach ($needProcesses as $key_process => $need_process) { // key ini untuk path 'licenses', 'gallery'
             $the_process = is_array($expert->$key_process ?? null) ? $expert->$key_process : [];
-            foreach ($need_process as $key_data_db => $process_data) {            // key ini untuk database data keberapa '[0]', '[1]'...
+            foreach ($need_process as $key_data_db => $process_data) {            // key ini untuk database data keberapa '[0]', '[1]'
                 foreach ($process_data as $key_item => $value) {                      // key ini untuk index data keberapa 'certification', 'attachment' or...
                                                                                           // cek apakah data yang baru ini string atau file
                     if ($request->hasFile("{$key_process}.{$key_data_db}.{$key_item}")) { // jika file proses ke s3 baru name file simpan database
@@ -319,6 +396,13 @@ class AuthController extends Controller
             }
             $expert->$key_process = $the_process;
             $expert->save();
+        }
+
+        $roles = $user->roles;
+        if (!in_array('expert', $roles)) {
+            $roles[] = 'expert';
+            $user->roles = $roles;
+            $user->save();
         }
 
         return redirect()->route('profile');

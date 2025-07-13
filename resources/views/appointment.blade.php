@@ -60,7 +60,7 @@
                                                         class="min-width-40 flex-grow-0 border border-muted text-muted fs-3 fw-semibold form-control text-center qty"
                                                         placeholder="" aria-label="Example text with button addon"
                                                         aria-describedby="add1" value="1" id="qty"
-                                                        data-target-id='priceDisplay' >
+                                                        data-target-id='priceDisplay'>
                                                     <button
                                                         class="btn min-width-40 py-0 border border-muted border-start-0 text-muted add"
                                                         type="button" id="addo2">
@@ -69,8 +69,8 @@
                                                 </div>
                                             </td>
                                             <td class="text-end border-bottom-0">
-                                                <h6 class="fs-4 fw-semibold mb-0" data-price="100000" id="priceDisplay">Rp.
-                                                    100.000</h6>
+                                                <h6 class="fs-4 fw-semibold mb-0" data-price="{{ $expert->price }}" id="priceDisplay">Rp.
+                                                    {{ number_format($expert->price, 0, ',', '.') }}</h6>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -80,7 +80,7 @@
                                 <h5 class="fs-5 fw-semibold mb-4">Appointment</h5>
                                 <div class="mb-4">
                                     <label class="form-label">Detail Appointment</label>
-                                    <textarea name="appoinment" class="form-control" placeholder="" rows="2"></textarea>
+                                    <textarea name="appointment" class="form-control" placeholder="" rows="2"></textarea>
                                     <p class="fs-2 mb-2">Input detail appointment</p>
                                 </div>
 
@@ -89,12 +89,13 @@
                                     <div class="d-flex align-items-center gap-6 py-1 flex-nowrap">
                                         <input name="date" type="text" class="form-control" placeholder="2023-06-04"
                                             id="mdate" />
-                                        <input name="time" class="form-control" id="timepicker" placeholder="Check time" />
+                                        <input name="time" class="form-control" id="timepicker"
+                                            placeholder="Check time" />
                                     </div>
                                     <p class="fs-2 mb-0">Request date and time</p>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary">Checkout</button>
                         </form>
                     </section>
                 </div>
@@ -104,7 +105,7 @@
 @endsection
 
 @section('footer')
-    @include('partials/footer')
+    @include('partials.footer')
 @endsection
 
 @section('script')

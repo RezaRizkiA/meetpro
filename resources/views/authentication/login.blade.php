@@ -39,7 +39,7 @@
                                                     class="border-top w-100 position-absolute top-50 start-50 translate-middle"></span>
                                             </div>
                                             <form action="{{ route('login_post') }}" method="POST"
-                                                enctype="multipart/form-data" class="row">@csrf
+                                                enctype="multipart/form-data">@csrf
                                                 <div class="mb-3">
                                                     <label for="email" class="form-label">Gmail Address</label>
                                                     <input type="email"
@@ -77,12 +77,10 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <button type="submit" class="btn btn-dark w-100 py-8 mb-4 rounded-1">Sign
-                                                    In</button>
+                                                <button type="submit" class="btn btn-dark w-100 py-8 mb-4 rounded-1">Sign In</button>
                                                 <div class="d-flex align-items-center justify-content-center">
                                                     <p class="fs-12 mb-0 fw-medium">Don’t have account?</p>
-                                                    <a class="text-primary fw-bolder ms-2"
-                                                        href="{{ route('google_redirect') }}">Sign in &nbsp;Google</a>
+                                                    <a class="text-primary fw-bolder ms-2" href="{{ route('google_redirect') }}">Sign Up&nbsp;Google</a>
                                                 </div>
                                             </form>
                                         </div>

@@ -18,6 +18,7 @@ class User extends Authenticatable
         'roles'             => 'array',
         'email_verified_at' => 'datetime',
         'password'          => 'hashed',
+        'google_token_expires_at' => 'datetime',
     ];
 
     public function client()
@@ -29,4 +30,15 @@ class User extends Authenticatable
     {
         return $this->hasOne(Expert::class, 'user_id');
     }
+
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->roles ?? [], true);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
 }

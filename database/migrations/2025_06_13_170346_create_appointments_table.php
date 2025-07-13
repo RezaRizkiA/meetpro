@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('appoinments', function (Blueprint $table) {
+        Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('expert_id')->nullable()->constrained('experts')->onDelete('cascade');
-            $table->text('appoinment')->nullable();
+            $table->text('appointment')->nullable();
             $table->timestamp('date_time')->nullable();
-            $table->text('calendar_token')->nullable();
+            $table->string('google_calendar_event_id')->nullable();
             $table->integer('hours')->nullable();
             $table->bigInteger('price')->nullable();
-            $table->string('status')->nullable();
+            $table->string('status')->default('pending');
+            $table->string('payment_status')->default('pending');
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('appoinments');
+        Schema::dropIfExists('appointments');
     }
 };
