@@ -238,7 +238,7 @@ class AuthController extends Controller
         }
 
         $isExpert = in_array('expert', $roles, true);
-
+        $appointmentsCount = 0;
         if ($isExpert && optional($user->expert)->id) {
 
             // ⇢ Login sebagai EXPERT  → tampilkan user
@@ -248,6 +248,8 @@ class AuthController extends Controller
                 ->where('expert_id', $user->expert->id)
                 ->latest()
                 ->get();
+
+            $appointmentsCount = $appointments->count();
 
         } else {
             $appointments = Appointment::with([
@@ -261,6 +263,8 @@ class AuthController extends Controller
                 ->where('user_id', $user->id)
                 ->latest()
                 ->get();
+
+            $appointmentsCount = $appointments->count();
         }
 
         // dd($appointments);
@@ -273,8 +277,7 @@ class AuthController extends Controller
 
         });
 
-        return view('profile', compact('expertises', 'appointments', 'isExpert', 'calendarAppointments'));
-
+        return view('profile', compact('expertises', 'appointments', 'isExpert', 'calendarAppointments', 'appointmentsCount'));
     }
 
     public function register_client_post(Request $request)

@@ -64,7 +64,7 @@
 
                                 <div class="">
                                     <h4 class="mb-0 fw-semibold lh-1 d-flex justify-content-start"><i
-                                            class="ti ti-file-description fs-6 d-block me-2"></i> 10</h4>
+                                            class="ti ti-file-description fs-6 d-block me-2"></i>{{ $appointmentsCount }}</h4>
                                     <p class="mb-0 ">Appointment</p>
                                 </div>
 
@@ -338,13 +338,11 @@
                                         <form class="position-relative">
                                             <input type="text" class="form-control search-chat py-2 ps-5"
                                                 id="text-srh" placeholder="Cari Nama Konselor...">
-                                            <i
-                                                class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
+                                            <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
                                         </form>
                                     </div>
                                     <div class="app-chat">
                                         <ul class="chat-users mh-n100 simplebar-scrollable-y" data-simplebar="init">
-
                                             <div class="simplebar-wrapper" style="margin: 0px;">
                                                 <div class="simplebar-height-auto-observer-wrapper">
                                                     <div class="simplebar-height-auto-observer"></div>
@@ -443,51 +441,6 @@
                         </form>
                     </div>
                     <div class="row">
-                        <div class=" col-md-6 col-xl-4">
-                            <div class="card">
-                                <div class="card-body p-4 d-flex align-items-center gap-6 flex-wrap">
-                                    <img src="../assets/images/profile/user-1.jpg" alt="matdash-img"
-                                        class="rounded-circle" width="40" height="40">
-                                    <div>
-                                        <h5 class="fw-semibold mb-0">Ibnu Haris Al Mutaqin</h5>
-                                        <span class="fs-2 d-flex align-items-center">
-                                            al.ibnuharis@gmail.com
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class=" col-md-6 col-xl-4">
-                            <div class="card">
-                                <div class="card-body p-4 d-flex align-items-center gap-6 flex-wrap">
-                                    <img src="../assets/images/profile/user-1.jpg" alt="matdash-img"
-                                        class="rounded-circle" width="40" height="40">
-                                    <div>
-                                        <h5 class="fw-semibold mb-0">Ibnu Haris Al Mutaqin</h5>
-                                        <span class="fs-2 d-flex align-items-center">
-                                            al.ibnuharis@gmail.com
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class=" col-md-6 col-xl-4">
-                            <div class="card">
-                                <div class="card-body p-4 d-flex align-items-center gap-6 flex-wrap">
-                                    <img src="../assets/images/profile/user-1.jpg" alt="matdash-img"
-                                        class="rounded-circle" width="40" height="40">
-                                    <div>
-                                        <h5 class="fw-semibold mb-0">Ibnu Haris Al Mutaqin</h5>
-                                        <span class="fs-2 d-flex align-items-center">
-                                            al.ibnuharis@gmail.com
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class=" col-md-6 col-xl-4">
                             <div class="card">
                                 <div class="card-body p-4 d-flex align-items-center gap-6 flex-wrap">

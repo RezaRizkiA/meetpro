@@ -12,7 +12,6 @@ Route::get('/auth/google/redirect', [AuthController::class, 'google_redirect'])-
 Route::get('/auth/google/callback', [AuthController::class, 'google_callback'])->name('google_callback');
 
 Route::middleware('auth')->group(function () {
-    Route::post('appointment/{id}/update-status', [AppointmentController::class, 'updateStatus'])->name('appointment.update_status');
 
     Route::get('register-expert', [AuthController::class, 'register'])->name('register_expert');
     Route::post('register-expert', [AuthController::class, 'register_expert_post'])->name('register_expert_post');
@@ -31,6 +30,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('make-appointment-{expert_id}', [ExpertController::class, 'make_appointment'])->name('appointment');
     Route::post('make-appointment-{expert_id}', [ExpertController::class, 'make_appointment_post'])->name('appointment_post');
+    Route::post('appointment/{id}/update-status', [AppointmentController::class, 'updateStatus'])->name('appointment.update_status');
+    Route::put('/appointments/{id}/edit-schedule', [AppointmentController::class, 'editSchedule'])->name('appointment.edit_schedule');
 
     // Rute Pembayaran
     Route::get('payment/{appointment}', [PaymentController::class, 'show'])->name('payment.show');

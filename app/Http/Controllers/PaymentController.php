@@ -9,14 +9,14 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\CreateGoogleCalendarEvent;
-
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
 
     public function show(Appointment $appointment)
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
         if ($appointment->user_id !== $userId) {
             abort(403, 'Unauthorized action.');
         }
@@ -31,7 +31,7 @@ class PaymentController extends Controller
 
     public function process(Appointment $appointment, Request $request)
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
         if ($appointment->user_id !== $userId) {
             abort(403, 'Unauthorized action.');
         }
@@ -49,7 +49,7 @@ class PaymentController extends Controller
             return back()->with('error', 'This appointment has already been paid.');
         }
 
-        $user     = auth()->user();
+        $user     = Auth::user();
         $amount   = $appointment->price * $appointment->hours;
         $trx_desc = $user->name . ' - ' . $appointment->expert->user->name;
 
@@ -123,7 +123,7 @@ class PaymentController extends Controller
 
     public function notify(Request $request)
     {
-        // dd($request->all());
+        // dd($request->all());a
 
         // terima dan catat semua data yang masuk
         $dataNotify = $request->all();
