@@ -10,30 +10,39 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        $emails = ['kastaraparama.idn@gmail.com', 'bu4893229@gmail.com'];
+        $users = [
+            [
+                'email' => 'kastaraparama.idn@gmail.com',
+                'slug'  => 'kastara-parama-nusantara',
+                'name'  => 'Kastara Parama Nusantara',
+            ],
+            [
+                'email' => 'bu4893229@gmail.com',
+                'slug'  => 'kastara-parama',
+                'name'  => 'Kastara Parama',
+            ],
+        ];
 
-        foreach ($emails as $email) {
-            $existingUser = User::where('email', $email)->first();
+        foreach ($users as $data) {
+            $existingUser = User::where('email', $data['email'])->first();
+
             if (!$existingUser) {
-                // Cek apakah sudah ada user lain yang punya role 'administrator'
                 $adminExists = User::whereJsonContains('roles', 'administrator')->exists();
-    
-                // Susun role
+
                 $roles = ['user'];
-                if (!$adminExists && $email == 'kastaraparama.idn@gmail.com') {
+                if (!$adminExists && $data['email'] === 'kastaraparama.idn@gmail.com') {
                     $roles[] = 'administrator';
                 }
-    
-                // Buat user baru
+
                 User::create([
-                    'name' => 'Kastara Parama Nusantara',
-                    'email' => $email,
-                    'phone' => '6282299668860',
-                    'slug' => 'kastara-parama-nusantara',
-                    'password' => 'KASTARAAPPS', // Otomatis di-hash oleh casts
-                    'gender' => 'L',
-                    'address' => 'Jl. Paus Dalam No.37 Rawamangun, Pulo Gadung, Jakarta Timur 13220',
-                    'roles' => $roles,
+                    'name'     => $data['name'],
+                    'email'    => $data['email'],
+                    'phone'    => '6282299668860',
+                    'slug'     => $data['slug'],
+                    'password' => 'KASTARAAPPS', // diasumsikan password di-cast agar auto hash
+                    'gender'   => 'L',
+                    'address'  => 'Jl. Paus Dalam No.37 Rawamangun, Pulo Gadung, Jakarta Timur 13220',
+                    'roles'    => $roles,
                 ]);
             }
         }
