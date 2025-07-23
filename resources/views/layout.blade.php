@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/favicon.png')}}" />
+  <link rel="shortcut icon" type="image/png" href="{{asset('assets/images/logos/key-color.png')}}" />
   <link rel="stylesheet" href="{{asset('assets/libs/quill/dist/quill.snow.css')}}">
   <link rel="stylesheet" href="{{asset('assets/libs/@claviska/jquery-minicolors/jquery.minicolors.css')}}">
 
@@ -28,7 +28,7 @@
 
 <body class="d-flex flex-column min-vh-100">
   <div class="preloader">
-    <img src="{{asset('assets/images/logos/favicon.png')}}" alt="loader" class="lds-ripple img-fluid" />
+    <img src="{{asset('assets/images/logos/key-color.png')}}" alt="loader" class="lds-ripple img-fluid" />
   </div>
 
   @yield('header')
