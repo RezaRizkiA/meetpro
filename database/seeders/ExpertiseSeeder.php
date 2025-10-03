@@ -9,7 +9,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ExpertiseSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $data = [
             'Business Management' => [
@@ -31,55 +31,59 @@ class ExpertiseSeeder extends Seeder
                 'Assessment & Diagnosis' => ['Mental status','Psychological tests','Case formulation','Risk assessment (self-harm, suicide, abuse)','Differential diagnosis (for psychologists/psychiatrists)'],
                 'Intervention' => ['Cognitive Behavioral Therapy (CBT)','Acceptance & Commitment Therapy (ACT)','Person-Centered Therapy (PCT)','Narrative therapy','Solution-Focused Brief Therapy (SFBT)','Psychoeducation'],
                 'Specialized Therapy' => ['Hypnotherapy','Clinical Hypnotherapy','Neuro-Linguistic Programming (NLP)','Mindfulness-Based Cognitive Therapy (MBCT)','Eye Movement Desensitization and Reprocessing (EMDR)','Art therapy','Play therapy'],
-                'Communication & Relational' => [
-                    'Building connection',
-                    'Verbal communication',
-                    'Non-verbal communication',
-                    'Managing transference',
-                    'Boundary setting',
-                    'Feedback delivery',
-                ]
-                // dst...
+                'Communication & Relational' => ['Building connection','Verbal communication','Non-verbal communication','Managing transference','Boundary setting','Feedback delivery']
             ]
         ];
 
-        $order1 = 1;
-        foreach ($data as $category => $subcategories) {
-            $categoryId = DB::table('expertises')->insertGetId([
-                'name' => $category,
-                'slug' => Str::slug($category),
-                'parent_id' => null,
-                'level' => 1,
-                'order' => $order1++,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        DB::transaction(function () use ($data) {
 
-            $order2 = 1;
-            foreach ($subcategories as $sub => $skills) {
-                $subId = DB::table('expertises')->insertGetId([
-                    'name' => $sub,
-                    'slug' => Str::slug($sub),
-                    'parent_id' => $categoryId,
-                    'level' => 2,
-                    'order' => $order2++,
+            // helper: find existing by (parent_id, slug), else create; return id
+            $findOrCreate = function (string $name, ?int $parentId, int $level, int $order) {
+                $slug = Str::slug($name);
+
+                // cari existing
+                $existing = DB::table('expertises')
+                    ->where('parent_id', $parentId)
+                    ->where('slug', $slug)
+                    ->first();
+
+                if ($existing) {
+                    // pastikan level & order tetap terbarui jika berubah
+                    DB::table('expertises')->where('id', $existing->id)->update([
+                        'name'       => $name,         // jaga-jaga jika ingin normalisasi nama terbaru
+                        'level'      => $level,
+                        'order'      => $order,
+                        'updated_at' => now(),
+                    ]);
+                    return (int) $existing->id;
+                }
+
+                // buat baru
+                return (int) DB::table('expertises')->insertGetId([
+                    'name'       => $name,
+                    'slug'       => $slug,
+                    'parent_id'  => $parentId,
+                    'level'      => $level,
+                    'order'      => $order,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
+            };
 
-                $order3 = 1;
-                foreach ($skills as $skill) {
-                    DB::table('expertises')->insert([
-                        'name' => $skill,
-                        'slug' => Str::slug($skill),
-                        'parent_id' => $subId,
-                        'level' => 3,
-                        'order' => $order3++,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+            $order1 = 1;
+            foreach ($data as $category => $subcategories) {
+                $categoryId = $findOrCreate($category, null, 1, $order1++);
+
+                $order2 = 1;
+                foreach ($subcategories as $sub => $skills) {
+                    $subId = $findOrCreate($sub, $categoryId, 2, $order2++);
+
+                    $order3 = 1;
+                    foreach ($skills as $skill) {
+                        $findOrCreate($skill, $subId, 3, $order3++);
+                    }
                 }
             }
-        }
+        });
     }
 }
