@@ -48198,3 +48198,14 @@ h6 {
         opacity: 0;
     }
 }
+
+
+ /* default: medium */
+  .accordion-item > .form-check .form-check-label { font-weight: 500; }
+
+  /* jika ada checkbox di dalam item ini yang checked → jadikan bold */
+  .accordion-item:has(.accordion-collapse input[type="checkbox"]:checked)
+    > .form-check .form-check-label { 
+      font-weight: 900 !important; 
+      color: #000;
+    }
