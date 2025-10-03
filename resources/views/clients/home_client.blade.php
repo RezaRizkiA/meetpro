@@ -33,14 +33,8 @@
                     <div class="col-lg-6 order-last order-lg-first">
                         <div class="p-4 p-lg-5 flex-grow-1">
                             <div class="py-lg-4 d-flex flex-column gap-3">
-                                <a href="{{ route('expert') }}">
-                                    <h2 class="fw-bolder fs-8">
-                                        {{ $client->banner_title }}
-                                    </h2>
-                                </a>
-                                <p class="">
-                                    {{ $client->banner_desc }}
-                                </p>
+                                <h2 class="fw-bolder fs-8">{{ $client->banner_title }}</h2>
+                                <p class="">{{ $client->banner_desc }}</p>
                                 <div class="d-flex justify-content-end align-items-center">
                                     <div class="d-flex gap-2">
                                         <i class="ti ti-circle"></i>
@@ -55,11 +49,11 @@
                             style="background-image: url('{{ urlpathSTORAGE($client->banner_background) }}')">
                             <img src="{{ urlpathSTORAGE($client->author_photo) }}" alt="user" width="44"
                                 height="44" class="rounded-circle">
-                            <div class="d-flex justify-content-end">
+                            {{-- <div class="d-flex justify-content-end">
                                 <p class="fs-2 py-1 px-2 bg-white rounded-1 fw-semibold mb-0 text-dark">29 profesional
                                     expert
                                 </p>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
