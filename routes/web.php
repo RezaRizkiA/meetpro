@@ -19,6 +19,7 @@ Route::get('privacy', [LandingController::class, 'privacy'])->name('privacy');
 
 // Routes Login
 Route::get('login', [AuthController::class, 'loginView'])->name('login')->middleware('guest');
+Route::post('/login', [AuthController::class, 'login_post'])->name('login_post')->middleware('guest');
 
 // Untuk login saja
 Route::get('/auth/google/login', [AuthController::class, 'google_login'])->name('google.login');
@@ -70,7 +71,7 @@ Route::get('client-{slug_page}/expertise-{slug}', [ClientController::class, 'lis
 Route::get('/expert-detail-{expert_id}', [ClientController::class, 'expert_detail'])->name('expert_detail');
 
 
-Route::post('/login', [AuthController::class, 'login_post'])->name('login_post')->middleware('guest');
+
 
 // Callback iPaymu - Rute ini di luar grup 'web' untuk menghindari masalah CSRF
 Route::post('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');

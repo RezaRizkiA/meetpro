@@ -314,7 +314,7 @@ class AuthController extends Controller
             ];
         });
 
-        return view('profile', compact('expertises', 'appointments', 'isExpert', 'calendarAppointments', 'appointmentsCount'));
+        return Inertia::render('Profile', compact('expertises', 'appointments', 'isExpert', 'calendarAppointments', 'appointmentsCount'));
     }
 
     public function register_client_post(Request $request)
