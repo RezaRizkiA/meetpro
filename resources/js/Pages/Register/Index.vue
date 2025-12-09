@@ -1,7 +1,8 @@
+// File: resources/js/Pages/Register/Index.vue
 <script setup>
 import { computed } from 'vue'; // Hapus 'ref' karena tidak butuh state tab lagi
 import { Head } from '@inertiajs/vue3';
-import MainLayout from '../../Layouts/MainLayout.vue';
+import AppLayout from "../../Layouts/AppLayout.vue";
 
 import ClientForm from './Tabs/ClientForm.vue';
 import ExpertForm from './Tabs/ExpertForm.vue';
@@ -33,7 +34,7 @@ const pageDescription = computed(() => {
 
     <Head :title="pageTitle" />
 
-    <MainLayout>
+    <AppLayout>
         <div class="min-h-screen bg-slate-50 pt-24 pb-20">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -65,5 +66,5 @@ const pageDescription = computed(() => {
 
             </div>
         </div>
-    </MainLayout>
+    </AppLayout>
 </template>

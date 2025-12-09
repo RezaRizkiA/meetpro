@@ -41,7 +41,8 @@ class AuthController extends Controller
             'client' => $user->client, // Data client user (jika ada)
             'expert' => $user->expert, // Data expert user (jika ada)
             'expertises' => $expertises,
-            'initialTab' => 'client' // Penanda untuk Vue
+            'initialTab' => 'client', // Penanda untuk Vue
+            'isEditMode' => $user->client !== null
         ]);
     }
 
@@ -55,7 +56,8 @@ class AuthController extends Controller
             'client' => $user->client,
             'expert' => $user->expert,
             'expertises' => $expertises,
-            'initialTab' => 'expert' // Penanda untuk Vue
+            'initialTab' => 'expert', // Penanda untuk Vue
+            'isEditMode' => $user->expert !== null
         ]);
     }
 

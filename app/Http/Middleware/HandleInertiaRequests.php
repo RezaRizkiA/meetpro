@@ -49,6 +49,10 @@ class HandleInertiaRequests extends Middleware
                 'googleIconUrl' => asset('assets/images/svgs/google-icon.svg'),
                 'bannerUrl' => asset('image/banner-detail-expert.jpg'),
                 'userPlaceholderUrl' => asset('assets/images/profile/user-1.jpg'),
+                'userPlaceholderUrl' => asset('assets/images/profile/user-3.jpg'),
+                'bannerPlaceholderUrl' => asset('assets/images/backgrounds/login-bg.jpg'),
+                'clientLogoPlaceholderUrl' => asset('assets/images/logos/white-key.png'),
+                'blogPlaceholderUrl' => asset('assets/images/frontend-pages/blog-1.jpg'),
             ],
 
             // 3. Definisi Route untuk Navbar/Footer (Agar bisa dipanggil di Vue)

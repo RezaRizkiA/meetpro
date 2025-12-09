@@ -7,6 +7,7 @@ class Expertise extends Model
 {
     protected $table   = 'expertises';
     protected $guarded = ['id'];
+    protected $appends = ['experts_count'];
 
     public function childrens()
     {

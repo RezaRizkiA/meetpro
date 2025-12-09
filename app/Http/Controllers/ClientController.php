@@ -5,6 +5,7 @@ use App\Models\Client;
 use App\Models\Expert;
 use App\Models\Expertise;
 use App\Models\ExpertiseCategory;
+use Inertia\Inertia;
 
 class ClientController extends Controller
 {
@@ -12,14 +13,20 @@ class ClientController extends Controller
     {
         $client = Client::where('slug_page', $slug_page)->firstOrFail();
 
+        // Convert string IDs to array if necessary
         $expertiseIds = is_array($client->expertise_id)
-        ? $client->expertise_id
-        : explode(',', $client->expertise_id);
+            ? $client->expertise_id
+            : explode(',', $client->expertise_id ?? '');
 
-        $expertises = Expertise::whereIn('id', $expertiseIds)->with('parent')
+        // Ambil data expertise beserta parent dan hitung expert-nya
+        $expertises = Expertise::whereIn('id', $expertiseIds)
+            ->with('parent')
             ->get();
 
-        return view('clients.home_client', compact('client', 'expertises'));
+        return Inertia::render('Client/Home', [
+            'client' => $client,
+            'expertises' => $expertises,
+        ]);
     }
 
     public function list_conselor($slug_page, $slug)
@@ -30,8 +37,17 @@ class ClientController extends Controller
         // 3. Ambil kategori berdasarkan slug
         $expertise = Expertise::where('slug', $slug)->firstOrFail();
 
+        $experts = Expert::with('user') // <--- Load user di sini
+            ->whereJsonContains('expertise_id', (string) $expertise->id)
+            ->get();
+
         // dd($experts);
-        return view('clients.list_expert', compact('client', 'expertise'));
+        return Inertia::render('Client/ListExpert', [
+            'client' => $client,
+            'expertise' => $expertise,
+            // Kirim list experts secara terpisah agar lebih mudah diakses di Vue
+            'experts' => $experts,
+        ]);
     }
 
     public function expert_detail($expert_id) {
