@@ -7,13 +7,21 @@ use App\Models\Expert;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ExpertController extends Controller
 {
     public function make_appointment($expert_id)
     {
         $expert = Expert::with('user')->findOrFail($expert_id);
-        return view('appointment', compact('expert'));
+
+        // Tangkap URL sebelumnya (jika ada)
+        $backUrl = request('back');
+
+        return Inertia::render('Client/MakeAppointment', [
+            'expert' => $expert,
+            'backUrl' => $backUrl,
+        ]);
     }
 
     public function make_appointment_post(Request $request, $expert_id) // GoogleCalendarService dihapus

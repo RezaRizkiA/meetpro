@@ -10,6 +10,7 @@ import AppointmentTab from "./Tabs/AppointmentTab.vue";
 import CalendarTab from "./Tabs/CalendarTab.vue";
 import MembersTab from "./Tabs/MembersTab.vue";
 import ExpertiseTab from "./Tabs/ExpertiseTab.vue";
+import PaymentTab from "./Tabs/PaymentTab.vue";
 
 // Icons
 import {
@@ -19,7 +20,8 @@ import {
     Users,
     Settings,
     ChevronRight,
-    LayoutDashboard
+    LayoutDashboard,
+    CreditCard
 } from "lucide-vue-next";
 
 // Props
@@ -33,7 +35,8 @@ const props = defineProps({
     appointments: Array,
     appointmentsCount: Number,
     calendarEvents: Array,
-    socialMedias: Array
+    socialMedias: Array,
+    transactions: Array,
 });
 
 // DEFAULT TAB SEKARANG 'home'
@@ -80,6 +83,14 @@ const tabs = [
         icon: Users,
         show: true,
         activeClass: 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200'
+    },
+    {
+        id: 'transactions',
+        label: 'My Transactions',
+        desc: 'Payment history & invoices',
+        icon: CreditCard,
+        show: true,
+        activeClass: 'bg-pink-50 text-pink-600 ring-1 ring-pink-200'
     },
 ];
 </script>
@@ -133,7 +144,7 @@ const tabs = [
                         </div>
 
                         <div v-else
-                            class="bg-white border border-slate-200 shadow-sm rounded-[2rem] min-h-[600px] relative overflow-hidden flex flex-col">
+                            class="bg-white border border-slate-200 shadow-sm rounded-4xl min-h-[600px] relative overflow-hidden flex flex-col">
 
                             <div
                                 class="lg:hidden p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
@@ -181,6 +192,16 @@ const tabs = [
                                             <p class="text-slate-500 mt-1">Browse registered users and experts.</p>
                                         </div>
                                         <MembersTab />
+                                    </div>
+
+                                    <div v-else-if="activeTab === 'transactions'" class="h-full flex flex-col p-8"
+                                        key="transactions">
+                                        <div class="mb-6">
+                                            <h2 class="text-2xl font-bold text-slate-900">Transaction History</h2>
+                                            <p class="text-slate-500 mt-1">Manage your invoices and pending payments.
+                                            </p>
+                                        </div>
+                                        <PaymentTab :transactions="transactions" />
                                     </div>
 
                                 </Transition>

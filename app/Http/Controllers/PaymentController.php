@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\CreateGoogleCalendarEvent;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PaymentController extends Controller
 {
@@ -21,12 +23,19 @@ class PaymentController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $paymentChannels = Ipaymu::all();
+        $appointment->load('expert.user');
 
-        $paymentChannels->each(function ($channel) {
+        $paymentChannels = Ipaymu::all()->map(function ($channel) {
+            // Decode JSON channels agar bisa dibaca JS
             $channel->channels = json_decode($channel->channels, true);
+            return $channel;
         });
-        return view('payment.show', compact('appointment', 'paymentChannels'));
+
+        return Inertia::render('Client/Payment/Show', [
+            'appointment' => $appointment,
+            'paymentChannels' => $paymentChannels,
+            'user' => Auth::user(), // Data user untuk pre-fill form
+        ]);
     }
 
     public function process(Appointment $appointment, Request $request)
@@ -105,26 +114,38 @@ class PaymentController extends Controller
 
     public function transaction($sid_transaction)
     {
-        // Cari transaksi berdasarkan sessionID
         $transaction = Transaction::where('sid', $sid_transaction)->firstOrFail();
 
-        // Cek apakah transaksi sudah dibayar
+        // 1. Cek Status Paid
         if ($transaction->status === 'paid') {
             return redirect()->route('profile')->with('success', 'Payment has been completed successfully.');
         }
 
-        // Cek apakah transaksi sudah kadaluarsa
+        // 2. Cek Expired
         if ($transaction->expired_date < now()) {
             return redirect()->route('profile')->with('error', 'Payment has expired. Please create a new transaction.');
         }
-        // Tampilkan halaman transaksi
-        return view('payment.transaction', compact('transaction'));
+
+        // 3. Generate QR Code (Jika metode QRIS)
+        $qrCodeImage = null;
+        if ($transaction->via === 'QRIS') {
+            $qrCodeImage = 'data:image/png;base64,' . base64_encode(
+                QrCode::format('png')
+                    ->size(400) // Ukuran diperbesar untuk kualitas
+                    ->margin(1)
+                    ->backgroundColor(255, 255, 255)
+                    ->generate($transaction->paymentNo)
+            );
+        }
+
+        return Inertia::render('Client/Payment/Transaction', [
+            'transaction' => $transaction,
+            'qrCodeImage' => $qrCodeImage, // Kirim gambar ke Vue
+        ]);
     }
 
     public function notify(Request $request)
     {
-        // dd($request->all());a
-
         // terima dan catat semua data yang masuk
         $dataNotify = $request->all();
         Log::info('Payment Notification Received', $dataNotify);

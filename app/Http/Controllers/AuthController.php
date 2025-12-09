@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Expertise;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,33 @@ class AuthController extends Controller
             // Kirim status jika ada redirect message (misal: "Silakan login dulu")
             'status' => session('status'),
         ]);
+    }
+
+    public function login_post(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|email',
+            'password' => 'required|min:4',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
+            $request->session()->regenerate();
+            $user = Auth::user();
+            $credentials = [
+                'user'      => $user->id,
+                'token_jwt' => $user->id,
+            ];
+            $request->session()->put('loggedUser', $credentials);
+            return redirect()->route('profile');
+        }
+        return redirect()->back()->withErrors([
+            'email' => 'Email atau Password Tidak Valid!!',
+        ])->withInput();
     }
 
     public function registerClient(Request $request)
@@ -46,6 +74,60 @@ class AuthController extends Controller
         ]);
     }
 
+    public function register_client_post(Request $request)
+    {
+        // Ambil user yang sedang login
+        $user = Auth::user();
+
+        $fileUpload = [
+            'file_author_photo'      => [
+                'db_column'    => 'author_photo',
+                'storage_path' => 'author/profiles/',
+            ],
+            'file_banner_background' => [
+                'db_column'    => 'banner_background',
+                'storage_path' => 'author/background/',
+            ],
+            'file_logo'              => [
+                'db_column'    => 'logo',
+                'storage_path' => 'author/logo/',
+            ],
+        ];
+
+        if ($user->client == null) {
+            $client = $user->client()->create($request->all()); //data baru
+        } else {
+            $client = $user->client;          // data lama
+            $client->update($request->all()); // data di perbarui
+        }
+
+        foreach ($fileUpload as $inputName => $fileInfo) {
+            if ($request->hasFile($inputName)) {
+                $file              = $request->file($inputName);
+                $dbColumn          = $fileInfo['db_column'];
+                $storagePathFolder = $fileInfo['storage_path'];
+
+                $filename = $storagePathFolder . uniqid() . '.' . $file->getClientOriginalExtension(); // data baru
+
+                if (! empty($user->client->dbColumn)) { //kossong
+                    Storage::disk('s3')->delete($user->client->dbColumn);
+                }
+                Storage::disk('s3')->put($filename, file_get_contents($file), 'public');
+                $client->$dbColumn = $filename;
+            }
+        }
+        $client->save();
+
+        $roles = $user->roles;
+        if (!in_array('client', $roles)) {
+            $roles[] = 'client';
+            $user->roles = $roles;
+            $user->save();
+        }
+
+        return redirect()->route('profile');
+    }
+
     public function registerExpert(Request $request)
     {
         $user = Auth::user();
@@ -61,6 +143,53 @@ class AuthController extends Controller
         ]);
     }
 
+    public function register_expert_post(Request $request)
+    {
+        $directProcess = $request->except(['_token', 'licenses', 'gallerys', 'socials']);
+
+        $user = Auth::user();
+        if ($user->expert == null) {
+            $expert = $user->expert()->create($directProcess); //data baru
+        } else {
+            $expert = $user->expert;         // data lama
+            $expert->update($directProcess); // data di perbarui
+        }
+
+        $needProcesses = $request->only(['licenses', 'gallerys', 'socials']);
+        foreach ($needProcesses as $key_process => $need_process) { // key ini untuk path 'licenses', 'gallery'
+            $the_process = is_array($expert->$key_process ?? null) ? $expert->$key_process : [];
+            foreach ($need_process as $key_data_db => $process_data) {            // key ini untuk database data keberapa '[0]', '[1]'
+                foreach ($process_data as $key_item => $value) {                      // key ini untuk index data keberapa 'certification', 'attachment' or...
+                    // cek apakah data yang baru ini string atau file
+                    if ($request->hasFile("{$key_process}.{$key_data_db}.{$key_item}")) { // jika file proses ke s3 baru name file simpan database
+                        // cek apakah file yang sebelumnya ada
+                        if (isset($the_process[$key_data_db][$key_item])) {                   // hapus dulu di s3 nya
+                            Storage::disk('s3')->delete($the_process[$key_data_db][$key_item]);
+                        }
+
+                        $file     = $value;
+                        $filename = "expert/{$key_process}/" . uniqid() . '.' . $file->getClientOriginalExtension(); // data baru
+                        Storage::disk('s3')->put($filename, file_get_contents($file), 'public');
+                        $the_process[$key_data_db][$key_item] = $filename;
+                    } else { // langsung update
+                        $the_process[$key_data_db][$key_item] = $value;
+                    }
+                }
+            }
+            $expert->$key_process = $the_process;
+            $expert->save();
+        }
+
+        $roles = $user->roles;
+        if (!in_array('expert', $roles)) {
+            $roles[] = 'expert';
+            $user->roles = $roles;
+            $user->save();
+        }
+
+        return redirect()->route('profile');
+    }
+
     public function profile()
     {
         $user = Auth::user();
@@ -72,7 +201,6 @@ class AuthController extends Controller
         $isExpert = in_array('expert', $roles, true);
         $isClient = in_array('client', $roles, true);
 
-        // 1. DATA EXPERTISES (Khusus Admin)
         $expertises = [];
         if ($isAdmin) {
             // Kita ambil struktur tree (nested) agar cocok dengan komponen ExpertiseSelector.vue
@@ -83,8 +211,6 @@ class AuthController extends Controller
                 ->get();
         }
 
-        // 2. DATA APPOINTMENTS
-        // Kita inisialisasi query builder
         $query = Appointment::latest();
 
         if ($isExpert && optional($user->expert)->id) {
@@ -102,8 +228,6 @@ class AuthController extends Controller
         $appointments = $query->get();
         $appointmentsCount = $appointments->count();
 
-        // 3. FORMAT DATA KALENDER (Untuk FullCalendar Vue)
-        // Kita ubah nama variabel jadi 'calendarEvents' agar sesuai prop Vue
         $calendarEvents = $appointments->map(function ($app) use ($isExpert) {
             // Tentukan siapa "Lawan Bicara" di event tersebut
             $person = $isExpert ? $app->user : optional($app->expert)->user;
@@ -128,10 +252,12 @@ class AuthController extends Controller
             ];
         });
 
-        // 4. SOCIAL MEDIA (Menggunakan helper yang ada di project lama Anda)
         $socialMedias = function_exists('getSocialMedias') ? getSocialMedias($user) : [];
 
-        // 5. RETURN INERTIA
+        $transactions = Transaction::where('user_id', $user->id)
+            ->latest()
+            ->get();
+            
         return Inertia::render('Profile/Index', [
             'user' => $user,
             'roles' => $roles,
@@ -145,6 +271,7 @@ class AuthController extends Controller
             'appointmentsCount' => $appointmentsCount,
             'calendarEvents' => $calendarEvents, // Nama prop disesuaikan dengan CalendarTab.vue
             'socialMedias' => $socialMedias,
+            'transactions' => $transactions,
         ]);
     }
 
@@ -259,18 +386,6 @@ class AuthController extends Controller
             ]);
         }
     }
-
-    public function register()
-    {
-        $user       = Auth::user();
-        $expertises = Expertise::whereNull('parent_id')->orderBy('order')->with('childrensRecursive')->get();
-        $client     = $user->client;
-        $expert     = $user->expert;
-
-        return Inertia::render('Register/Index', compact('expertises', 'client', 'expert'));
-    }
-
-    
 
     public function logout(Request $request)
     {
@@ -392,195 +507,5 @@ class AuthController extends Controller
         $user->save();
 
         return redirect()->route('profile')->with('success', 'Profile updated successfully.');
-    }
-
-    // public function profile()
-    // {
-    //     $user  = Auth::user();
-    //     $roles = $user->roles ?? [];
-
-    //     $expertises = null;
-
-    //     if (in_array('administrator', $roles, true)) {
-    //         $roots = Expertise::whereNull('parent_id')
-    //             ->orderBy('order')
-    //             ->with('childrensRecursive')
-    //             ->get();
-
-    //         $expertises = collect();
-    //         foreach ($roots as $root) {
-    //             $expertises = $expertises
-    //                 ->merge([$root])                         // level-1
-    //                 ->merge($root->flattenAllDescendants()); // level-2 & 3
-    //         }
-    //     }
-
-    //     $isExpert = in_array('expert', $roles, true);
-    //     $appointmentsCount = 0;
-    //     if ($isExpert && optional($user->expert)->id) {
-
-    //         // ⇢ Login sebagai EXPERT  → tampilkan user
-    //         $appointments = Appointment::with([
-    //             'user:id,name,email',
-    //         ])
-    //             ->where('expert_id', $user->expert->id)
-    //             ->latest()
-    //             ->get();
-
-    //         $appointmentsCount = $appointments->count();
-    //     } else {
-    //         $appointments = Appointment::with([
-    //             // ambil data expert beserta user-nya dan email
-    //             'expert' => function ($q) {
-    //                 // harus include user_id agar relasi "user" bisa bekerja
-    //                 $q->select('id', 'user_id', 'expertise', 'price')
-    //                     ->with('user:id,name,email');
-    //             },
-    //         ])
-    //             ->where('user_id', $user->id)
-    //             ->latest()
-    //             ->get();
-
-    //         $appointmentsCount = $appointments->count();
-    //     }
-
-    //     // dd($appointments);
-    //     $calendarAppointments = $appointments->map(function ($app) use ($isExpert) {
-    //         $person = $isExpert ? $app->user : optional($app->expert)->user;
-    //         return [
-    //             'title' => $person->name . ' (' . ucfirst(str_replace('_', ' ', $app->status)) . ')',
-    //             'start' => $app->date_time,
-    //         ];
-    //     });
-
-    //     return Inertia::render('Profile/Index', compact('expertises', 'appointments', 'isExpert', 'calendarAppointments', 'appointmentsCount'));
-    // }
-
-    public function register_client_post(Request $request)
-    {
-        // Ambil user yang sedang login
-        $user = Auth::user();
-
-        $fileUpload = [
-            'file_author_photo'      => [
-                'db_column'    => 'author_photo',
-                'storage_path' => 'author/profiles/',
-            ],
-            'file_banner_background' => [
-                'db_column'    => 'banner_background',
-                'storage_path' => 'author/background/',
-            ],
-            'file_logo'              => [
-                'db_column'    => 'logo',
-                'storage_path' => 'author/logo/',
-            ],
-        ];
-
-        if ($user->client == null) {
-            $client = $user->client()->create($request->all()); //data baru
-        } else {
-            $client = $user->client;          // data lama
-            $client->update($request->all()); // data di perbarui
-        }
-
-        foreach ($fileUpload as $inputName => $fileInfo) {
-            if ($request->hasFile($inputName)) {
-                $file              = $request->file($inputName);
-                $dbColumn          = $fileInfo['db_column'];
-                $storagePathFolder = $fileInfo['storage_path'];
-
-                $filename = $storagePathFolder . uniqid() . '.' . $file->getClientOriginalExtension(); // data baru
-
-                if (! empty($user->client->dbColumn)) { //kossong
-                    Storage::disk('s3')->delete($user->client->dbColumn);
-                }
-                Storage::disk('s3')->put($filename, file_get_contents($file), 'public');
-                $client->$dbColumn = $filename;
-            }
-        }
-        $client->save();
-
-        $roles = $user->roles;
-        if (!in_array('client', $roles)) {
-            $roles[] = 'client';
-            $user->roles = $roles;
-            $user->save();
-        }
-
-        return redirect()->route('profile');
-    }
-
-    public function login_post(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email'    => 'required|email',
-            'password' => 'required|min:4',
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
-            $request->session()->regenerate();
-            $user = Auth::user();
-            $credentials = [
-                'user'      => $user->id,
-                'token_jwt' => $user->id,
-            ];
-            $request->session()->put('loggedUser', $credentials);
-            return redirect()->route('profile');
-        }
-        return redirect()->back()->withErrors([
-            'email' => 'Email atau Password Tidak Valid!!',
-        ])->withInput();
-    }
-
-    public function register_expert_post(Request $request)
-    {
-        $directProcess = $request->except(['_token', 'licenses', 'gallerys', 'socials']);
-
-        $user = Auth::user();
-        if ($user->expert == null) {
-            $expert = $user->expert()->create($directProcess); //data baru
-        } else {
-            $expert = $user->expert;         // data lama
-            $expert->update($directProcess); // data di perbarui
-        }
-
-        $needProcesses = $request->only(['licenses', 'gallerys', 'socials']);
-        foreach ($needProcesses as $key_process => $need_process) { // key ini untuk path 'licenses', 'gallery'
-            $the_process = is_array($expert->$key_process ?? null) ? $expert->$key_process : [];
-            foreach ($need_process as $key_data_db => $process_data) {            // key ini untuk database data keberapa '[0]', '[1]'
-                foreach ($process_data as $key_item => $value) {                      // key ini untuk index data keberapa 'certification', 'attachment' or...
-                    // cek apakah data yang baru ini string atau file
-                    if ($request->hasFile("{$key_process}.{$key_data_db}.{$key_item}")) { // jika file proses ke s3 baru name file simpan database
-                        // cek apakah file yang sebelumnya ada
-                        if (isset($the_process[$key_data_db][$key_item])) {                   // hapus dulu di s3 nya
-                            Storage::disk('s3')->delete($the_process[$key_data_db][$key_item]);
-                        }
-
-                        $file     = $value;
-                        $filename = "expert/{$key_process}/" . uniqid() . '.' . $file->getClientOriginalExtension(); // data baru
-                        Storage::disk('s3')->put($filename, file_get_contents($file), 'public');
-                        $the_process[$key_data_db][$key_item] = $filename;
-                    } else { // langsung update
-                        $the_process[$key_data_db][$key_item] = $value;
-                    }
-                }
-            }
-            $expert->$key_process = $the_process;
-            $expert->save();
-        }
-
-        $roles = $user->roles;
-        if (!in_array('expert', $roles)) {
-            $roles[] = 'expert';
-            $user->roles = $roles;
-            $user->save();
-        }
-
-        return redirect()->route('profile');
     }
 }

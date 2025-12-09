@@ -16,7 +16,7 @@ import {
 
 const props = defineProps({
     expert: Object,
-    backUrl: String // URL halaman sebelumnya dari Controller
+    backUrl: String 
 });
 
 const page = usePage();
@@ -61,7 +61,7 @@ const socials = safeJsonParse(props.expert.socials);
                         <div
                             class="bg-white rounded-3xl p-8 border border-slate-200 shadow-xl shadow-slate-200/50 relative overflow-hidden">
                             <div
-                                class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-violet-600 to-fuchsia-600">
+                                class="absolute top-0 left-0 w-full h-32 bg-linear-to-r from-violet-600 to-fuchsia-600">
                             </div>
 
                             <div class="relative flex flex-col md:flex-row gap-6 mt-12">
@@ -199,10 +199,10 @@ const socials = safeJsonParse(props.expert.socials);
                             </div>
 
                             <div class="space-y-3">
-                                <a :href="route('appointment', expert.id)"
+                                <Link :href="`${route('appointment', expert.id)}?back=${encodeURIComponent($page.url)}`"
                                     class="block w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-center hover:bg-violet-600 transition-all shadow-lg shadow-slate-900/20">
                                     Select Schedule
-                                </a>
+                                </Link>
                                 <button
                                     class="block w-full py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-center hover:bg-slate-50 transition-all">
                                     Send Message
