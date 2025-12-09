@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Client;
@@ -50,10 +51,14 @@ class ClientController extends Controller
         ]);
     }
 
-    public function expert_detail($expert_id) {
+    public function expert_detail($expert_id)
+    {
         $expert = Expert::with('user')->findOrFail($expert_id);
-        $back = request('back'); // Tangkap query string back
-        
-        return view('clients.detail_expert', compact('expert', 'back'));
+        $backUrl = request('back'); // Tangkap query string back
+
+        return Inertia::render('Client/ExpertDetail', [
+            'expert' => $expert,
+            'backUrl' => $backUrl,
+        ]);
     }
 }
