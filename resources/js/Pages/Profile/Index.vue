@@ -1,7 +1,6 @@
 <script setup>
-import { ref } from "vue";
-import { Head } from "@inertiajs/vue3";
-// import MainLayout from "../../Layouts/MainLayout.vue";
+import { ref, computed } from "vue";
+import { Head, usePage, Link } from "@inertiajs/vue3";
 import AppLayout from "../../Layouts/AppLayout.vue";
 
 // Components
@@ -14,14 +13,16 @@ import PaymentTab from "./Tabs/PaymentTab.vue";
 
 // Icons
 import {
-    Home, // <--- Import Icon Home
+    Home,
     Briefcase,
     Calendar as CalendarIcon,
     Users,
     Settings,
     ChevronRight,
-    LayoutDashboard,
-    CreditCard
+    CreditCard,
+    LogOut,
+    Menu,
+    X
 } from "lucide-vue-next";
 
 // Props
@@ -39,60 +40,83 @@ const props = defineProps({
     transactions: Array,
 });
 
-// DEFAULT TAB SEKARANG 'home'
-const activeTab = ref("home");
+// Assets Helper
+const page = usePage();
+const assets = computed(() => page.props.assets);
 
-// Tambahkan menu 'Home' di urutan pertama
+// State
+const activeTab = ref("home");
+const isMobileMenuOpen = ref(false);
+
+// Config Menu Tabs
 const tabs = [
     {
         id: 'home',
-        label: 'Dashboard Home',
-        desc: 'Profile overview & stats',
+        label: 'Overview',
+        desc: 'Stats & Activity',
         icon: Home,
         show: true,
-        activeClass: 'bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200'
-    },
-    {
-        id: 'expertises',
-        label: 'Expertise Config',
-        desc: 'Manage skills & categories',
-        icon: Settings,
-        show: props.isAdmin,
-        activeClass: 'bg-orange-50 text-orange-600 ring-1 ring-orange-200'
+        color: 'text-violet-600',
+        bgActive: 'bg-violet-50',
+        borderActive: 'border-violet-200'
     },
     {
         id: 'appointments',
         label: 'My Appointments',
-        desc: 'Upcoming & past sessions',
+        desc: 'Manage Sessions',
         icon: Briefcase,
         show: true,
-        activeClass: 'bg-violet-50 text-violet-600 ring-1 ring-violet-200'
+        color: 'text-blue-600',
+        bgActive: 'bg-blue-50',
+        borderActive: 'border-blue-200'
     },
     {
         id: 'calendar',
-        label: 'Schedule Calendar',
-        desc: 'Monthly & weekly view',
+        label: 'Schedule',
+        desc: 'Calendar View',
         icon: CalendarIcon,
         show: true,
-        activeClass: 'bg-blue-50 text-blue-600 ring-1 ring-blue-200'
-    },
-    {
-        id: 'members',
-        label: 'User Community',
-        desc: 'List of registered members',
-        icon: Users,
-        show: true,
-        activeClass: 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200'
+        color: 'text-emerald-600',
+        bgActive: 'bg-emerald-50',
+        borderActive: 'border-emerald-200'
     },
     {
         id: 'transactions',
-        label: 'My Transactions',
-        desc: 'Payment history & invoices',
+        label: 'Billing',
+        desc: 'Invoices & History',
         icon: CreditCard,
         show: true,
-        activeClass: 'bg-pink-50 text-pink-600 ring-1 ring-pink-200'
+        color: 'text-pink-600',
+        bgActive: 'bg-pink-50',
+        borderActive: 'border-pink-200'
+    },
+    {
+        id: 'members',
+        label: 'Community',
+        desc: 'Experts & Users',
+        icon: Users,
+        show: true,
+        color: 'text-indigo-600',
+        bgActive: 'bg-indigo-50',
+        borderActive: 'border-indigo-200'
+    },
+    {
+        id: 'expertises',
+        label: 'Settings',
+        desc: 'System Config',
+        icon: Settings,
+        show: props.isAdmin,
+        color: 'text-orange-600',
+        bgActive: 'bg-orange-50',
+        borderActive: 'border-orange-200'
     },
 ];
+
+// Computed Title untuk Header Kanan
+const currentTabTitle = computed(() => {
+    const tab = tabs.find(t => t.id === activeTab.value);
+    return tab ? tab.label : 'Dashboard';
+});
 </script>
 
 <template>
@@ -100,106 +124,154 @@ const tabs = [
     <Head title="My Dashboard" />
 
     <AppLayout>
-        <div class="bg-slate-50 min-h-screen pt-24 pb-20 font-sans">
+        <div class="bg-slate-50/50 min-h-screen pt-28 pb-20 font-sans">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                <div class="grid lg:grid-cols-12 gap-8 items-start">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+                    <div>
+                        <h1 class="font-display text-3xl md:text-4xl font-bold text-slate-900">
+                            Welcome back, <span class="text-violet-600">{{ user.name.split(' ')[0] }}</span>!
+                        </h1>
+                        <p class="text-slate-500 mt-2 text-lg">Here's what's happening with your account today.</p>
+                    </div>
 
-                    <div class="lg:col-span-3 sticky top-24 z-10 space-y-6">
-                        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-                            <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
-                                <LayoutDashboard class="w-4 h-4 text-slate-400" />
-                                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Dashboard Menu
-                                </h3>
+                    <button @click="isMobileMenuOpen = !isMobileMenuOpen"
+                        class="md:hidden flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl shadow-sm text-slate-700 font-bold">
+                        <Menu v-if="!isMobileMenuOpen" class="w-5 h-5" />
+                        <X v-else class="w-5 h-5" />
+                        Menu
+                    </button>
+                </div>
+
+                <div class="grid lg:grid-cols-12 gap-8 items-start relative">
+
+                    <div class="lg:col-span-3 lg:sticky lg:top-28 z-20 transition-all duration-300"
+                        :class="isMobileMenuOpen ? 'block' : 'hidden lg:block'">
+
+                        <div
+                            class="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-xl shadow-slate-200/40 mb-6 text-center relative overflow-hidden group">
+                            <div
+                                class="absolute top-0 left-0 w-full h-20 bg-linear-to-r from-violet-500 to-fuchsia-500 opacity-10 group-hover:opacity-20 transition-opacity">
                             </div>
-                            <nav class="flex flex-col p-3 space-y-1">
+
+                            <div class="relative inline-block mt-4 mb-4">
+                                <div class="p-1 bg-white rounded-full">
+                                    <img :src="user.profile_photo_url || assets.userPlaceholderUrl"
+                                        class="w-20 h-20 rounded-full object-cover border-2 border-slate-100 shadow-sm"
+                                        alt="Profile">
+                                </div>
+                                <div class="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-4 border-white rounded-full"
+                                    title="Online"></div>
+                            </div>
+
+                            <h3 class="font-bold text-slate-900 text-lg leading-tight">{{ user.name }}</h3>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1 mb-4">
+                                {{ isExpert ? 'Professional Expert' : 'Member Client' }}
+                            </p>
+
+                            <Link :href="route('update_profile')"
+                                class="inline-flex w-full justify-center items-center py-2.5 px-4 rounded-xl bg-slate-50 text-slate-600 text-sm font-bold hover:bg-slate-900 hover:text-white transition-all duration-300">
+                            Edit Profile
+                            </Link>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-3 border border-slate-200/60 shadow-sm">
+                            <nav class="space-y-1">
                                 <template v-for="tab in tabs" :key="tab.id">
-                                    <button v-if="tab.show" @click="activeTab = tab.id"
-                                        class="group relative w-full text-left px-4 py-4 rounded-2xl transition-all duration-300 flex items-center justify-between overflow-hidden"
+                                    <button v-if="tab.show" @click="activeTab = tab.id; isMobileMenuOpen = false"
+                                        class="group w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200"
                                         :class="activeTab === tab.id
-                                            ? tab.activeClass
-                                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'">
-                                        <div class="flex items-center gap-4 relative z-10">
-                                            <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
-                                                :class="activeTab === tab.id ? 'bg-white shadow-sm' : 'bg-slate-100 group-hover:bg-white group-hover:shadow-sm'">
-                                                <component :is="tab.icon" class="w-5 h-5" />
+                                            ? `bg-white shadow-md border ${tab.borderActive}`
+                                            : 'hover:bg-slate-50 text-slate-500'">
+
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors"
+                                                :class="activeTab === tab.id ? tab.bgActive : 'bg-slate-100 group-hover:bg-white'">
+                                                <component :is="tab.icon" class="w-5 h-5"
+                                                    :class="activeTab === tab.id ? tab.color : 'text-slate-500'" />
                                             </div>
-                                            <div>
-                                                <div class="font-bold text-sm leading-tight">{{ tab.label }}</div>
-                                                <div class="text-[11px] mt-0.5 font-medium opacity-70">{{ tab.desc }}
+                                            <div class="text-left">
+                                                <div class="font-bold text-sm"
+                                                    :class="activeTab === tab.id ? 'text-slate-900' : 'text-slate-600'">
+                                                    {{ tab.label }}
+                                                </div>
+                                                <div class="text-[10px] font-medium opacity-60 hidden xl:block">
+                                                    {{ tab.desc }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <ChevronRight v-if="activeTab === tab.id"
-                                            class="w-5 h-5 opacity-50 relative z-10" />
+
+                                        <ChevronRight v-if="activeTab === tab.id" class="w-4 h-4 transition-colors"
+                                            :class="tab.color" />
                                     </button>
                                 </template>
                             </nav>
+
+                            <div class="mt-3 pt-3 border-t border-slate-100">
+                                <Link :href="route('logout')" method="post" as="button"
+                                    class="w-full flex items-center gap-3 p-3 rounded-xl text-red-600 hover:bg-red-50 transition-colors font-medium text-sm">
+                                <LogOut class="w-5 h-5" />
+                                Sign Out
+                                </Link>
+                            </div>
                         </div>
                     </div>
 
                     <div class="lg:col-span-9">
-                        <div v-if="activeTab === 'home'">
-                            <HomeTab :user="user" :appointments-count="appointmentsCount" :is-expert="isExpert" />
-                        </div>
+                        <div
+                            class="bg-white border border-slate-200/60 shadow-xl shadow-slate-200/30 rounded-[2.5rem] min-h-[600px] overflow-hidden relative flex flex-col">
 
-                        <div v-else
-                            class="bg-white border border-slate-200 shadow-sm rounded-4xl min-h-[600px] relative overflow-hidden flex flex-col">
-
-                            <div
-                                class="lg:hidden p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active
-                                    View</span>
-                                <span
-                                    class="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-bold capitalize">
-                                    {{ activeTab }}
-                                </span>
+                            <div class="lg:hidden p-6 border-b border-slate-100 bg-slate-50/50">
+                                <h2 class="text-xl font-bold text-slate-900">{{ currentTabTitle }}</h2>
                             </div>
 
-                            <div class="flex-1 p-1">
+                            <div class="flex-1 relative">
                                 <Transition name="fade" mode="out-in">
 
-                                    <div v-if="activeTab === 'expertises' && isAdmin" class="h-full flex flex-col"
-                                        key="expertises">
-                                        <div class="p-8 border-b border-slate-100 bg-white sticky top-0 z-20">
-                                            <h2 class="text-2xl font-bold text-slate-900">Expertise Management</h2>
-                                            <p class="text-slate-500 mt-1">Configure categories and skills.</p>
+                                    <div v-if="activeTab === 'home'" key="home">
+                                        <HomeTab :user="user" :appointments-count="appointmentsCount"
+                                            :is-expert="isExpert" />
+                                    </div>
+
+                                    <div v-else-if="activeTab === 'expertises' && isAdmin" key="expertises"
+                                        class="h-full">
+                                        <div
+                                            class="p-8 border-b border-slate-100 sticky top-0 bg-white/95 backdrop-blur z-10">
+                                            <h2 class="text-2xl font-bold text-slate-900">Expertise Settings</h2>
+                                            <p class="text-slate-500">Configure system categories and skills.</p>
                                         </div>
                                         <div class="p-8">
                                             <ExpertiseTab :expertises="expertises" />
                                         </div>
                                     </div>
 
-                                    <div v-else-if="activeTab === 'appointments'" class="h-full flex flex-col"
-                                        key="appointments">
+                                    <div v-else-if="activeTab === 'appointments'" key="appointments" class="h-full">
                                         <AppointmentTab :appointments="appointments" :is-expert="isExpert"
-                                            class="h-full border-0 shadow-none rounded-none" />
+                                            class="h-full" />
                                     </div>
 
-                                    <div v-else-if="activeTab === 'calendar'" class="h-full flex flex-col p-8"
-                                        key="calendar">
-                                        <div class="mb-6">
-                                            <h2 class="text-2xl font-bold text-slate-900">Schedule Calendar</h2>
-                                            <p class="text-slate-500 mt-1">Visualize your upcoming sessions.</p>
+                                    <div v-else-if="activeTab === 'calendar'" key="calendar" class="h-full p-6 md:p-10">
+                                        <div class="mb-8">
+                                            <h2 class="text-2xl font-bold text-slate-900">Your Schedule</h2>
+                                            <p class="text-slate-500">Manage your availability and upcoming sessions.
+                                            </p>
                                         </div>
                                         <CalendarTab :calendar-events="calendarEvents" />
                                     </div>
 
-                                    <div v-else-if="activeTab === 'members'" class="h-full flex flex-col p-8"
-                                        key="members">
-                                        <div class="mb-6">
-                                            <h2 class="text-2xl font-bold text-slate-900">User Community</h2>
-                                            <p class="text-slate-500 mt-1">Browse registered users and experts.</p>
+                                    <div v-else-if="activeTab === 'members'" key="members" class="h-full p-6 md:p-10">
+                                        <div class="mb-8">
+                                            <h2 class="text-2xl font-bold text-slate-900">Community Members</h2>
+                                            <p class="text-slate-500">Explore registered users and experts.</p>
                                         </div>
                                         <MembersTab />
                                     </div>
 
-                                    <div v-else-if="activeTab === 'transactions'" class="h-full flex flex-col p-8"
-                                        key="transactions">
-                                        <div class="mb-6">
+                                    <div v-else-if="activeTab === 'transactions'" key="transactions"
+                                        class="h-full p-6 md:p-10">
+                                        <div class="mb-8">
                                             <h2 class="text-2xl font-bold text-slate-900">Transaction History</h2>
-                                            <p class="text-slate-500 mt-1">Manage your invoices and pending payments.
-                                            </p>
+                                            <p class="text-slate-500">Track your payments and invoices.</p>
                                         </div>
                                         <PaymentTab :transactions="transactions" :is-expert="isExpert" />
                                     </div>
@@ -210,7 +282,6 @@ const tabs = [
                     </div>
 
                 </div>
-
             </div>
         </div>
     </AppLayout>
@@ -219,16 +290,16 @@ const tabs = [
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .fade-enter-from {
     opacity: 0;
-    transform: translateX(15px);
+    transform: translateY(10px);
 }
 
 .fade-leave-to {
     opacity: 0;
-    transform: translateX(-15px);
+    transform: translateY(-10px);
 }
 </style>

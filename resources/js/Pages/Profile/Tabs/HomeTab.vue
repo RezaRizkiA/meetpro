@@ -31,10 +31,6 @@ const assets = computed(() => usePage().props.assets);
                             <img :src="user.picture_url || assets.userPlaceholderUrl" alt="Profile"
                                 class="w-full h-full object-cover" />
                         </div>
-                        <Link :href="route('update_profile')"
-                            class="absolute bottom-2 right-2 p-2 bg-white rounded-full shadow-md text-slate-600 hover:text-violet-600 transition-colors">
-                            <Settings class="w-5 h-5" />
-                        </Link>
                     </div>
                 </div>
 
