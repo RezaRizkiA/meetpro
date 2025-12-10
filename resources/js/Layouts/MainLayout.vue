@@ -22,7 +22,7 @@ const componentName = computed(() => page.component);
         <AppNavbar :user="user" :routes="routes" :logo-url="assets.logoUrl"
             :current-route-name="componentName.toLowerCase()" />
 
-        <main class="flex-grow">
+        <main class="grow">
             <Transition name="page" mode="out-in" appear>
                 <slot :key="componentName" />
             </Transition>

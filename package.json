@@ -18,6 +18,8 @@
         "@fullcalendar/interaction": "^6.1.19",
         "@fullcalendar/timegrid": "^6.1.19",
         "@fullcalendar/vue3": "^6.1.19",
+        "@headlessui/vue": "^1.7.23",
+        "@heroicons/vue": "^2.2.0",
         "@inertiajs/vue3": "^2.2.19",
         "@vitejs/plugin-vue": "^6.0.2",
         "@vueup/vue-quill": "^1.0.0-beta.11",

@@ -50,7 +50,7 @@ onMounted(() => {
             <div v-if="show"
                 class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-black ring-opacity-5 p-4 flex items-start gap-4">
 
-                <div class="flex-shrink-0">
+                <div class="shrink-0">
                     <CheckCircle v-if="type === 'success'" class="h-6 w-6 text-green-500" />
                     <AlertCircle v-else class="h-6 w-6 text-red-500" />
                 </div>
@@ -64,7 +64,7 @@ onMounted(() => {
                     </p>
                 </div>
 
-                <div class="ml-4 flex flex-shrink-0">
+                <div class="ml-4 flex shrink-0">
                     <button @click="show = false" type="button"
                         class="inline-flex rounded-md bg-white text-slate-400 hover:text-slate-500 focus:outline-none">
                         <X class="h-5 w-5" />
