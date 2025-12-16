@@ -56,7 +56,7 @@ const formatCurrency = (value) => {
                             </span>
                             <h1 class="font-display text-4xl md:text-5xl font-bold text-slate-900">
                                 Find your <span
-                                    class="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600">{{
+                                    class="text-transparent bg-clip-text bg-linear-to-r from-violet-600 to-fuchsia-600">{{
                                     expertise.name }}</span>
                             </h1>
                         </div>
