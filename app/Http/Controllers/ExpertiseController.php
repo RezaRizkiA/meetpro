@@ -32,7 +32,8 @@ class ExpertiseController extends Controller
         ]);
     }
 
-    public function store_expertise(Request $request){
+    public function store_expertise(Request $request)
+    {
         $expertise = Expertise::create($request->all());
         $expertise->slug = Str::slug($request->name);
 

@@ -30,7 +30,7 @@ class DashboardService
             'total_appointments' => Appointment::count(),
 
             // Hitung Total Pendapatan (Status Paid)
-            'total_revenue' => Transaction::where('status', 'paid')->sum('amount'),
+            'total_revenue' => Transaction::where('status', 'berhasil')->sum('amount'),
 
             // Hitung Appointment yang butuh konfirmasi (Pending)
             'pending_appointments' => Appointment::where('status', 'need_confirmation')->count(),

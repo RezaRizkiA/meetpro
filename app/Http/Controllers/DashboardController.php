@@ -18,16 +18,34 @@ class DashboardController extends Controller
 
     public function index()
     {
-        // 1. Ambil User
         $user = Auth::user();
+        $roles = $user->roles ?? []; // Asumsi user punya atribut/relasi roles
 
-        // 2. Load relasi awal yg penting (opsional, bisa juga di service)
-        $user->load(['client', 'expert']);
+        // --- 1. LOGIKA UNTUK ADMINISTRATOR ---
+        if (in_array('administrator', $roles)) {
 
-        // 3. Minta data ke Service
-        $data = $this->dashboardService->getDashboardData($user);
+            // Panggil method yang BENAR di service
+            $stats = $this->dashboardService->getAdminStats();
 
-        // 4. Return View
-        return Inertia::render('Dashboard/Index', $data);
+            // Render ke folder frontend Administrator yang baru
+            return Inertia::render('Administrator/Dashboard/Index', [
+                'stats' => $stats,
+                // 'user' tidak perlu dikirim manual jika sudah ada di HandleInertiaRequests (Shared Props)
+            ]);
+        }
+
+        // --- 2. LOGIKA UNTUK EXPERT / CLIENT (Fallback) ---
+        // Karena kita refactor bertahap, jika bukan admin, kita bisa:
+        // A. Arahkan ke dashboard lama (jika file vue lama masih ada)
+        // B. Atau buatkan logic stats sederhana untuk mereka juga
+
+        // Contoh sementara (Return kosong atau redirect):
+        return Inertia::render('Dashboard/Index', [
+            // Kirim data minimal agar tidak error
+            'user' => $user,
+            'isExpert' => in_array('expert', $roles),
+            'isAdmin' => false,
+            // ... data dummy lain agar component lama tidak crash
+        ]);
     }
 }
