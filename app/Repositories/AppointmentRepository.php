@@ -6,7 +6,7 @@ use App\Models\Appointment;
 
 class AppointmentRepository
 {
-    public function getAllForAdmin($perPage = 5)
+    public function getAllForAdmin($perPage = 10)
     {
         return Appointment::with([
             'user:id,name,email,picture',        // Load data Client
@@ -14,6 +14,26 @@ class AppointmentRepository
         ])
             ->latest()
             ->paginate($perPage, ['*'], 'appointments_page');
+    }
+
+    // Ambil data raw untuk Calendar (Tanpa pagination)
+    public function getAllForCalendar($userId = null, $expertId = null, $isAdmin = false)
+    {
+        $query = Appointment::select('id', 'user_id', 'expert_id', 'date_time', 'status', 'appointment');
+
+        if ($isAdmin) {
+            // ADMIN: Ambil Semua + Load relasi User & Expert (untuk judul event)
+            $query->with([
+                'user:id,name',
+                'expert.user:id,name'
+            ]);
+        } else if ($expertId) {
+            $query->where('expert_id', $expertId)->with('user:id,name');
+        } else {
+            $query->where('user_id', $userId)->with('expert.user:id,name');
+        }
+
+        return $query->get();
     }
 
     // Ambil appointment untuk Client (User biasa)
@@ -32,28 +52,6 @@ class AppointmentRepository
             ->with(['user:id,name,email,picture'])
             ->latest()
             ->paginate($perPage, ['*'], 'appointments_page');
-    }
-
-    // Ambil data raw untuk Calendar (Tanpa pagination)
-    public function getAllForCalendar($userId, $expertId = null, $isAdmin = false)
-    {
-        $query = Appointment::select('id', 'user_id', 'expert_id', 'date_time', 'status', 'appointment');
-
-        if ($isAdmin) {
-            // ADMIN: Ambil Semua + Load relasi User & Expert (untuk judul event)
-            $query->with([
-                'user:id,name',
-                'expert.user:id,name'
-            ]);
-        } else if ($expertId) {
-            // EXPERT: Filter by Expert ID
-            $query->where('expert_id', $expertId)->with('user:id,name');
-        } else {
-            // CLIENT: Filter by User ID
-            $query->where('user_id', $userId)->with('expert.user:id,name');
-        }
-
-        return $query->get();
     }
 
     // Hitung total appointment

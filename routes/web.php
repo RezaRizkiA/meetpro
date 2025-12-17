@@ -58,19 +58,22 @@ Route::middleware('auth')->group(function () {
     // 1. NEW DASHBOARD REFACTOR (Service-Repository Pattern)
     // ---------------------------------------------------------------------
     Route::prefix('dashboard')->group(function () {
-        // 1. Overview
+        // Overview
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-        // 2. Appointments
+        // Appointments
         Route::get('/appointments', [AppointmentController::class, 'index'])->name('dashboard.appointments');
 
-        // 3. Calendar
+        // Calendar
         Route::get('/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar');
 
-        // 4. Billing/Transactions
+        // Billing/Transactions
         Route::get('/billing', [TransactionController::class, 'index'])->name('dashboard.billing');
 
-        // 5. Settings (New Refactor)
+        // Expertise Management (KHUSUS ADMIN)
+        Route::get('/expertises', [ExpertiseController::class, 'index'])->name('dashboard.expertises');
+
+        // Settings update profile
         Route::get('/settings', [ProfileController::class, 'edit'])->name('profile.edit');
     });
 

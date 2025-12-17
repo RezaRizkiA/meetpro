@@ -3,12 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expertise;
+use App\Services\ExpertiseService;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ExpertiseController extends Controller
 {
+    protected $service;
+
+    // Inject Service
+    public function __construct(ExpertiseService $service)
+    {
+        $this->service = $service;
+    }
+
+    // HALAMAN UTAMA MANAJEMEN EXPERTISE
+    public function index()
+    {
+        // Cek permission admin jika perlu (opsional jika sudah di handle middleware/menu)
+        // if (!auth()->user()->isAdmin()) abort(403);
+
+        $expertises = $this->service->getExpertiseTree();
+
+        return Inertia::render('Administrator/Expertises/Index', [
+            'expertises' => $expertises
+        ]);
+    }
+
     public function store_expertise(Request $request){
         $expertise = Expertise::create($request->all());
         $expertise->slug = Str::slug($request->name);

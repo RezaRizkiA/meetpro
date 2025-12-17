@@ -3,147 +3,51 @@
 namespace App\Services;
 
 use App\Repositories\AppointmentRepository;
-use App\Repositories\TransactionRepository;
 use App\Models\User;
-use App\Models\Expertise; // Jangan lupa import Model ini
+use App\Models\Transaction;
+use App\Models\Appointment;
 
 class DashboardService
 {
     protected $appointmentRepo;
-    protected $transactionRepo;
 
-    public function __construct(
-        AppointmentRepository $appointmentRepo,
-        TransactionRepository $transactionRepo
-    ) {
+    public function __construct(AppointmentRepository $appointmentRepo)
+    {
         $this->appointmentRepo = $appointmentRepo;
-        $this->transactionRepo = $transactionRepo;
     }
 
-    public function getDashboardData(User $user)
+    /**
+     * Mengambil statistik ringkas untuk halaman Dashboard Admin
+     */
+    public function getAdminStats()
     {
-        // 1. Definisikan Role & Context ID
-        $roles = $user->roles ?? [];
-
-        // FIX: Tambahkan definisi isClient
-        $isExpert = in_array('expert', $roles, true);
-        $isAdmin  = in_array('administrator', $roles, true);
-        $isClient = in_array('client', $roles, true);
-
-        // Ambil Expert ID jika dia expert (untuk filter query)
-        $expertId = $isExpert ? optional($user->expert)->id : null;
-
-        // 2. Return Array (Harus match dengan Props di Vue)
         return [
-            // Basic Data
-            'user'              => $user,
-            'roles'             => $roles,
-            'isExpert'          => $isExpert,
-            'isAdmin'           => $isAdmin,
-            'isClient'          => $isClient, // FIX: Dikirim ke Vue
+            // Hitung Total User di sistem
+            'total_users' => User::count(),
 
-            // Data Berat (Lazy Load dengan fn())
-            'appointments'      => fn() => $this->fetchAppointments($user->id, $expertId, $isAdmin),
-            'transactions'      => fn() => $this->fetchTransactions($user->id, $expertId, $isAdmin),
-            'calendarEvents'    => fn() => $this->formatCalendarEvents($user->id, $expertId, $isExpert, $isAdmin),
+            // Hitung Total Appointment (Semua)
+            // Menggunakan repo atau query langsung juga boleh untuk count sederhana
+            'total_appointments' => Appointment::count(),
 
-            // FIX: Tambahkan Expertises (Hanya jika Admin)
-            'expertises'        => fn() => $this->fetchExpertises($isAdmin),
+            // Hitung Total Pendapatan (Status Paid)
+            'total_revenue' => Transaction::where('status', 'paid')->sum('amount'),
 
-            // Data Ringan
-            'appointmentsCount' => $this->appointmentRepo->countForUser($user->id, $expertId),
-
-            // FIX: Tambahkan Social Medias
-            // Pastikan helper getSocialMedias tersedia, atau pindahkan logic-nya ke sini
-            'socialMedias'      => function_exists('getSocialMedias') ? getSocialMedias($user) : [],
+            // Hitung Appointment yang butuh konfirmasi (Pending)
+            'pending_appointments' => Appointment::where('status', 'need_confirmation')->count(),
         ];
     }
 
-    // --- Private Helper Methods ---
-
-    private function fetchAppointments($userId, $expertId, $isAdmin)
+    /**
+     * (Opsional) Mengambil statistik untuk Expert
+     */
+    public function getExpertStats($expertId)
     {
-        // 1. Cek Admin Dulu (Prioritas Tertinggi)
-        if ($isAdmin) {
-            return $this->appointmentRepo->getAllForAdmin();
-        }
-
-        // 2. Cek Expert
-        if ($expertId) {
-            return $this->appointmentRepo->getForExpert($expertId);
-        }
-
-        // 3. Fallback ke Client
-        return $this->appointmentRepo->getForClient($userId);
-    }
-
-    private function fetchTransactions($userId, $expertId, $isAdmin)
-    {
-        // 1. Cek Admin (Prioritas Utama)
-        if ($isAdmin) {
-            return $this->transactionRepo->getAllForAdmin();
-        }
-
-        // 2. Cek Expert
-        if ($expertId) {
-            return $this->transactionRepo->getForExpert($expertId);
-        }
-
-        // 3. Fallback Client
-        return $this->transactionRepo->getForClient($userId);
-    }
-
-    // FIX: Method baru untuk mengambil Expertise
-    private function fetchExpertises($isAdmin)
-    {
-        if (!$isAdmin) return [];
-
-        return Expertise::whereNull('parent_id')
-            ->orderBy('order')
-            ->with('childrensRecursive')
-            ->get();
-    }
-
-    private function formatCalendarEvents($userId, $expertId, $isExpert, $isAdmin)
-    {
-        $rawEvents = $this->appointmentRepo->getAllForCalendar($userId, $expertId, $isAdmin);
-
-        return $rawEvents->map(function ($app) use ($isExpert, $isAdmin) {
-
-            // 2. Tentukan Judul Event (Title)
-            if ($isAdmin) {
-                // Format Admin: "Client Name w/ Expert Name"
-                // Menggunakan optional() untuk jaga-jaga jika user terhapus
-                $clientName = optional($app->user)->name ?? 'Unknown';
-                $expertName = optional(optional($app->expert)->user)->name ?? 'Unknown';
-                $title = "$clientName w/ $expertName";
-            } else {
-                // Format User Biasa
-                $person = $isExpert ? $app->user : optional($app->expert)->user;
-                $title = ($person->name ?? 'Unknown');
-            }
-
-            $title .= ' (' . ucfirst($app->status) . ')';
-
-            // 3. Tentukan Warna (Sama seperti sebelumnya)
-            $colors = [
-                'confirmed' => '#10b981',
-                'cancelled' => '#ef4444',
-                'pending'   => '#f59e0b',
-            ];
-            $color = $colors[$app->status] ?? '#3b82f6';
-
-            return [
-                'id'              => $app->id,
-                'title'           => $title,
-                'start'           => $app->date_time,
-                'backgroundColor' => $color,
-                'borderColor'     => $color,
-                'extendedProps'   => [
-                    'status' => $app->status,
-                    'appointment'  => $app->appointment
-                ]
-            ];
-        });
+        return [
+            'total_appointments' => Appointment::where('expert_id', $expertId)->count(),
+            // Logika revenue expert (mungkin ada potongan platform fee)
+            'total_revenue' => Transaction::whereHas('appointment', fn($q) => $q->where('expert_id', $expertId))
+                ->where('status', 'paid')
+                ->sum('amount'),
+        ];
     }
 }

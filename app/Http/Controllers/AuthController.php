@@ -273,18 +273,6 @@ class AuthController extends Controller
         ]);
     }
 
-    public function settings()
-    {
-        return Inertia::render('Profile/Settings', [
-            'user' => Auth::user(),
-            // Kirim flash message jika ada (sukses/gagal update)
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-            ]
-        ]);
-    }
-
     public function google_login()
     {
         return Socialite::driver('google')
@@ -391,6 +379,18 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login');
+    }
+
+    public function settings()
+    {
+        return Inertia::render('Profile/Settings', [
+            'user' => Auth::user(),
+            // Kirim flash message jika ada (sukses/gagal update)
+            'flash' => [
+                'success' => session('success'),
+                'error' => session('error'),
+            ]
+        ]);
     }
 
     public function renew_password(Request $request)

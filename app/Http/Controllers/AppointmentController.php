@@ -5,14 +5,34 @@ use App\Mail\AppointmentConfirmed;
 use App\Mail\AppointmentRescheduled;
 use App\Mail\AppointmentStatusChanged;
 use App\Models\Appointment;
+use App\Services\AppointmentService;
 use App\Services\GoogleCalendarService;
 use Google\Service\Calendar\EventDateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 class AppointmentController extends Controller
 {
+    protected $service;
+
+    public function __construct(AppointmentService $service) // Inject Service
+    {
+        $this->service = $service;
+    }
+
+    public function index()
+    {
+        // Controller terima data matang dari Service
+        $appointments = $this->service->getAdminList();
+
+        return Inertia::render('Administrator/Appointments/Index', [
+            'appointments' => $appointments
+        ]);
+    }
+
+
     public function updateStatus(Request $request, $id, GoogleCalendarService $calendarService)
     {
         $request->validate([
