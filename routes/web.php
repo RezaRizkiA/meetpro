@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
 
         // Appointments
         Route::get('/appointments', [AppointmentController::class, 'index'])->name('dashboard.appointments');
+        Route::get('/appointments/{id}', [AppointmentController::class, 'show'])->name('dashboard.appointments.show');
 
         // Calendar
         Route::get('/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar');

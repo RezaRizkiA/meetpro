@@ -8,12 +8,37 @@ class AppointmentRepository
 {
     public function getAllForAdmin($perPage = 10)
     {
-        return Appointment::with([
-            'user:id,name,email,picture',        // Load data Client
-            'expert.user:id,name,email,picture'  // Load data Expert
-        ])
+        return Appointment::query()
+            ->select([
+                'id',
+                'user_id',
+                'expert_id',
+                'status',
+                'payment_status',
+                'created_at'
+            ])
+            ->with([
+                'user:id,name,email',
+                'expert:id,user_id',
+                'expert.user:id,name,email'
+            ])
             ->latest()
             ->paginate($perPage, ['*'], 'appointments_page');
+    }
+
+    /**
+     * Mengambil detail appointment lengkap beserta relasinya.
+     * Digunakan untuk Admin, Expert, User, dan Client.
+     */
+    public function getAppointmentDetail($id)
+    {
+        return Appointment::with([
+            'user',                  // Data Employee/User yg booking
+            'expert.user',           // Data Personal Expert (Nama, Foto)
+            'transaction',           // Data Pembayaran (untuk Admin & Client)
+            'expert.expertise'       // Label Keahlian Expert
+        ])
+            ->findOrFail($id);
     }
 
     // Ambil data raw untuk Calendar (Tanpa pagination)
@@ -35,6 +60,28 @@ class AppointmentRepository
 
         return $query->get();
     }
+
+    /**
+     * Mencari appointment spesifik beserta relasi user & expert
+     * Digunakan oleh Service untuk validasi & notifikasi
+     */
+    public function findWithRelations($id)
+    {
+        // Kita butuh data user (Client) dan expert.user (Expert) 
+        // untuk kirim email notifikasi nama pengirim/penerima.
+        return Appointment::with(['user', 'expert.user'])->findOrFail($id);
+    }
+
+    /**
+     * Melakukan update data appointment
+     */
+    public function update(Appointment $appointment, array $data)
+    {
+        $appointment->update($data);
+        return $appointment->refresh(); // Return data terbaru
+    }
+
+
 
     // Ambil appointment untuk Client (User biasa)
     public function getForClient($userId, $perPage = 5)
