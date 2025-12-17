@@ -6,6 +6,7 @@ use App\Models\User;
 use Google\Client;
 use Google\Service\Calendar;
 use Google\Service\Calendar\Event;
+use Illuminate\Support\Facades\Log;
 
 class GoogleCalendarService
 {

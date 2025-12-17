@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpertController;
 use App\Http\Controllers\ExpertiseController;
 use App\Http\Controllers\PaymentController; // Ditambahkan
@@ -28,6 +29,9 @@ Route::get('/auth/google/calendar-connect', [AuthController::class, 'google_cale
 
 Route::middleware('auth')->group(function () {
 
+    // route dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
     // Route Authentikasi yang ada middleware auth
     Route::get('register-client', [AuthController::class, 'registerClient'])->name('register_client');
     Route::post('register-client', [AuthController::class, 'register_client_post'])->name('register_client_post');

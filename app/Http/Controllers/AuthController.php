@@ -267,7 +267,7 @@ class AuthController extends Controller
             'expertises' => $expertises,
             'appointments' => $appointments,
             'appointmentsCount' => $appointmentsCount,
-            'calendarEvents' => $calendarEvents, // Nama prop disesuaikan dengan CalendarTab.vue
+            'calendarEvents' => $calendarEvents,
             'socialMedias' => $socialMedias,
             'transactions' => $transactions,
         ]);
