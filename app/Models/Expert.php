@@ -9,7 +9,6 @@ class Expert extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'expertise_id' => 'array',
         'experiences'  => 'array',
         'licenses'     => 'array',
         'gallerys'     => 'array',
@@ -25,5 +24,10 @@ class Expert extends Model
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'expert_skill');
     }
 }

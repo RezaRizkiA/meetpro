@@ -34,6 +34,11 @@ class Appointment extends Model
         return $this->belongsTo(Expert::class);
     }
 
+    public function skill()
+    {
+        return $this->belongsTo(Skill::class);
+    }
+
     public function transactions()
     {
         return $this->hasMany(Transaction::class);

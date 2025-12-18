@@ -12,14 +12,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->unique()->nullable()->constrained('users')->onDelete('cascade');
             $table->string('type')->nullable();
-            $table->string('expertise')->nullable();
             $table->text('biography')->nullable();
             $table->text('experiences')->nullable();
             $table->text('licenses')->nullable();
             $table->text('gallerys')->nullable();
             $table->text('socials')->nullable();
             $table->string('background')->nullable();
-            $table->text('expertise_id')->nullable();
             $table->integer('price')->nullable();
             $table->timestamps();
         });

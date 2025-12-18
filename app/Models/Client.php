@@ -16,6 +16,11 @@ class Client extends Model
         'expertise_id' => 'array',
     ];
 
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'client_skill');
+    }
+    
     public function getLogoUrlAttribute()
     {
         return $this->logo ? Storage::url($this->logo) : null;

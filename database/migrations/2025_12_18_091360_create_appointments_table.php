@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('expert_id')->nullable()->constrained('experts')->onDelete('cascade');
+            $table->foreignId('expert_id')->constrained('experts')->onDelete('cascade');
+            $table->foreignId('skill_id')->constrained('skills')->onDelete('cascade');
             $table->text('appointment')->nullable();
             $table->timestamp('date_time')->nullable();
             $table->string('google_calendar_event_id')->nullable();

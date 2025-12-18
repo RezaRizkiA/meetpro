@@ -1,9 +1,10 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Client;
-use App\Models\Expertise;
+use App\Models\Skill;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
@@ -16,16 +17,17 @@ class ClientSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        // Ambil hanya LEAF (level 3): parent_id ≠ null
-        $leafIds = Expertise::whereNotNull('parent_id')->pluck('id')->all();
+        // Ambil semua ID Skill
+        $allSkillIds = Skill::pluck('id')->toArray();
 
-        DB::transaction(function () use ($faker, $leafIds) {
+        DB::transaction(function () use ($faker, $allSkillIds) {
 
-            for ($i = 1; $i < 3; $i++) { // hasilkan 2 client (1 & 2)
-                $name  = $faker->name();
+            // Buat 2 Client Dummy
+            for ($i = 1; $i <= 2; $i++) {
+                $name  = $faker->company(); // Pakai nama perusahaan biar relevan
                 $email = "client{$i}@gmail.com";
 
-                // --- USER (idempotent by email) ---
+                // 1. Buat User
                 $user = User::firstOrCreate(
                     ['email' => $email],
                     [
@@ -35,60 +37,56 @@ class ClientSeeder extends Seeder
                         'password' => Hash::make('password'),
                         'gender'   => $faker->randomElement(['L', 'P']),
                         'address'  => $faker->address,
-                        'roles'    => ['user', 'client'],
+                        'roles'    => ['user', 'client'], // Pastikan setup roles/permission sesuai
                     ]
                 );
 
-                // Jika user sudah ada, pastikan roles mengandung 'user' & 'client'
-                if ($user->wasRecentlyCreated === false) {
-                    $roles = (array) ($user->roles ?? []);
-                    $roles[] = 'user';
+                // Ensure Roles logic (jika pakai Spatie atau array manual)
+                $roles = (array) ($user->roles ?? []);
+                if (!in_array('client', $roles)) {
                     $roles[] = 'client';
-                    $roles = array_values(array_unique($roles));
-                    $user->update(['roles' => $roles]);
+                    $user->update(['roles' => array_unique($roles)]);
                 }
 
-                // Pilih 3–4 leaf expertise acak (string ids)
-                $pickCount = min(4, max(3, 3));
-                $selected  = $this->pickLeafIds($leafIds, $pickCount);
+                // 2. Pilih Skill Random untuk Client ini
+                // Client membeli akses untuk 3-5 skill acak
+                $selectedSkills = $this->pickRandomIds($allSkillIds, rand(3, 5));
 
-                // --- CLIENT (idempotent by user_id) ---
-                Client::updateOrCreate(
+                // 3. Buat Client Profile
+                // (HAPUS kolom expertise_id)
+                $client = Client::updateOrCreate(
                     ['user_id' => $user->id],
                     [
-                        'section_hero'       => $faker->text(15),
+                        'section_hero'       => $faker->text(20),
                         'banner_title'       => $faker->sentence(3),
-                        'banner_desc'        => $faker->paragraph(5),
-                        'author_name'        => $user->name,
-                        'author_photo'       => null,
-                        'banner_background'  => null,
-                        'banner_footer'      => $faker->sentence(2),
-                        'banner_footer_desc' => $faker->sentence(4),
-                        'color'              => null,
-                        'logo'               => null,
-                        'slug_page'          => Str::slug($user->name) . '-' . substr($user->id, 0, 6),
-                        // simpan sebagai array string sesuai pola kamu
-                        'expertise_id'       => array_map('strval', $selected),
+                        'banner_desc'        => $faker->paragraph(2),
+                        'author_name'        => $faker->name, // HR Manager name maybe?
+                        'slug_page'          => Str::slug($name),
+                        // Hapus expertise_id di sini
                     ]
                 );
+
+                // 4. ISI PIVOT TABLE (client_skill)
+                $client->skills()->sync($selectedSkills);
             }
         });
     }
 
     /**
-     * Pilih N id leaf unik secara acak dari array sumber,
-     * aman untuk kasus jumlah sumber < N.
+     * Helper untuk ambil N ID unik acak
      */
-    private function pickLeafIds(array $source, int $n): array
+    private function pickRandomIds(array $source, int $n): array
     {
-        $source = array_values(array_unique($source));
         if (empty($source)) return [];
-
         $n = min($n, count($source));
-        if ($n <= 1) return [$source[array_rand($source)]];
+        if ($n === 0) return [];
 
         $keys = array_rand($source, $n);
-        if (!is_array($keys)) $keys = [$keys];
+
+        // array_rand mengembalikan int jika n=1, array jika n>1
+        if (!is_array($keys)) {
+            return [$source[$keys]];
+        }
 
         return array_map(fn($k) => $source[$k], $keys);
     }

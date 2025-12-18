@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('color')->nullable();
             $table->string('logo')->nullable();
             $table->string('slug_page')->unique()->nullable();
-            $table->text('expertise_id')->nullable();
             $table->timestamps();
         });
     }
