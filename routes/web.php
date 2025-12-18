@@ -62,8 +62,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         // Appointments
-        Route::get('/appointments', [AppointmentController::class, 'index'])->name('dashboard.appointments');
-        Route::get('/appointments/{id}', [AppointmentController::class, 'show'])->name('dashboard.appointments.show');
+        Route::prefix('appointments')->name('dashboard.appointments.')->group(function () {
+            Route::get('/', [AppointmentController::class, 'index'])->name('index');
+            Route::get('/{id}', [AppointmentController::class, 'show'])->name('show');
+
+            // NEW ACTIONS
+            Route::patch('/{id}/status', [AppointmentController::class, 'updateStatus'])->name('update-status');
+            Route::patch('/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('reschedule');
+            Route::delete('/{id}', [AppointmentController::class, 'destroy'])->name('destroy');
+        });
 
         // Calendar
         Route::get('/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar');

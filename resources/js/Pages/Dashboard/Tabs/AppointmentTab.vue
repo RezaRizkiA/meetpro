@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { router, useForm } from "@inertiajs/vue3";
 import { Filter } from "lucide-vue-next";
 
+
 // Import Partials
 import AppointmentFilter from "./Partials/Appointment/Filter.vue";
 import AppointmentCard from "./Partials/Appointment/Card.vue";

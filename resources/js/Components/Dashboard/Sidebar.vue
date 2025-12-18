@@ -35,7 +35,7 @@ const menuItems = [
     },
     { 
         label: 'Appointments', 
-        route: 'dashboard.appointments', 
+        route: 'dashboard.appointments.index', 
         icon: Briefcase,
         show: true 
     },

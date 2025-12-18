@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Sidebar from '@/Components/Dashboard/Sidebar.vue';
 import Topbar from '@/Components/Dashboard/Topbar.vue';
+import ToastNotification from '@/Components/ToastNotification.vue';
 
 const isSidebarExpanded = ref(true);
 const isMobileMenuOpen = ref(false);
@@ -13,6 +14,7 @@ const toggleSidebar = () => {
 
 <template>
     <div class="min-h-screen bg-slate-50 font-sans flex">
+        
         <Sidebar 
             :is-sidebar-expanded="isSidebarExpanded"
             :is-mobile-menu-open="isMobileMenuOpen"
@@ -32,5 +34,7 @@ const toggleSidebar = () => {
                 </div>
             </div>
         </main>
+
+        <ToastNotification/>
     </div>
 </template>

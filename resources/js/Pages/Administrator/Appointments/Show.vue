@@ -1,7 +1,10 @@
 <script setup>
 import { ref } from 'vue';
 import { Link, router } from '@inertiajs/vue3'; // Tambahkan router
+import Swal from 'sweetalert2';
+
 import DashboardLayout from '@/Layouts/DashboardLayout.vue';
+
 import { 
     Calendar, Clock, MapPin, CheckCircle, XCircle, 
     User, Mail, Phone, Briefcase, FileText, ArrowLeft, CreditCard,
@@ -37,15 +40,24 @@ const getStatus = (status) => statusConfig[status] || { class: 'bg-gray-100', la
 
 // 1. Update Status
 const updateStatus = (newStatus) => {
-    // Confirmation dialog
-    if (!confirm(`Are you sure you want to mark this as ${newStatus}?`)) return;
-
-    router.patch(route('dashboard.appointments.update-status', props.appointment.id), {
-        status: newStatus
-    }, {
-        preserveScroll: true,
-        onSuccess: () => {
-            // Optional: Show toast notification here
+    // GANTI confirm() dengan Swal.fire
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Change status to ${newStatus}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#7c3aed', // Warna Violet
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Baru jalankan router jika user klik Yes
+            router.patch(route('dashboard.appointments.update-status', props.appointment.id), {
+                status: newStatus
+            }, {
+                preserveScroll: true,
+                // onSuccess tidak perlu alert manual lagi, biarkan Toast bekerja
+            });
         }
     });
 };
@@ -58,35 +70,51 @@ const deleteAppointment = () => {
 };
 
 // 3. Reschedule Logic
-const showRescheduleModal = ref(false);
-const rescheduleForm = ref({
-    date: '',
-    time: ''
-});
+// const showRescheduleModal = ref(false);
+// const rescheduleForm = ref({
+//     date: '',
+//     time: ''
+// });
 
-const submitReschedule = () => {
-    if (!rescheduleForm.value.date || !rescheduleForm.value.time) {
-        alert("Please select both date and time.");
-        return;
-    }
+// const submitReschedule = () => {
+//     // 1. Validasi Client Side
+//     if (!rescheduleForm.value.date || !rescheduleForm.value.time) {
+//         alert("Please select both date and time.");
+//         return;
+//     }
 
-    const newDateTime = `${rescheduleForm.value.date} ${rescheduleForm.value.time}`;
+//     // 2. Gabungkan Format
+//     // Tips: Tambahkan ':00' (detik) agar sesuai format MySQL 'YYYY-MM-DD HH:mm:ss'
+//     const newDateTime = `${rescheduleForm.value.date} ${rescheduleForm.value.time}:00`;
     
-    router.patch(route('dashboard.appointments.reschedule', props.appointment.id), {
-        date_time: newDateTime
-    }, {
-        onSuccess: () => {
-            showRescheduleModal.value = false;
-            rescheduleForm.value = { date: '', time: '' }; // Reset form
-        }
-    });
-};
+//     // 3. Kirim ke Backend
+//     router.patch(route('dashboard.appointments.reschedule', props.appointment.id), {
+//         date_time: newDateTime
+//     }, {
+//         onSuccess: () => {
+//             // Berhasil: Tutup Modal & Reset
+//             showRescheduleModal.value = false;
+//             rescheduleForm.value = { date: '', time: '' };
+//             // alert('Berhasil diubah!'); // Opsional
+//         },
+//         onError: (errors) => {
+//             // Gagal: Tampilkan pesan error dari Laravel
+//             console.error(errors);
+//             // Ambil pesan error pertama (jika ada)
+//             const firstError = Object.values(errors)[0];
+//             alert(`Gagal reschedule: ${firstError}`);
+//         },
+//         onFinish: () => {
+//             // Dijalankan baik sukses maupun gagal (opsional, misal matikan loading spinner)
+//         }
+//     });
+// };
 </script>
 
 <template>
     <div class="space-y-6 relative">
         <div class="flex items-center gap-4">
-            <Link :href="route('dashboard.appointments')" class="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500">
+            <Link :href="route('dashboard.appointments.index')" class="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-500">
                 <ArrowLeft class="w-5 h-5" />
             </Link>
             <div>
@@ -194,10 +222,10 @@ const submitReschedule = () => {
                                 </button>
                             </div>
                             
-                            <button @click="showRescheduleModal = true" 
+                            <!-- <button @click="showRescheduleModal = true" 
                                 class="flex items-center gap-3 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 text-slate-700 font-medium hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 rounded-xl transition-all text-left">
                                 <RefreshCw class="w-4 h-4" /> Reschedule Date
-                            </button>
+                            </button> -->
                         </div>
 
 
@@ -323,7 +351,7 @@ const submitReschedule = () => {
             </div>
         </div>
 
-        <div v-if="showRescheduleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <!-- <div v-if="showRescheduleModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
                 <div class="flex justify-between items-start mb-6">
                     <div>
@@ -359,7 +387,7 @@ const submitReschedule = () => {
                     </button>
                 </div>
             </div>
-        </div>
+        </div> -->
 
     </div>
 </template>

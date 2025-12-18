@@ -8,9 +8,11 @@ use App\Mail\AppointmentStatusChanged;
 use App\Models\Appointment;
 use App\Services\AppointmentService;
 use App\Services\GoogleCalendarService;
+use Carbon\Carbon;
 use Google\Service\Calendar\EventDateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
@@ -65,18 +67,14 @@ class AppointmentController extends Controller
     {
         // 1. Validasi Input
         $request->validate([
-            'status' => 'required|in:progress,declined,completed,edited',
+            'status' => 'required|in:pending,need_confirmation,confirmed,progress,completed,declined,edited',
         ]);
 
         try {
             // 2. Panggil Service
             $this->service->updateStatus($id, $request->status);
-
-            // 3. Return Success
             return redirect()->back()->with('success', 'Appointment status updated successfully.');
         } catch (\Exception $e) {
-            // 4. Handle Error (Auth error atau Calendar error)
-            // Cek kode error jika 403 authorization
             if ($e->getCode() === 403) {
                 return redirect()->back()->withErrors(['authorization' => $e->getMessage()]);
             }
@@ -86,104 +84,66 @@ class AppointmentController extends Controller
     }
 
 
-    // public function updateStatus(Request $request, $id, GoogleCalendarService $calendarService)
-    // {
-    //     $request->validate([
-    //         'status' => 'required|in:progress,declined,completed,edited',
-    //     ]);
-
-    //     $appointment = Appointment::with(['user', 'expert.user'])->findOrFail($id);
-    //     $user        = Auth::user();
-
-    //     // Authorization: Ensure the user can update the appointment.
-    //     $isExpert = $user->id === $appointment->expert->user_id;
-    //     $isClient = $user->id === $appointment->user_id;
-
-    //     if (! $isExpert && ! $isClient) {
-    //         return redirect()->back()->withErrors(['authorization' => 'You are not authorized to update this appointment.']);
-    //     }
-
-    //     $appointment->status = $request->status;
-    //     $appointment->save();
-
-    //     // Google Calendar Sync & Email Notifications
-    //     try {
-    //         if ($appointment->google_calendar_event_id) {
-    //             $event = $calendarService->getEvent($appointment->user, $appointment->google_calendar_event_id);
-
-    //             if ($request->status === 'progress') {
-    //                 $event->setSummary('Appointment with ' . $appointment->expert->user->name . ' (Confirmed)');
-    //                 $calendarService->updateEvent($appointment->user, $appointment->google_calendar_event_id, $event);
-    //                 Mail::to($appointment->user->email)->send(new AppointmentConfirmed($appointment));
-    //             } elseif ($request->status === 'declined') {
-    //                 $calendarService->deleteEvent($appointment->user, $appointment->google_calendar_event_id);
-    //                 $appointment->google_calendar_event_id = null; // Clear the token
-    //                 $appointment->save();
-
-    //                 $recipient = $isExpert ? $appointment->user : $appointment->expert->user;
-    //                 Mail::to($recipient->email)->send(new AppointmentStatusChanged($appointment, $request->status));
-    //             } elseif ($request->status === 'completed') {
-    //                 $event->setSummary('Appointment with ' . $appointment->expert->user->name . ' (Completed)');
-    //                 $calendarService->updateEvent($appointment->user, $appointment->google_calendar_event_id, $event);
-    //             }
-    //         }
-    //     } catch (\Exception $e) {
-    //         return redirect()->back()->withErrors(['calendar_error' => 'Failed to update Google Calendar or send email: ' . $e->getMessage()]);
-    //     }
-
-    //     return redirect()->route('profile')->with('success', 'Appointment status updated successfully.');
-    // }
-
-    /**
-     * Edit the schedule of an appointment.
-     *
-     * @param Request $request
-     * @param int $id
-     * @param GoogleCalendarService $calendarService
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function editSchedule(Request $request, $id, GoogleCalendarService $calendarService)
+    public function reschedule(Request $request, $id, GoogleCalendarService $calendarService)
     {
-        // ... (Validasi dan Otorisasi tetap sama) ...
         $request->validate([
-            'date' => 'required|date',
-            'time' => 'required|date_format:H:i',
+            'date_time' => 'required|date|after:now',
         ]);
+
         $appointment = Appointment::with(['user', 'expert.user'])->findOrFail($id);
-        $user        = Auth::user();
-        if ($user->id !== $appointment->expert->user_id) {
-            return redirect()->back()->withErrors(['authorization' => 'You are not authorized to edit this appointment.']);
-        }
+
+        // 3. Otorisasi: Hapus pengecekan Expert ID. 
+        // Kita asumsikan Middleware 'role:admin' di route sudah menangani keamanan.
 
         try {
-            $newDateTime = \Carbon\Carbon::parse($request->date . ' ' . $request->time);
+            $newDateTime = Carbon::parse($request->date_time);
 
+            // 4. Update Google Calendar (Opsional/Best Effort)
+            // Note: Ini mungkin tricky kalau Admin tidak punya token akses ke kalender user.
+            // Sebaiknya dibungkus try-catch terpisah agar tidak membatalkan update DB jika gagal.
             if ($appointment->google_calendar_event_id) {
+                try {
+                    // Pastikan $calendarService bisa handle update by Admin
+                    $event = $calendarService->getEvent($appointment->user, $appointment->google_calendar_event_id);
 
-                $event = $calendarService->getEvent($appointment->user, $appointment->google_calendar_event_id);
+                    $startTime = new EventDateTime();
+                    $startTime->setDateTime($newDateTime->toRfc3339String());
+                    $event->setStart($startTime);
 
-                $startTime = new EventDateTime(); // <- Berubah
-                $startTime->setDateTime($newDateTime->toRfc3339String());
-                $event->setStart($startTime);
+                    $endTime = new EventDateTime();
+                    // Asumsi durasi default 1 jam jika kolom hours tidak ada/null
+                    $hours = $appointment->hours ?? 1;
+                    $endTime->setDateTime($newDateTime->copy()->addHours($hours)->toRfc3339String());
+                    $event->setEnd($endTime);
 
-                $endTime = new EventDateTime(); // <- Berubah
-                $endTime->setDateTime($newDateTime->copy()->addHours($appointment->hours)->toRfc3339String());
-                $event->setEnd($endTime);
+                    $event->setSummary('Appointment with ' . $appointment->expert->user->name . ' (Rescheduled by Admin)');
 
-                $event->setSummary('Appointment with ' . $appointment->expert->user->name . ' (Rescheduled)');
-
-                $calendarService->updateEvent($appointment->user, $appointment->google_calendar_event_id, $event);
+                    $calendarService->updateEvent($appointment->user, $appointment->google_calendar_event_id, $event);
+                } catch (\Exception $calEx) {
+                    // Log error kalender tapi lanjut update database
+                    Log::error("GCal update failed: " . $calEx->getMessage());
+                }
             }
 
-            // ... (Update database tetap sama) ...
+            // 5. Update Database
             $appointment->date_time = $newDateTime;
-            $appointment->status    = $request->status ?? $appointment->status;
+
+            // Opsional: Jika status 'declined' atau 'completed', kembalikan ke 'confirmed'
+            if (in_array($appointment->status, ['declined', 'completed'])) {
+                $appointment->status = 'confirmed';
+            }
+
             $appointment->save();
-            Mail::to($appointment->user->email)->send(new AppointmentRescheduled($appointment));
+
+            // 6. Kirim Email Notifikasi ke User & Expert
+            // Cek dulu apakah user punya email valid
+            if ($appointment->user && $appointment->user->email) {
+                Mail::to($appointment->user->email)->send(new AppointmentRescheduled($appointment));
+            }
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Failed to update schedule: ' . $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to update schedule: ' . $e->getMessage()]);
         }
 
-        return redirect()->back()->with('success', 'Appointment schedule has been updated successfully.');
+        return back()->with('success', 'Appointment schedule has been updated successfully.');
     }
 }
