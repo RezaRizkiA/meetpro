@@ -51,7 +51,7 @@ class AppointmentService
         if ($appointment->user_id === $user->id) {
             return $appointment;
         }
-
+        
         // client / company -> b2b2c ( status backlog )
         // if (in_array('client', $userRoles)) {
         //     if ($appointment->user->client_id === $user->client_id) {

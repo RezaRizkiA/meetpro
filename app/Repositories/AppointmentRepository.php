@@ -35,8 +35,8 @@ class AppointmentRepository
         return Appointment::with([
             'user',                  // Data Employee/User yg booking
             'expert.user',           // Data Personal Expert (Nama, Foto)
-            'transaction',           // Data Pembayaran (untuk Admin & Client)
-            'expert.expertise'       // Label Keahlian Expert
+            'transactions',           // Data Pembayaran (untuk Admin & Client)
+            'skill.subCategory.category',
         ])
             ->findOrFail($id);
     }

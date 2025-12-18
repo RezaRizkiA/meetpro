@@ -14,7 +14,7 @@ const statusConfig = {
     },
     need_confirmation: {
         class: "bg-orange-50 text-orange-700 border-orange-100",
-        label: "Confirm",
+        label: "Need Confirmation",
     },
     progress: {
         class: "bg-blue-50 text-blue-700 border-blue-100",

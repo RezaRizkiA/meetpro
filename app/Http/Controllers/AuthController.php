@@ -200,13 +200,13 @@ class AuthController extends Controller
         $isExpert = in_array('expert', $roles, true);
         $isClient = in_array('client', $roles, true);
 
-        $expertises = [];
-        if ($isAdmin) {
-            $expertises = Expertise::whereNull('parent_id')
-                ->orderBy('order')
-                ->with('childrensRecursive')
-                ->get();
-        }
+        // $expertises = [];
+        // if ($isAdmin) {
+        //     $expertises = Expertise::whereNull('parent_id')
+        //         ->orderBy('order')
+        //         ->with('childrensRecursive')
+        //         ->get();
+        // }
 
         $query = Appointment::latest();
 
@@ -264,7 +264,7 @@ class AuthController extends Controller
             'isClient' => $isClient,
             'isAdmin' => $isAdmin,
             // Data Tabs
-            'expertises' => $expertises,
+            // 'expertises' => $expertises,
             'appointments' => $appointments,
             'appointmentsCount' => $appointmentsCount,
             'calendarEvents' => $calendarEvents,
