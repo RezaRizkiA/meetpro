@@ -68,4 +68,31 @@ class DashboardService
                 ->sum('amount'),
         ];
     }
+
+    public function getUserStats($userId)
+    {
+        return [
+            // 1. Total Booking (History)
+            'total_bookings' => Appointment::where('user_id', $userId)->count(),
+
+            // 2. Sesi Mendatang (Penting agar user tidak lupa)
+            'upcoming_sessions' => Appointment::where('user_id', $userId)
+                ->whereIn('status', ['confirmed', 'progress'])
+                ->where('date_time', '>=', now())
+                ->count(),
+
+            // 3. Menunggu Pembayaran (Action Needed)
+            'pending_payments' => Appointment::where('user_id', $userId)
+                ->where('payment_status', 'pending') // Asumsi kolom payment_status
+                ->count(),
+
+            // 4. Total Pengeluaran (Total Spent)
+            // Mengambil dari transaksi sukses yang terkait user ini
+            'total_spent' => Transaction::whereHas('appointment', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+                ->where('status', 'paid') // Atau 'settlement' / 'success' sesuai midtrans
+                ->sum('amount'),
+        ];
+    }
 }

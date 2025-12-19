@@ -59,8 +59,10 @@ class DashboardController extends Controller
             ]);
         }
 
-        // --- 3. LOGIKA UNTUK USER BIASA / FALLBACK ---
-        // Bisa redirect ke home atau dashboard user biasa
-        return Inertia::render('User/Dashboard/Index');
+        $stats = $this->dashboardService->getUserStats($user->id);
+
+        return Inertia::render('User/Dashboard/Index', [
+            'stats' => $stats,
+        ]);
     }
 }
