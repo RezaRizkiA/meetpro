@@ -57,6 +57,30 @@ class AppointmentRepository
             ->paginate($perPage, ['*'], 'appointments_page');
     }
 
+    public function getAllForUser($userId, $perPage = 10)
+    {
+        return Appointment::query()
+            ->where('user_id', $userId)
+            ->select([
+                'id',
+                'expert_id',
+                'skill_id', // Penting agar expert tau topiknya apa
+                'date_time',
+                'status',
+                'payment_status',
+                'topic', // Catatan user
+                'location_url', // Link meeting
+                'created_at'
+            ])
+            ->with([
+                'expert.user:id,name,email,picture',
+                'skill:id,name,sub_category_id',
+                'skill.subCategory:id,name'
+            ])
+            ->latest('date_time')
+            ->paginate($perPage, ['*'], 'appointments_page');
+    }
+
     /**
      * Mengambil detail appointment lengkap beserta relasinya.
      * Digunakan untuk Admin, Expert, User, dan Client.

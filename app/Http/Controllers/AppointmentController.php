@@ -61,7 +61,12 @@ class AppointmentController extends Controller
 
         // --- C. JIKA CLIENT/USER BIASA ---
         // (Nanti implementasi getAllForUser di repo & service)
-        // return Inertia::render('User/Appointments/Index', ...);
+        $appointments = $this->service->getAllForUser($user->id);
+
+        return Inertia::render('User/Appointments/Index', [
+            'appointments' => $appointments
+        ]);
+
 
         abort(403, 'Unauthorized access.');
     }
@@ -73,8 +78,6 @@ class AppointmentController extends Controller
         $user = Auth::user();
         $roles = $user->roles ?? [];
 
-        // --- ROLE VIEW ROUTING ---
-        // A. Administrator View
         if (in_array('administrator', $roles)) {
             return Inertia::render('Administrator/Appointments/Show', [
                 'appointment' => $appointment
