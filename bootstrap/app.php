@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => EnsureEmailIsVerified::class,
         ]);
         $middleware->validateCsrfTokens(except: [
-            '/payment-notify',
+            'payment/notify',
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class, // <--- TAMBAHKAN INI

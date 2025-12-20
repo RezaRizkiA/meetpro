@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAppointmentRequest;
 use App\Mail\AppointmentConfirmed;
 use App\Mail\AppointmentLinkUpdated;
 use App\Mail\AppointmentRescheduled;
 use App\Mail\AppointmentStatusChanged;
 use App\Models\Appointment;
+use App\Models\Expert;
 use App\Services\AppointmentService;
 use App\Services\GoogleCalendarService;
 use Carbon\Carbon;
@@ -95,6 +97,40 @@ class AppointmentController extends Controller
         return Inertia::render('User/Appointments/Show', [
             'appointment' => $appointment
         ]);
+    }
+
+    public function create($expert_id)
+    {
+        $expert = Expert::with('user')->findOrFail($expert_id);
+
+        // Ambil slot sibuk dari Service
+        $bookedSlots = $this->service->getBusySlots($expert_id);
+
+        return Inertia::render('User/Appointments/Booking', [
+            'expert' => $expert,
+            'bookedSlots' => $bookedSlots,
+            'backUrl' => request('back'),
+        ]);
+    }
+
+    // POST: Simpan Booking
+    public function store(StoreAppointmentRequest $request)
+    {
+        try {
+            // Validasi sudah ditangani StoreAppointmentRequest
+            // Kita gabungkan input date & time agar mudah diolah service
+            $data = $request->validated();
+
+            // Panggil Service
+            $appointment = $this->service->createAppointment($data, Auth::id());
+
+            // Redirect ke Payment
+            return redirect()->route('payment.create', $appointment->id)
+                ->with('success', 'Booking berhasil dibuat! Silakan lakukan pembayaran.');
+        } catch (\Exception $e) {
+            // Tangkap error (misal: slot penuh saat lock)
+            return back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
     }
 
     public function updateStatus(Request $request, $id)

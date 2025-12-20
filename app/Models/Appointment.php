@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,7 @@ class Appointment extends Model
 
     protected $casts = [
         'date_time' => 'datetime',
+        'guests' => 'array'
     ];
 
     protected $fillable = [
@@ -24,6 +26,8 @@ class Appointment extends Model
         'price',
         'status',
         'payment_status',
+        'type',
+        'guests'
     ];
 
     public function user()

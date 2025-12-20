@@ -33,4 +33,9 @@ class TransactionRepository
             ->latest()
             ->paginate($perPage, ['*'], 'transactions_page');
     }
+
+    public function create(array $data)
+    {
+        return Transaction::create($data);
+    }
 }

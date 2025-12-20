@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 // Pastikan Controller baru ini sudah dibuat (walaupun file-nya belum ada di upload list, saya asumsikan sudah generate)
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpertController;
 use App\Http\Controllers\ExpertiseController;
@@ -30,9 +31,15 @@ Route::get('pricing', [LandingController::class, 'pricing'])->name('pricing');
 Route::get('terms', [LandingController::class, 'terms'])->name('terms');
 Route::get('privacy', [LandingController::class, 'privacy'])->name('privacy');
 
-Route::get('client-{slug_page}', [ClientController::class, 'home_client'])->name('home_client');
-Route::get('client-{slug_page}/expertise-{slug}', [ClientController::class, 'list_conselor'])->name('list_conselor');
-Route::get('/expert-detail-{expert_id}', [ClientController::class, 'expert_detail'])->name('expert_detail');
+Route::prefix('portal')->group(function () {
+
+    Route::get('/{client:slug_page}', [ClientPortalController::class, 'index'])
+        ->name('client.home');
+    Route::get('/{client:slug_page}/category/{expertise:slug}', [ClientPortalController::class, 'experts'])
+        ->name('client.experts');
+});
+Route::get('/experts/{expert}', [ClientPortalController::class, 'show'])
+    ->name('experts.show');
 
 // =========================================================================
 // AUTHENTICATION ROUTES (Guest Only)
@@ -79,17 +86,48 @@ Route::middleware('auth')->group(function () {
         // Billing/Transactions
         Route::get('/billing', [TransactionController::class, 'index'])->name('dashboard.billing');
 
-        // Expertise Management (KHUSUS ADMIN)
-        Route::get('/expertises', [ExpertiseController::class, 'index'])->name('dashboard.expertises');
+        // Grouping Expertise Management (KHUSUS ADMIN)
+        Route::prefix('expertises')->name('dashboard.expertises.')->group(function () {
+            // 1. Halaman Utama
+            Route::get('/', [ExpertiseController::class, 'index'])->name('index');
+
+            // 2. CRUD Categories
+            Route::post('/categories', [ExpertiseController::class, 'storeCategory'])->name('categories.store');
+            Route::put('/categories/{id}', [ExpertiseController::class, 'updateCategory'])->name('categories.update');
+            Route::delete('/categories/{id}', [ExpertiseController::class, 'destroyCategory'])->name('categories.destroy');
+
+            // 3. CRUD Sub-Categories
+            Route::post('/sub-categories', [ExpertiseController::class, 'storeSubCategory'])->name('sub-categories.store');
+            Route::put('/sub-categories/{id}', [ExpertiseController::class, 'updateSubCategory'])->name('sub-categories.update');
+            Route::delete('/sub-categories/{id}', [ExpertiseController::class, 'destroySubCategory'])->name('sub-categories.destroy');
+
+            // 4. CRUD Skills
+            Route::post('/skills', [ExpertiseController::class, 'storeSkill'])->name('skills.store');
+            Route::put('/skills/{id}', [ExpertiseController::class, 'updateSkill'])->name('skills.update');
+            Route::delete('/skills/{id}', [ExpertiseController::class, 'destroySkill'])->name('skills.destroy');
+        });
 
         // Settings update profile
         Route::get('/settings', [ProfileController::class, 'edit'])->name('profile.edit');
     });
 
+    Route::get('/booking/{expert}', [AppointmentController::class, 'create'])
+        ->name('booking.create');
+    Route::post('/booking', [AppointmentController::class, 'store'])
+        ->name('booking.store');
+
+    Route::get('/payment/{appointment}/checkout', [PaymentController::class, 'create'])
+        ->name('payment.create');
+    Route::post('/payment/{appointment}/checkout', [PaymentController::class, 'store'])
+        ->name('payment.store');
+    Route::get('/payment/transaction/{sid}', [PaymentController::class, 'transaction'])
+        ->name('payment.transaction');
+    Route::post('/payment/notify', [PaymentController::class, 'notify'])
+        ->name('payment.notify');
+
     // ---------------------------------------------------------------------
     // 2. LEGACY ROUTES (Existing Functionality - Jangan Dihapus)
     // ---------------------------------------------------------------------
-
     // Auth & Profile Legacy
     Route::get('register-client', [AuthController::class, 'registerClient'])->name('register_client');
     Route::post('register-client', [AuthController::class, 'register_client_post'])->name('register_client_post');
@@ -108,28 +146,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Appointment Creation
-    Route::get('make-appointment-{expert_id}', [ExpertController::class, 'make_appointment'])->name('appointment');
-    Route::post('make-appointment-{expert_id}', [ExpertController::class, 'make_appointment_post'])->name('appointment_post');
-
-    // Payment Logic
-    Route::get('payment/{appointment}', [PaymentController::class, 'show'])->name('payment.show');
-    Route::post('payment/{appointment}', [PaymentController::class, 'process'])->name('payment.process');
-    Route::get('payment-{sid}', [PaymentController::class, 'transaction'])->name('payment.transaction');
-    Route::post('payment-notify', [PaymentController::class, 'notify'])->name('payment.notify');
-
     if (app()->isLocal()) {
         Route::get('paymentnotify-test', function () {
             return view('payment.notify_test');
         })->name('payment.notify_test');
     }
-
-    // Appointment Actions
-    Route::post('appointment/{id}/update-status', [AppointmentController::class, 'updateStatus'])->name('appointment.update_status');
-    Route::put('/appointments/{id}/edit-schedule', [AppointmentController::class, 'editSchedule'])->name('appointment.edit_schedule');
-
-    // Expertise Management (Admin)
-    Route::post('create-expertise', [ExpertiseController::class, 'store_expertise'])->name('store_expertise');
-    Route::post('create-expertise-{expertise_id}', [ExpertiseController::class, 'update_expertise'])->name('update_expertise');
-    Route::get('destroy-expertise-{expertise_id}', [ExpertiseController::class, 'destroy_expertise'])->name('destroy_expertise');
 });

@@ -2,117 +2,104 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Expertise;
 use App\Services\ExpertiseService;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ExpertiseController extends Controller
 {
     protected $service;
 
-    // Inject Service
     public function __construct(ExpertiseService $service)
     {
         $this->service = $service;
     }
 
-    // HALAMAN UTAMA MANAJEMEN EXPERTISE
     public function index()
     {
-        // Cek permission admin jika perlu (opsional jika sudah di handle middleware/menu)
-        // if (!auth()->user()->isAdmin()) abort(403);
+        // Ambil semua data (Categories, SubCats, Skills)
+        $data = $this->service->getAllData();
 
-        $expertises = $this->service->getExpertiseTree();
-
-        return Inertia::render('Administrator/Expertises/Index', [
-            'expertises' => $expertises
+        return Inertia::render('Administrator/Expertise/Index', [
+            'categories' => $data['categories'],
+            'subCategories' => $data['sub_categories'],
+            'skills' => $data['skills'],
         ]);
     }
 
-    public function store_expertise(Request $request)
+    // --- ACTIONS CATEGORY ---
+    public function storeCategory(Request $request)
     {
-        $expertise = Expertise::create($request->all());
-        $expertise->slug = Str::slug($request->name);
-
-        if($request->has('parent_id')){
-            $expertise_parent = Expertise::with('childrens')->findOrFail($request->parent_id);
-            $expertise->level = $expertise_parent->level + 1;
-            // Ambil semua order anak, urutkan, dan cari celah
-            $usedOrders = $expertise_parent->childrens->pluck('order')->filter()->unique()->sort()->values()->all();
-            $order = collect(range(1, count($usedOrders) + 1))->diff($usedOrders)->first();
-            $expertise->order = $order ?: count($usedOrders) + 1;
-        }else{
-            $expertise->level = 1;
-            $usedOrders = Expertise::whereNull('parent_id')->pluck('order')->filter()->unique()->sort()->values()->all();
-            $order = collect(range(1, count($usedOrders) + 1))->diff($usedOrders)->first();
-            $expertise->order = $order ?: count($usedOrders) + 1;
-        }
-
-        // Menyimpan gambar baru ke S3
-        if ($request->hasFIle('file_ilustration_img')) {
-            $image    = $request->file('file_ilustration_img');
-            $filename = 'expertise/' . uniqid() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('s3')->put($filename, file_get_contents($image), 'public');
-            $expertise->ilustration_img = $filename;
-        }
-
-        $expertise->save();
-        return back();
+        $request->validate(['name' => 'required|string|max:255']);
+        $this->service->createCategory($request->only('name', 'icon')); // icon opsional
+        return back()->with('success', 'Category created successfully.');
     }
 
-    public function update_expertise(Request $request, $expertise_id)
+    public function updateCategory(Request $request, $id)
     {
-        $expertise = Expertise::findOrFail($expertise_id);
-        $expertise->fill($request->all());
-        $expertise->slug = Str::slug($request->name);
-
-        // Jika parent_id berubah, atur level & order baru
-        if ($request->parent_id != $expertise->parent_id) {
-            if ($request->parent_id) {
-                $expertise_parent = Expertise::with('childrens')->findOrFail($request->parent_id);
-                $expertise->level = $expertise_parent->level + 1;
-                $usedOrders = $expertise_parent->childrens->pluck('order')->filter()->unique()->sort()->values()->all();
-                $order = collect(range(1, count($usedOrders) + 1))->diff($usedOrders)->first();
-                $expertise->order = $order ?: count($usedOrders) + 1;
-            } else {
-                $expertise->level = 1;
-                $usedOrders = Expertise::whereNull('parent_id')->pluck('order')->filter()->unique()->sort()->values()->all();
-                $order = collect(range(1, count($usedOrders) + 1))->diff($usedOrders)->first();
-                $expertise->order = $order ?: count($usedOrders) + 1;
-            }
-        }
-
-        // Update ilustration image jika ada
-        if ($request->hasFile('file_ilustration_img')) {
-            Storage::disk('s3')->delete($expertise->ilustration_img);
-            $image = $request->file('file_ilustration_img');
-            $filename = 'expertise/' . uniqid() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('s3')->put($filename, file_get_contents($image), 'public');
-            $expertise->ilustration_img = $filename;
-        }
-
-        $expertise->save();
-        return back();
+        $request->validate(['name' => 'required|string|max:255']);
+        $this->service->updateCategory($id, $request->only('name', 'icon'));
+        return back()->with('success', 'Category updated.');
     }
 
-    public function destroy_expertise($expertise_id)
+    public function destroyCategory($id)
     {
-        $expertise = Expertise::with('childrensRecursive')->findOrFail($expertise_id);
-        // Ambil semua descendant
-        $flattened = collect([$expertise])->merge($expertise->flattenAllDescendants());
+        // Tips: Cek dulu apakah punya sub-category agar tidak error constraint
+        $this->service->deleteCategory($id);
+        return back()->with('success', 'Category deleted.');
+    }
 
-        // Hapus semua gambar ilustrasi
-        foreach ($flattened as $item) {
-            if (!empty($item->ilustration_img)) {
-                Storage::disk('s3')->delete($item->ilustration_img);
-            }
-        }
+    // --- ACTIONS SUB CATEGORY ---
+    public function storeSubCategory(Request $request)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|string|max:255'
+        ]);
+        $this->service->createSubCategory($request->all());
+        return back()->with('success', 'Sub-Category added.');
+    }
 
-        // Hapus root expertise, yang akan otomatis menghapus semua children (cascade)
-        $expertise->delete();
-        return back()->with('success', 'Skill dan semua sub-skill berhasil dihapus.');
+    public function updateSubCategory(Request $request, $id)
+    {
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|string|max:255'
+        ]);
+        $this->service->updateSubCategory($id, $request->all());
+        return back()->with('success', 'Sub-Category updated.');
+    }
+
+    public function destroySubCategory($id)
+    {
+        $this->service->deleteSubCategory($id);
+        return back()->with('success', 'Sub-Category deleted.');
+    }
+
+    // --- ACTIONS SKILL ---
+    public function storeSkill(Request $request)
+    {
+        $request->validate([
+            'sub_category_id' => 'required|exists:sub_categories,id',
+            'name' => 'required|string|max:255'
+        ]);
+        $this->service->createSkill($request->all());
+        return back()->with('success', 'Skill added.');
+    }
+
+    public function updateSkill(Request $request, $id)
+    {
+        $request->validate([
+            'sub_category_id' => 'required|exists:sub_categories,id',
+            'name' => 'required|string|max:255'
+        ]);
+        $this->service->updateSkill($id, $request->all());
+        return back()->with('success', 'Skill updated.');
+    }
+
+    public function destroySkill($id)
+    {
+        $this->service->deleteSkill($id);
+        return back()->with('success', 'Skill deleted.');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Appointment;
+use Carbon\Carbon;
 
 class AppointmentRepository
 {
@@ -125,6 +126,48 @@ class AppointmentRepository
         // Kita butuh data user (Client) dan expert.user (Expert) 
         // untuk kirim email notifikasi nama pengirim/penerima.
         return Appointment::with(['user', 'expert.user'])->findOrFail($id);
+    }
+
+    public function create(array $data)
+    {
+        return Appointment::create([
+            'user_id'        => $data['user_id'],
+            'expert_id'      => $data['expert_id'],
+            'skill_id'       => $data['skill_id'] ?? null,
+            'date_time'      => $data['date_time'],
+            'hours'          => $data['hours'],
+            'price'          => $data['price'],
+            'status'         => 'pending',
+            'payment_status' => 'pending',
+            'location_url'   => null, 
+            'google_calendar_event_id' => null,
+            'topic'          => $data['topic'] ?? null,
+            'type'           => $data['type'],
+            'guests'         => $data['guests'] ?? null,
+        ]);
+    }
+
+    // 1. Ambil semua appointment yang "Active" untuk expert tertentu
+    // Dipakai untuk generate tampilan kalender di frontend
+    public function getActiveAppointmentsByExpert($expertId)
+    {
+        return Appointment::where('expert_id', $expertId)
+            ->where('status', '!=', 'declined') // Status declined dianggap kosong
+            ->whereDate('date_time', '>=', Carbon::today())
+            ->get(['date_time', 'hours']);
+    }
+
+    // 2. Cek apakah Slot Waktu tersedia (Conflict Checker)
+    public function isSlotAvailable($expertId, $startDateTime, $endDateTime)
+    {
+        return !Appointment::where('expert_id', $expertId)
+            ->where('status', '!=', 'declined')
+            ->where(function ($query) use ($startDateTime, $endDateTime) {
+                // Logika overlap waktu
+                $query->where('date_time', '<', $endDateTime)
+                    ->whereRaw("DATE_ADD(date_time, INTERVAL hours HOUR) > ?", [$startDateTime]);
+            })
+            ->exists();
     }
 
     /**

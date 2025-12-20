@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePaymentRequest;
 use App\Models\Appointment;
 use App\Models\Ipaymu;
 use App\Models\Transaction;
@@ -10,12 +11,56 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\CreateGoogleCalendarEvent;
+use App\Mail\AppointmentInvitation;
+use App\Services\PaymentService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class PaymentController extends Controller
 {
+    protected $service;
+
+    public function __construct(PaymentService $service)
+    {
+        $this->service = $service;
+    }
+
+    // 1. CREATE (Halaman Pilih Pembayaran)
+    // URL: GET /payment/{appointment}/checkout
+    public function create(Appointment $appointment)
+    {
+        // Validasi sederhana status (bisa dipindah ke policy nanti)
+        if ($appointment->payment_status === 'paid') {
+            return redirect()->back()->with('info', 'Appointment already paid.');
+        }
+
+        // Ambil Channel Pembayaran untuk Dropdown Frontend
+        $channels = Ipaymu::all()->map(function ($c) {
+            $c->channels = json_decode($c->channels, true);
+            return $c;
+        });
+
+        return Inertia::render('User/Payment/Create', [
+            'appointment' => $appointment->load('expert.user'),
+            'paymentChannels' => $channels,
+        ]);
+    }
+
+    // 2. STORE (Proses ke iPaymu)
+    // URL: POST /payment/{appointment}/checkout
+    public function store(StorePaymentRequest $request, Appointment $appointment)
+    {
+        try {
+            // Panggil Service untuk urus iPaymu & DB
+            $transaction = $this->service->processPayment($appointment, $request->validated());
+            return redirect()->route('payment.transaction', ['sid' => $transaction->sid]);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
 
     public function show(Appointment $appointment)
     {
@@ -117,73 +162,115 @@ class PaymentController extends Controller
         return redirect()->route('payment.transaction', ['sid' => $transaction->sid]);
     }
 
-    public function transaction($sid_transaction)
+    // PaymentController.php
+
+    public function transaction($sid)
     {
-        $transaction = Transaction::where('sid', $sid_transaction)->firstOrFail();
+        // Cari Transaksi berdasarkan SID
+        $transaction = Transaction::where('sid', $sid)
+            ->with('appointment.expert.user') // Load relasi untuk detail tampilan
+            ->firstOrFail();
 
-        // 1. Cek Status Paid
+        // 1. Jika Sukses -> Arahkan ke Detail Appointment (bukan Profile umum)
         if ($transaction->status === 'berhasil') {
-            return redirect()->route('profile')->with('success', 'Payment has been completed successfully.');
+            return redirect()->route('dashboard.appointments.show', $transaction->appointment_id)
+                ->with('success', 'Payment successful! Your session is confirmed.');
         }
 
-        // 2. Cek Expired
+        // 2. Jika Expired -> Beri opsi buat ulang
         if ($transaction->expired_date < now()) {
-            return redirect()->route('profile')->with('error', 'Payment has expired. Please create a new transaction.');
+            // Logikanya: User harus booking ulang atau checkout ulang
+            return redirect()->route('booking.create', $transaction->appointment->expert_id)
+                ->with('error', 'Payment expired. Please book again.');
         }
 
-        // 3. Generate QR Code (Jika metode QRIS)
+        // 3. QRIS Generation (Logic View)
         $qrCodeImage = null;
-        if ($transaction->via === 'QRIS') {
+        if ($transaction->via === 'QRIS' && $transaction->paymentNo) {
             $qrCodeImage = 'data:image/png;base64,' . base64_encode(
-                QrCode::format('png')
-                    ->size(400) // Ukuran diperbesar untuk kualitas
+                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
+                    ->size(300)
                     ->margin(1)
-                    ->backgroundColor(255, 255, 255)
                     ->generate($transaction->paymentNo)
             );
         }
 
-        return Inertia::render('Client/Payment/Transaction', [
+        return Inertia::render('User/Payment/Transaction', [
             'transaction' => $transaction,
             'qrCodeImage' => $qrCodeImage,
+            // Kirim data appointment untuk konteks (Nama Expert, Tanggal, dll)
+            'appointment' => $transaction->appointment
         ]);
     }
 
     public function notify(Request $request)
     {
-        // terima dan catat semua data yang masuk
-        $dataNotify = $request->all();
-        Log::info('Payment Notification Received', $dataNotify);
+        dd($request->all());
+        // 1. Log Incoming Data (Untuk Debugging)
+        Log::info('iPaymu Webhook:', $request->all());
 
-        if (!isset($dataNotify['trx_id'])) {
-            Log::error('Missing trx_id in payment notification');
-            return response()->json(['error' => 'Missing trx_id'], 400);
+        $trxId = $request->input('trx_id');
+        if (!$trxId) return response()->json(['error' => 'No trx_id'], 400);
+
+        // 2. Cari Transaksi
+        $transaction = Transaction::where('transactionId', $trxId)->first();
+        if (!$transaction) return response()->json(['error' => 'Transaction not found'], 404);
+
+        // 3. Jika sudah 'berhasil', stop (Idempotency)
+        if ($transaction->status === 'berhasil') {
+            return response()->json(['message' => 'Already paid']);
         }
 
-        // cari transaksi berdasarkan kolom referenceId
-        $transaction = Transaction::where('transactionId', $dataNotify['trx_id'])->first();
+        // 4. Double Check Status ke Server iPaymu (Security Best Practice)
+        // Asumsi helper checkTransactionIpaymu() mengembalikan array response iPaymu
+        $check = checkTransactionIpaymu($trxId);
 
-        if (!$transaction) {
-            Log::error('Transaction not found for trx_id: ' . $dataNotify['trx_id']);
-            return response()->json(['error' => 'Transaction not found'], 404);
-        }
+        if (isset($check['StatusDesc']) && $check['StatusDesc'] === 'Berhasil') {
 
-        $checkTransaction = checkTransactionIpaymu($transaction->transactionId);
+            try {
+                DB::transaction(function () use ($transaction, $check) {
+                    // A. Update Status Transaksi
+                    $transaction->update([
+                        'status'       => 'berhasil',
+                        'payment_date' => Carbon::now(),
+                        // Update field lain jika perlu dari $check response
+                    ]);
 
-        if (isset($checkTransaction['StatusDesc']) && $checkTransaction['StatusDesc'] === 'Berhasil') {
-            if ($transaction->status !== 'berhasil') {
-                $transaction->update([
-                    'status'        => strtolower($checkTransaction['StatusDesc'] ?? 'berhasil'),
-                    'status'        => strtolower($checkTransaction['StatusDesc'] ?? 'berhasil'),
-                    'trx_id'        => $checkTransaction['TransactionId'] ?? $transaction->transactionId,
-                    'reference_id'  => $checkTransaction['ReferenceId'] ?? $transaction->reference_id,
-                    'payment_date'  => isset($checkTransaction['SuccessDate']) ? Carbon::parse($checkTransaction['SuccessDate']) : null,
-                ]);
-                $transaction->appointment->update(['payment_status' => 'berhasil']);
-                CreateGoogleCalendarEvent::dispatch($transaction->appointment);
+                    // B. Update Status Appointment
+                    $appointment = $transaction->appointment;
+                    $appointment->update([
+                        'payment_status' => 'paid',
+                        'status'         => 'confirmed', // Appointment sah
+                    ]);
+
+                    // C. TRIGGER ACTIONS (LOGIC BARU KITA)
+
+                    // 1. Job Google Calendar (Sudah ada, tapi perlu update logic internalnya nanti)
+                    CreateGoogleCalendarEvent::dispatch($appointment);
+
+                    // 2. Kirim Email Undangan (Undang Leader & Tamu)
+                    // Pastikan Anda sudah membuat Mailable: php artisan make:mail AppointmentInvitation
+
+                    // Kirim ke Leader
+                    Mail::to($appointment->user->email)
+                        ->send(new AppointmentInvitation($appointment));
+
+                    // Kirim ke Tamu (Looping array guests)
+                    if ($appointment->type === 'group' && !empty($appointment->guests)) {
+                        foreach ($appointment->guests as $guestEmail) {
+                            Mail::to($guestEmail)
+                                ->send(new AppointmentInvitation($appointment));
+                        }
+                    }
+                });
+
+                return response()->json(['status' => 'success']);
+            } catch (\Exception $e) {
+                Log::error('Webhook Error: ' . $e->getMessage());
+                return response()->json(['error' => 'Internal Server Error'], 500);
             }
-            return response()->json(['status' => 'success', 'message' => 'Payment processed, Google Calendar event created successfully']);
         }
-        return response()->json(['message' => 'Payment not yet successful']);
+
+        return response()->json(['message' => 'Payment status is: ' . ($check['StatusDesc'] ?? 'Unknown')]);
     }
 }

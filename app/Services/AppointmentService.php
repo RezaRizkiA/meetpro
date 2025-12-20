@@ -6,9 +6,12 @@ use App\Repositories\AppointmentRepository;
 use App\Services\GoogleCalendarService;
 use App\Mail\AppointmentConfirmed;
 use App\Mail\AppointmentStatusChanged;
+use App\Models\Expert;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class AppointmentService
 {
@@ -71,6 +74,72 @@ class AppointmentService
 
         abort(403, 'Unauthorized access to this appointment.');
     }
+
+    // 1. Logic Generate "Booked Slots" untuk Frontend
+    // Memindahkan loop foreach yang panjang dari Controller lama
+    public function getBusySlots($expertId)
+    {
+        $appointments = $this->repo->getActiveAppointmentsByExpert($expertId);
+        $bookedSlots = [];
+
+        foreach ($appointments as $app) {
+            $start = Carbon::parse($app->date_time);
+            for ($i = 0; $i < $app->hours; $i++) {
+                $current = $start->copy()->addHours($i);
+                $dateKey = $current->format('Y-m-d');
+                $timeKey = $current->format('H:i');
+
+                if (!isset($bookedSlots[$dateKey])) {
+                    $bookedSlots[$dateKey] = [];
+                }
+                $bookedSlots[$dateKey][] = $timeKey;
+            }
+        }
+
+        return $bookedSlots;
+    }
+
+    // 2. Logic Create dengan Transaction & Locking
+    public function createAppointment($data, $userId)
+    {
+        return DB::transaction(function () use ($data, $userId) {
+
+            // A. LOCKING (PENTING! Jangan dibuang)
+            // Kita lock row expert ini agar tidak ada proses lain yang booking di detik yang sama
+            $expert = Expert::lockForUpdate()->findOrFail($data['expert_id']);
+
+            // B. Hitung Start & End Time
+            $startDateTime = Carbon::createFromFormat('Y-m-d H:i', "{$data['date']} {$data['time']}");
+            $endDateTime = $startDateTime->copy()->addHours($data['hours']);
+
+            // C. Cek Bentrok via Repository
+            if (! $this->repo->isSlotAvailable($expert->id, $startDateTime, $endDateTime)) {
+                throw new Exception('Maaf, slot waktu ini baru saja diambil orang lain.');
+            }
+
+            // D. Hitung Harga (Security)
+            $totalPrice = $expert->price * $data['hours'];
+
+            // E. Siapkan Data Final
+            $finalData = [
+                'user_id'       => $userId,
+                'expert_id'     => $expert->id,
+                'skill_id'      => $data['skill_id'] ?? null, // Opsional jika dari halaman skill
+                'date_time'     => $startDateTime,
+                'hours'         => $data['hours'],
+                'price'         => $totalPrice,
+                'topic'         => $data['topic'], // Dulu 'appointment', sekarang 'topic'
+                'type'          => $data['type'],  // Inputan baru (Individual/Group)
+                'guests'        => ($data['type'] === 'group') ? $data['guests'] : null,
+                'status'        => 'pending', // Atau 'need_confirmation'
+                'payment_status' => 'pending',
+            ];
+
+            // F. Simpan
+            return $this->repo->create($finalData);
+        });
+    }
+
 
     /**
      * Handle Update Status Appointment
