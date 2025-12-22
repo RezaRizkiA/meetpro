@@ -34,7 +34,93 @@ class DashboardService
 
             // Hitung Appointment yang butuh konfirmasi (Pending)
             'pending_appointments' => Appointment::where('status', 'need_confirmation')->count(),
+
+            // Data untuk Chart - Appointment Trends (Last 30 Days)
+            'appointment_trends' => $this->getAppointmentTrends(),
+
+            // Data untuk Quick Schedule (Next 5 Appointments)
+            'quick_schedule' => $this->getQuickSchedule(),
+
+            // Data untuk Recent Booking Requests (Last 10)
+            'recent_bookings' => $this->getRecentBookings(),
         ];
+    }
+
+    /**
+     * Get appointment trends data for the last 30 days
+     * Returns daily booking counts for chart visualization
+     */
+    protected function getAppointmentTrends()
+    {
+        $thirtyDaysAgo = now()->subDays(30)->startOfDay();
+        
+        $bookings = Appointment::where('created_at', '>=', $thirtyDaysAgo)
+            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        // Fill in missing dates with zero counts
+        $trends = [];
+        for ($i = 29; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $count = $bookings->firstWhere('date', $date)?->count ?? 0;
+            $trends[] = [
+                'date' => $date,
+                'count' => $count,
+            ];
+        }
+
+        return $trends;
+    }
+
+    /**
+     * Get upcoming appointments for quick schedule view
+     * Returns next 5 appointments with expert and user details
+     */
+    protected function getQuickSchedule()
+    {
+        return Appointment::with(['expert.user', 'user'])
+            ->whereIn('status', ['confirmed', 'need_confirmation'])
+            ->where('date_time', '>=', now())
+            ->orderBy('date_time')
+            ->limit(5)
+            ->get()
+            ->map(function ($appointment) {
+                return [
+                    'id' => $appointment->id,
+                    'title' => $appointment->expert->user->name ?? 'Expert',
+                    'type' => $appointment->topic ?? 'Consultation',
+                    'date_time' => $appointment->date_time,
+                    'status' => $appointment->status,
+                ];
+            });
+    }
+
+    /**
+     * Get recent booking requests for admin review
+     * Returns last 10 appointments with detailed information
+     */
+    protected function getRecentBookings()
+    {
+        return Appointment::with(['expert.user', 'user.client'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($appointment) {
+                return [
+                    'id' => $appointment->id,
+                    'expert' => [
+                        'name' => $appointment->expert->user->name ?? 'Unknown',
+                        'avatar' => $appointment->expert->user->picture_url ?? null,
+                    ],
+                    'client' => [
+                        'institution' => $appointment->user->client->company_name ?? $appointment->user->name,
+                    ],
+                    'date_time' => $appointment->date_time,
+                    'status' => $appointment->status,
+                ];
+            });
     }
 
     /**

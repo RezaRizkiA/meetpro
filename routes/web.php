@@ -33,11 +33,8 @@ Route::prefix('portal')->group(function () {
         ->name('client.experts');
 });
 Route::get('/experts/{expert}', [ClientPortalController::class, 'show'])
-    ->name('experts.show');
+        ->name('experts.show');
 
-// =========================================================================
-// AUTHENTICATION ROUTES (Guest Only)
-// =========================================================================
 Route::get('login', [AuthController::class, 'loginView'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'login_post'])->name('login_post')->middleware('guest');
 
@@ -49,51 +46,38 @@ Route::get('/auth/google/calendar-connect', [AuthController::class, 'google_cale
 // Callback iPaymu (Luar auth group & csrf protected biasanya, tapi biarkan sesuai setup Anda)
 Route::post('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
 
+
+
 Route::middleware('auth')->group(function () {
     Route::prefix('dashboard')->group(function () {
-        // Overview
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-        // Appointments
         Route::prefix('appointments')->name('dashboard.appointments.')->group(function () {
             Route::get('/', [AppointmentController::class, 'index'])->name('index');
             Route::get('/{id}', [AppointmentController::class, 'show'])->name('show');
             Route::patch('/{id}/update-link', [AppointmentController::class, 'updateLink'])->name('update-link');
-
-            // NEW ACTIONS
             Route::patch('/{id}/status', [AppointmentController::class, 'updateStatus'])->name('update-status');
             Route::patch('/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('reschedule');
             Route::delete('/{id}', [AppointmentController::class, 'destroy'])->name('destroy');
         });
 
-        // Calendar
         Route::get('/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar');
 
-        // Billing/Transactions
         Route::get('/billing', [TransactionController::class, 'index'])->name('dashboard.billing');
 
-        // Grouping Expertise Management (KHUSUS ADMIN)
         Route::prefix('expertises')->name('dashboard.expertises.')->group(function () {
-            // 1. Halaman Utama
             Route::get('/', [ExpertiseController::class, 'index'])->name('index');
-
-            // 2. CRUD Categories
             Route::post('/categories', [ExpertiseController::class, 'storeCategory'])->name('categories.store');
             Route::put('/categories/{id}', [ExpertiseController::class, 'updateCategory'])->name('categories.update');
             Route::delete('/categories/{id}', [ExpertiseController::class, 'destroyCategory'])->name('categories.destroy');
-
-            // 3. CRUD Sub-Categories
             Route::post('/sub-categories', [ExpertiseController::class, 'storeSubCategory'])->name('sub-categories.store');
             Route::put('/sub-categories/{id}', [ExpertiseController::class, 'updateSubCategory'])->name('sub-categories.update');
             Route::delete('/sub-categories/{id}', [ExpertiseController::class, 'destroySubCategory'])->name('sub-categories.destroy');
-
-            // 4. CRUD Skills
             Route::post('/skills', [ExpertiseController::class, 'storeSkill'])->name('skills.store');
             Route::put('/skills/{id}', [ExpertiseController::class, 'updateSkill'])->name('skills.update');
             Route::delete('/skills/{id}', [ExpertiseController::class, 'destroySkill'])->name('skills.destroy');
         });
 
-        // Settings update profile
         Route::get('/settings', [ProfileController::class, 'edit'])->name('profile.edit');
     });
 
