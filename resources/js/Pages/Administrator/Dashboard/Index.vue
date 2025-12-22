@@ -215,6 +215,7 @@ const totalBookings = computed(() => {
             :icon="Users"
             iconColor="blue"
             trend="+12%"
+            to="dashboard.experts.index"
         />
 
         <StatCard
@@ -223,6 +224,7 @@ const totalBookings = computed(() => {
             :icon="Calendar"
             iconColor="violet"
             trend="+5%"
+            to="dashboard.appointments.index"
         />
 
         <StatCard
@@ -231,6 +233,7 @@ const totalBookings = computed(() => {
             :icon="Building2"
             iconColor="green"
             trend="+2%"
+            to="dashboard.clients.index"
         />
 
         <StatCard
@@ -239,6 +242,7 @@ const totalBookings = computed(() => {
             :icon="DollarSign"
             iconColor="orange"
             trend="+8%"
+            variant="gradient"
         />
     </div>
 

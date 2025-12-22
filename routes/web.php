@@ -7,6 +7,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\ClientRegistrationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExpertController;
 use App\Http\Controllers\ExpertiseController;
 use App\Http\Controllers\ExpertRegistrationController;
 use App\Http\Controllers\LandingController;
@@ -62,6 +63,8 @@ Route::middleware('auth')->group(function () {
             Route::patch('/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('reschedule');
             Route::delete('/{id}', [AppointmentController::class, 'destroy'])->name('destroy');
         });
+
+        Route::get('/experts', [ExpertController::class, 'index'])->name('dashboard.experts.index');
 
         Route::get('/clients', [ClientController::class, 'index'])->name('dashboard.clients.index');
 
