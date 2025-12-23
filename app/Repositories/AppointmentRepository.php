@@ -28,6 +28,149 @@ class AppointmentRepository
     }
 
     /**
+     * Get paginated appointments for admin with filters and stats
+     *
+     * @param array $filters
+     * @param int $perPage
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function getPaginatedAppointmentsForAdmin(array $filters = [], int $perPage = 15)
+    {
+        $query = Appointment::query()
+            ->with([
+                'user:id,name,email',
+                'user.client:id,user_id,company_name',
+                'expert:id,user_id',
+                'expert.user:id,name,email'
+            ])
+            ->select([
+                'id',
+                'user_id',
+                'expert_id',
+                'skill_id',
+                'date_time',
+                'status',
+                'payment_status',
+                'price',
+                'hours',
+                'created_at',
+                'updated_at'
+            ]);
+
+        // Search filter - search by client name, expert name, or company
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                })
+                ->orWhereHas('expert.user', function ($expertQuery) use ($search) {
+                    $expertQuery->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('user.client', function ($clientQuery) use ($search) {
+                    $clientQuery->where('company_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Status filter
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Order by created_at desc
+        $query->orderBy('date_time', 'desc');
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Get stats for appointments
+     *
+     * @return array
+     */
+    public function getStats(): array
+    {
+        return [
+            'total' => Appointment::count(),
+            'completed' => Appointment::where('status', 'completed')->count(),
+            'scheduled' => Appointment::where('status', 'scheduled')->count(),
+            'cancelled' => Appointment::where('status', 'cancelled')->count(),
+            'pending' => Appointment::where('status', 'pending')->count(),
+        ];
+    }
+
+    /**
+     * Get appointments for a specific date range (for calendar view)
+     * Returns all appointments without pagination
+     *
+     * @param string|Carbon $startDate
+     * @param string|Carbon $endDate
+     * @param array $filters
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAppointmentsForDateRange($startDate, $endDate, array $filters = [])
+    {
+        $query = Appointment::query()
+            ->with([
+                'user:id,name,email',
+                'user.client:id,user_id,company_name',
+                'expert:id,user_id',
+                'expert.user:id,name,email'
+            ])
+            ->select([
+                'id',
+                'user_id',
+                'expert_id',
+                'skill_id',
+                'date_time',
+                'status',
+                'payment_status',
+                'price',
+                'hours',
+                'created_at',
+                'updated_at'
+            ])
+            ->whereBetween('date_time', [
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->endOfDay()
+            ]);
+
+        // Apply search filter
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                })
+                ->orWhereHas('expert.user', function ($expertQuery) use ($search) {
+                    $expertQuery->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('user.client', function ($clientQuery) use ($search) {
+                    $clientQuery->where('company_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Apply status filter
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Apply expert filter
+        if (!empty($filters['expert'])) {
+            $query->where('expert_id', $filters['expert']);
+        }
+
+        // Order by date_time ascending for calendar display
+        $query->orderBy('date_time', 'asc');
+
+        return $query->get();
+    }
+
+    /**
      * Query khusus untuk Expert.
      * Hanya mengambil data dimana expert_id sesuai dengan yang login.
      */

@@ -28,49 +28,94 @@ class AppointmentController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $roles = $user->roles ?? []; // Asumsi array role
+        $roles = $user->roles ?? [];
 
         // --- A. JIKA ADMINISTRATOR ---
         if (in_array('administrator', $roles)) {
-            // Panggil service Admin (Query Global)
-            $appointments = $this->service->getAllForAdmin();
+            try {
+                $filters = $request->only(['search', 'status', 'expert', 'view_mode', 'start_date', 'end_date']);
+                
+                // Check if calendar view mode
+                if (isset($filters['view_mode']) && $filters['view_mode'] === 'calendar') {
+                    // Calendar view: no pagination, get all appointments for date range
+                    $appointments = $this->service->getAppointmentsForCalendar($filters);
+                    
+                    // Transform without pagination wrapper
+                    $transformedAppointments = $appointments->map(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'client_name' => $appointment->user->name ?? 'Unknown',
+                            'company_name' => $appointment->user->client->company_name ?? null,
+                            'expert_name' => $appointment->expert->user->name ?? 'Unknown',
+                            'date_time' => $appointment->date_time,
+                            'status' => $appointment->status,
+                            'payment_status' => $appointment->payment_status,
+                            'price' => $appointment->price,
+                            'hours' => $appointment->hours,
+                        ];
+                    })->values(); // Reset array keys
+                } else {
+                    // List view: paginated as before
+                    $appointments = $this->service->getPaginatedAppointments($filters);
+                    
+                    // Transform with pagination
+                    $transformedAppointments = $appointments->through(function ($appointment) {
+                        return [
+                            'id' => $appointment->id,
+                            'client_name' => $appointment->user->name ?? 'Unknown',
+                            'company_name' => $appointment->user->client->company_name ?? null,
+                            'expert_name' => $appointment->expert->user->name ?? 'Unknown',
+                            'date_time' => $appointment->date_time,
+                            'status' => $appointment->status,
+                            'payment_status' => $appointment->payment_status,
+                            'price' => $appointment->price,
+                            'hours' => $appointment->hours,
+                        ];
+                    });
+                }
+                
+                // Get stats
+                $stats = $this->service->getAppointmentStats();
+                
+                return Inertia::render('Administrator/Appointments/Index', [
+                    'appointments' => $transformedAppointments,
+                    'stats' => $stats,
+                    'filters' => $filters
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Failed to load appointments: ' . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString()
+                ]);
 
-            return Inertia::render('Administrator/Appointments/Index', [
-                'appointments' => $appointments
-            ]);
+                return redirect()->route('dashboard.index')
+                    ->withErrors(['error' => 'Failed to load appointments.']);
+            }
         }
 
         // --- B. JIKA EXPERT ---
         if (in_array('expert', $roles)) {
-            // Ambil ID Expert dari relasi User
             $expert = $user->expert;
 
             if (!$expert) {
-                return redirect()->route('dashboard')->with('error', 'Profile expert belum aktif.');
+                return redirect()->route('dashboard.index')->with('error', 'Profile expert belum aktif.');
             }
 
-            // Panggil service Expert (Query Terbatas)
             $appointments = $this->service->getAllForExpert($expert->id);
 
-            // Render ke View KHUSUS Expert (Kita harus buat file ini)
             return Inertia::render('Expert/Appointments/Index', [
                 'appointments' => $appointments
             ]);
         }
 
         // --- C. JIKA CLIENT/USER BIASA ---
-        // (Nanti implementasi getAllForUser di repo & service)
         $appointments = $this->service->getAllForUser($user->id);
 
         return Inertia::render('User/Appointments/Index', [
             'appointments' => $appointments
         ]);
-
-
-        abort(403, 'Unauthorized access.');
     }
 
     public function show($id)

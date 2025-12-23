@@ -92,7 +92,7 @@ Route::middleware('auth')->group(function () {
         });
 
         
-        Route::get('/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar.index');
+        // Route::get('/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar.index');
 
         Route::get('/transactions', [TransactionController::class, 'index'])->name('dashboard.transactions.index');
 

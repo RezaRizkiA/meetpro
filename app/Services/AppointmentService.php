@@ -31,6 +31,35 @@ class AppointmentService
         return $this->repo->getAllForAdmin($perPage);
     }
 
+    public function getPaginatedAppointments(array $filters = [], int $perPage = 15)
+    {
+        return $this->repo->getPaginatedAppointmentsForAdmin($filters, $perPage);
+    }
+
+    public function getAppointmentStats(): array
+    {
+        return $this->repo->getStats();
+    }
+
+    /**
+     * Get appointments for calendar view without pagination
+     *
+     * @param array $filters
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAppointmentsForCalendar(array $filters = [])
+    {
+        // Use provided date range or default to current month
+        $startDate = $filters['start_date'] ?? Carbon::now()->startOfMonth();
+        $endDate = $filters['end_date'] ?? Carbon::now()->endOfMonth();
+        
+        return $this->repo->getAppointmentsForDateRange(
+            $startDate,
+            $endDate,
+            $filters
+        );
+    }
+
     public function getAllForExpert($expertId, $perPage = 10)
     {
         return $this->repo->getAllForExpert($expertId, $perPage);

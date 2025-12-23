@@ -76,12 +76,6 @@ const menuSections = [
                 show: true,
             },
             {
-                label: "Google Schedule",
-                route: "dashboard.calendar.index",
-                icon: Calendar,
-                show: true,
-            },
-            {
                 label: "Skills & Expertise",
                 route: "dashboard.expertises.index",
                 icon: Layers,
