@@ -107,7 +107,7 @@ const faqItems = [
     <Head title="Support - How Can We Help?" />
 
     <MainLayout>
-        <div>
+        <div class="bg-page-gradient text-foreground">
             <!-- Hero Section -->
             <HeroSection
                 title="How Can We Help?"
@@ -116,7 +116,7 @@ const faqItems = [
             />
 
             <!-- Help Categories Section -->
-            <section class="relative py-24 px-6 bg-slate-900">
+            <section class="relative py-24 px-6">
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <h2
@@ -183,7 +183,7 @@ const faqItems = [
             </section>
 
             <!-- FAQ Section -->
-            <section class="relative py-24 px-6 bg-slate-950">
+            <section class="relative py-24 px-6">
                 <div
                     class="absolute inset-0 bg-glow-gradient opacity-20 -z-10"
                 ></div>

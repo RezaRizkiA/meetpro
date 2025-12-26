@@ -100,7 +100,7 @@ const benefits = [
     <Head title="About Us - Connecting You With Expert Guidance" />
 
     <MainLayout>
-        <div class="bg-slate-900 text-white">
+        <div class="bg-page-gradient text-foreground">
             <!-- Hero Section -->
             <HeroSection
                 badge="TRUSTED BY LEADING EXPERTS"
@@ -110,7 +110,7 @@ const benefits = [
             />
 
             <!-- Our Expertise Section -->
-            <section class="relative py-24 px-6 bg-slate-900">
+            <section class="relative py-24 px-6">
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <p
@@ -158,7 +158,7 @@ const benefits = [
             </section>
 
             <!-- How It Works Section -->
-            <section class="relative py-24 px-6 bg-slate-950">
+            <section class="relative py-24 px-6">
                 <div
                     class="absolute inset-0 bg-glow-gradient opacity-30 -z-10"
                 ></div>
@@ -215,7 +215,7 @@ const benefits = [
             </section>
 
             <!-- The keyPerson Advantage Section -->
-            <section class="relative py-24 px-6 bg-slate-900">
+            <section class="relative py-24 px-6">
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <p

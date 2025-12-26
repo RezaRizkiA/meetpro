@@ -15,6 +15,12 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        // OAuth tokens - SANGAT SENSITIF, jangan pernah ekspos ke frontend
+        'google_id',
+        'google_access_token',
+        'google_refresh_token',
+        'google_token_expires_at',
+        'google_scopes',
     ];
 
     protected $casts = [
@@ -32,8 +38,9 @@ class User extends Authenticatable
             return asset('assets/images/profile/user-3.jpg');
         }
 
-        // Storage::url() otomatis mendeteksi apakah pakai S3 atau Local
-        // dan menghasilkan URL lengkap (https://...)
+        if (str_starts_with($this->picture, 'http')) {
+        return $this->picture;
+    }
         return Storage::url($this->picture);
     }
 

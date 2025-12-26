@@ -38,6 +38,9 @@ Route::prefix('portal')->group(function () {
 Route::get('/experts/{expert}', [ClientPortalController::class, 'show'])
         ->name('experts.show');
 
+// Choose Path Page
+Route::get('/choose-path', [AuthController::class, 'choosePath'])->name('choose_path');
+
 Route::get('login', [AuthController::class, 'loginView'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'login_post'])->name('login_post')->middleware('guest');
 

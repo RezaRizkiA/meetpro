@@ -11,16 +11,90 @@
     --font-sans: "Inter", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     --font-display: "Plus Jakarta Sans", "Inter", sans-serif;
 
-    /* Dark Glow Theme Colors */
+    /* ===========================================
+       SEMANTIC COLOR TOKENS
+       Akan berubah otomatis berdasarkan .dark class
+       =========================================== */
+
+    /* Base Colors */
+    --color-background: var(--tw-color-background, #f8fafc);
+    --color-foreground: var(--tw-color-foreground, #0f172a);
+
+    /* Surface Colors (cards, panels, elevated content) */
+    --color-surface: var(--tw-color-surface, #ffffff);
+    --color-surface-hover: var(--tw-color-surface-hover, #f1f5f9);
+    --color-surface-elevated: var(--tw-color-surface-elevated, #ffffff);
+
+    /* Text Colors */
+    --color-muted: var(--tw-color-muted, #64748b);
+    --color-muted-foreground: var(--tw-color-muted-foreground, #94a3b8);
+
+    /* Border Colors */
+    --color-border: var(--tw-color-border, #e2e8f0);
+    --color-border-hover: var(--tw-color-border-hover, #cbd5e1);
+
+    /* Navbar specific */
+    --color-navbar-bg: var(--tw-color-navbar-bg, rgba(255, 255, 255, 0.8));
+    --color-navbar-text: var(--tw-color-navbar-text, #334155);
+    --color-navbar-text-hover: var(--tw-color-navbar-text-hover, #3b82f6);
+
+    /* Card Colors */
+    --color-card-bg: var(--tw-color-card-bg, #ffffff);
+    --color-card-border: var(--tw-color-card-border, #e2e8f0);
+
+    /* Input Colors */
+    --color-input-bg: var(--tw-color-input-bg, #f8fafc);
+    --color-input-border: var(--tw-color-input-border, #e2e8f0);
+    --color-input-text: var(--tw-color-input-text, #0f172a);
+
+    /* Legacy - backward compatibility */
     --color-dark-bg: #0f172a;
     --color-dark-surface: #1e293b;
     --color-dark-border: #334155;
 
-    /* Blue Glow Palette */
+    /* Blue Glow Palette (unchanged - works for both modes) */
     --color-glow-blue: #3b82f6;
     --color-glow-blue-light: #60a5fa;
     --color-glow-blue-dark: #2563eb;
     --color-glow-cyan: #06b6d4;
+}
+
+/* ===========================================
+   DARK MODE OVERRIDES
+   Premium dark blue glassmorphism theme
+   =========================================== */
+:root.dark,
+.dark {
+    /* Base Colors */
+    --tw-color-background: #0f172a;
+    --tw-color-foreground: #f8fafc;
+
+    /* Surface Colors */
+    --tw-color-surface: #1e293b;
+    --tw-color-surface-hover: #334155;
+    --tw-color-surface-elevated: #1e293b;
+
+    /* Text Colors */
+    --tw-color-muted: #94a3b8;
+    --tw-color-muted-foreground: #64748b;
+
+    /* Border Colors */
+    --tw-color-border: #334155;
+    --tw-color-border-hover: #475569;
+
+    /* Navbar specific */
+    --tw-color-navbar-bg: rgba(15, 23, 42, 0.8);
+    --tw-color-navbar-text: #e2e8f0;
+    --tw-color-navbar-text-hover: #60a5fa;
+
+    /* Card Colors */
+    --tw-color-card-bg: rgba(30, 41, 59, 0.5);
+    --tw-color-card-border: rgba(51, 65, 85, 0.5);
+
+    /* Input Colors */
+    --tw-color-input-bg: rgba(30, 41, 59, 0.5);
+    --tw-color-input-border: rgba(51, 65, 85, 0.5);
+    --tw-color-input-text: #f8fafc;
 }
 
 /* 4. Base Styles */
@@ -65,25 +139,34 @@
     }
 
     .btn-secondary-glow {
-        @apply px-8 py-4 bg-slate-800 text-white border-2 border-slate-600 
+        @apply flex items-center justify-center gap-2 px-8 py-4 bg-slate-800 text-white border-2 border-slate-600 
                rounded-xl font-bold text-lg hover:bg-slate-700 
                hover:border-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)] 
                transition-all;
     }
 
-    /* Card Components (Dark Theme) */
+    /* Card Components (Theme Responsive) */
     .card-dark {
-        @apply bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 
-               rounded-3xl p-8 hover:bg-slate-800/80 hover:border-blue-500/50 
+        @apply bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm 
+               border border-slate-200 dark:border-slate-700/50 
+               rounded-3xl p-8 
+               hover:bg-white dark:hover:bg-slate-800/80 
+               hover:border-blue-500/50 
                hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] 
                transition-all duration-300;
     }
 
     .card-feature-dark {
-        @apply bg-slate-800/60 p-8 rounded-3xl shadow-lg border border-slate-700/60 
+        @apply bg-white/80 dark:bg-slate-800/60 p-8 rounded-3xl shadow-lg 
+               border border-slate-200 dark:border-slate-700/60 
                hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] 
                hover:border-blue-500/40 hover:-translate-y-1 
                transition-all duration-300 backdrop-blur-sm;
+    }
+
+    /* Mock UI Card for demos - always dark for contrast */
+    .card-mock-ui {
+        @apply bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-6;
     }
 
     /* Badge Component */
@@ -124,6 +207,75 @@
 }
 
 /* 6. Utilities (Custom Scrollbar & Glow Effects) */
+
+/* Global Auto-Hide Scrollbar for Dark Theme */
+
+/* Reserve space for scrollbar to prevent layout shift */
+html.dark,
+:root.dark {
+    scrollbar-gutter: stable;
+}
+
+:root.dark,
+.dark {
+    /* Firefox - auto-hide with transparent colors */
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+:root.dark:hover,
+.dark:hover {
+    scrollbar-color: rgba(51, 65, 85, 0.6) transparent;
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) - Global Auto-Hide */
+:root.dark::-webkit-scrollbar,
+.dark ::-webkit-scrollbar,
+.dark::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+:root.dark::-webkit-scrollbar-track,
+.dark ::-webkit-scrollbar-track,
+.dark::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+:root.dark::-webkit-scrollbar-thumb,
+.dark ::-webkit-scrollbar-thumb,
+.dark::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+/* Show scrollbar on hover */
+:root.dark:hover::-webkit-scrollbar-thumb,
+.dark:hover ::-webkit-scrollbar-thumb,
+.dark:hover::-webkit-scrollbar-thumb {
+    background: rgba(51, 65, 85, 0.6);
+}
+
+:root.dark::-webkit-scrollbar-thumb:hover,
+.dark ::-webkit-scrollbar-thumb:hover,
+.dark::-webkit-scrollbar-thumb:hover {
+    background: rgba(71, 85, 105, 0.8);
+}
+
+/* Show scrollbar track on hover */
+:root.dark:hover::-webkit-scrollbar-track,
+.dark:hover ::-webkit-scrollbar-track,
+.dark:hover::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.3);
+}
+
+:root.dark::-webkit-scrollbar-corner,
+.dark ::-webkit-scrollbar-corner,
+.dark::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 @layer utilities {
     /* Scrollbar */
     .custom-scrollbar::-webkit-scrollbar {
@@ -137,6 +289,37 @@
         border-radius: 4px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+    }
+
+    /* Auto-hide scrollbar - only visible when scrolling */
+    .scrollbar-auto-hide {
+        scrollbar-width: thin;
+        scrollbar-color: transparent transparent;
+        transition: scrollbar-color 0.3s ease;
+    }
+    .scrollbar-auto-hide:hover,
+    .scrollbar-auto-hide:active,
+    .scrollbar-auto-hide.is-scrolling {
+        scrollbar-color: #475569 transparent;
+    }
+    .scrollbar-auto-hide::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scrollbar-auto-hide::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .scrollbar-auto-hide::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+    }
+    .scrollbar-auto-hide:hover::-webkit-scrollbar-thumb,
+    .scrollbar-auto-hide:active::-webkit-scrollbar-thumb,
+    .scrollbar-auto-hide.is-scrolling::-webkit-scrollbar-thumb {
+        background: #475569;
+    }
+    .scrollbar-auto-hide::-webkit-scrollbar-thumb:hover {
         background: #64748b;
     }
 
@@ -173,6 +356,76 @@
                 rgba(6, 182, 212, 0.15) 0%,
                 transparent 50%
             );
+    }
+
+    /* Dark Blue Gradient Background - for Choose Path page */
+    .bg-dark-gradient {
+        background: linear-gradient(
+            135deg,
+            #0a1628 0%,
+            #0f2744 30%,
+            #1a365d 50%,
+            #0f2744 70%,
+            #0a1628 100%
+        );
+    }
+
+    .bg-dark-gradient-radial {
+        background: radial-gradient(
+                ellipse at top center,
+                rgba(30, 58, 95, 0.8) 0%,
+                transparent 50%
+            ),
+            radial-gradient(
+                ellipse at bottom left,
+                rgba(15, 39, 68, 0.6) 0%,
+                transparent 40%
+            ),
+            linear-gradient(180deg, #0a1628 0%, #0f172a 100%);
+    }
+
+    /* Light Mode Gradient Background */
+    .bg-light-gradient-radial {
+        background: radial-gradient(
+                ellipse at top center,
+                rgba(59, 130, 246, 0.08) 0%,
+                transparent 60%
+            ),
+            radial-gradient(
+                ellipse at bottom right,
+                rgba(6, 182, 212, 0.06) 0%,
+                transparent 50%
+            ),
+            linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    /* Responsive Page Gradient - changes based on theme */
+    .bg-page-gradient {
+        background: radial-gradient(
+                ellipse at top center,
+                rgba(59, 130, 246, 0.08) 0%,
+                transparent 60%
+            ),
+            radial-gradient(
+                ellipse at bottom right,
+                rgba(6, 182, 212, 0.06) 0%,
+                transparent 50%
+            ),
+            linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .dark .bg-page-gradient {
+        background: radial-gradient(
+                ellipse at top center,
+                rgba(30, 58, 95, 0.8) 0%,
+                transparent 50%
+            ),
+            radial-gradient(
+                ellipse at bottom left,
+                rgba(15, 39, 68, 0.6) 0%,
+                transparent 40%
+            ),
+            linear-gradient(180deg, #0a1628 0%, #0f172a 100%);
     }
 }
 
@@ -217,4 +470,19 @@
 
 .animate-pulse-glow {
     animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Skeleton Loading Animation */
+@keyframes skeleton-pulse {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.skeleton-pulse {
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
 }

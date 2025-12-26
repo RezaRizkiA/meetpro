@@ -12,7 +12,10 @@ class LandingController extends Controller
         return Inertia::render('Home', [
             // 1. HERO: The Big Promise
             'hero' => [
-                'title' => 'Find the Right Person, Set the Right Time',
+                'title' => [
+                    'Find the Right Person',
+                    'Set the Right Time',
+                ],
                 'subtitle' => 'Integrated platform connecting Companies and Individuals with a curated network of Experts. From counseling to executive mentoring, everything is automatically scheduled in your Google Calendar.',
                 'image' => asset('image/dashboard-timeline.png'),
             ],

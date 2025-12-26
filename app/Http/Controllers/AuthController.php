@@ -25,6 +25,11 @@ class AuthController extends Controller
         ]);
     }
 
+    public function choosePath()
+    {
+        return Inertia::render('Auth/ChoosePath');
+    }
+
     public function login_post(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -87,7 +87,7 @@ const faqItems = [
     <Head title="Contact Us - Get in Touch" />
 
     <MainLayout>
-        <div>
+        <div class="bg-page-gradient text-foreground">
             <!-- Hero Section -->
             <HeroSection
                 title="Get in Touch"
@@ -96,7 +96,7 @@ const faqItems = [
             />
 
             <!-- Main Contact Section -->
-            <section class="relative py-24 px-6 bg-slate-900">
+            <section class="relative py-24 px-6">
                 <div class="max-w-7xl mx-auto">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
                         <!-- Left Sidebar: Contact Methods + CTA -->
@@ -288,7 +288,7 @@ const faqItems = [
             </section>
 
             <!-- FAQ Section -->
-            <section class="relative py-24 px-6 bg-slate-950">
+            <section class="relative py-24 px-6">
                 <div class="max-w-4xl mx-auto">
                     <div class="text-center mb-12">
                         <p

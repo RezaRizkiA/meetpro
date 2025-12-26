@@ -7,24 +7,30 @@ import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "ziggy-js";
 import VCalendar from "v-calendar";
 import "v-calendar/dist/style.css";
+import PageTransition from "./Components/PageTransition.vue";
 
 createInertiaApp({
-  title: title => `${title} - KeyPerson`,
-  // Ini memberitahu Vue untuk mencari komponen halaman di folder Pages
-  resolve: name =>
-    resolvePageComponent(
-      `./Pages/${name}.vue`,
-      import.meta.glob("./Pages/**/*.vue")
-    ),
-  setup({ el, App, props, plugin }) {
-    return createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .use(ZiggyVue)
-      .use(VCalendar, {})
-      .mount(el);
-  },
-  progress: {
-    color: "#7c3aed", // Warna Violet untuk loading bar
-    showSpinner: true,
-  },
+    title: (title) => `${title} - KeyPerson`,
+    resolve: async (name) => {
+        const page = await resolvePageComponent(
+            `./Pages/${name}.vue`,
+            import.meta.glob("./Pages/**/*.vue")
+        );
+        // Apply PageTransition as default layout if no layout is set
+        if (!page.default.layout) {
+            page.default.layout = PageTransition;
+        }
+        return page;
+    },
+    setup({ el, App, props, plugin }) {
+        return createApp({ render: () => h(App, props) })
+            .use(plugin)
+            .use(ZiggyVue)
+            .use(VCalendar, {})
+            .mount(el);
+    },
+    progress: {
+        color: "#3b82f6", // Blue untuk konsistensi dengan design
+        showSpinner: false, // Kita pakai skeleton sendiri
+    },
 });

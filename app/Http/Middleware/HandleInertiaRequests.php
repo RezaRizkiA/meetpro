@@ -38,7 +38,14 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             // 1. Data User Login
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                'id' => $request->user()->id,
+                'name' => $request->user()->name,
+                'email' => $request->user()->email,
+                'roles' => $request->user()->roles,
+                'picture_url' => $request->user()->picture,
+                // Token Google JANGAN dimasukkan disini
+            ] : null,
             ],
 
             // 2. Data Asset Global (Logo)
@@ -49,7 +56,6 @@ class HandleInertiaRequests extends Middleware
                 'googleIconUrl' => asset('assets/images/svgs/google-icon.svg'),
                 'bannerUrl' => asset('image/banner-detail-expert.jpg'),
                 'userPlaceholderUrl' => asset('assets/images/profile/user-1.jpg'),
-                'userPlaceholderUrl' => asset('assets/images/profile/user-3.jpg'),
                 'bannerPlaceholderUrl' => asset('assets/images/backgrounds/login-bg.jpg'),
                 'clientLogoPlaceholderUrl' => asset('assets/images/logos/white-key.png'),
                 'blogPlaceholderUrl' => asset('assets/images/frontend-pages/blog-1.jpg'),

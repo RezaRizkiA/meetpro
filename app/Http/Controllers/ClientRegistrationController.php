@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreClientRequest;
 use App\Models\Skill;
+use App\Models\Category;
 use App\Services\ClientOnboardingService;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -64,8 +65,13 @@ class ClientRegistrationController extends Controller
                 'Transportation & Logistics',
                 'Other',
             ],
-            'skill' => Skill::select('id', 'name')->orderBy('name')->get()
         ];
+
+        // Get categories with subcategories and skills (hierarchical)
+        $categories = Category::with(['subCategories.skills'])
+            ->orderBy('name')
+            ->get()
+            ->toArray();
 
         // 3. Render View dengan Inertia
         return Inertia::render('Client/Onboarding/Create', [
@@ -74,7 +80,8 @@ class ClientRegistrationController extends Controller
                 'name'  => $user->name,
                 'email' => $user->email,
             ],
-            'options' => $formOptions
+            'options' => $formOptions,
+            'categories' => $categories,
         ]);
     }
 

@@ -47,7 +47,7 @@ const otherApps = [
 </script>
 
 <template>
-    <footer class="bg-slate-900 text-slate-300 mt-auto relative font-sans">
+    <footer class="bg-background text-muted mt-auto relative font-sans">
         <div
             class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-600 via-cyan-500 to-blue-400"
         ></div>
@@ -57,14 +57,22 @@ const otherApps = [
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12"
             >
                 <div class="lg:col-span-1">
-                    <Link :href="routes.home" class="inline-block mb-6">
+                    <Link
+                        :href="routes.home"
+                        class="inline-flex items-center gap-2 mb-6 group"
+                    >
                         <img
-                            :src="assets.logoWhiteUrl || assets.logoUrl"
-                            class="h-10 w-auto brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+                            :src="assets.logoSmallUrl"
+                            class="h-10 w-auto opacity-90 group-hover:opacity-100 transition-opacity"
                             alt="KeyPerson Logo"
                         />
+                        <span
+                            class="font-display font-bold text-xl tracking-tight text-foreground"
+                        >
+                            Key<span class="text-blue-400">Person</span>
+                        </span>
                     </Link>
-                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                    <p class="text-muted text-sm leading-relaxed mb-6">
                         Professional platform connecting you with verified
                         experts for mentorship, coaching, and personal growth.
                     </p>
@@ -75,7 +83,7 @@ const otherApps = [
                             :key="social.name"
                             :href="social.url"
                             target="_blank"
-                            class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]"
+                            class="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-muted hover:bg-blue-600 hover:text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]"
                         >
                             <svg
                                 class="w-5 h-5"
@@ -94,7 +102,7 @@ const otherApps = [
 
                 <div>
                     <h3
-                        class="text-white font-bold text-lg mb-6 flex items-center gap-2"
+                        class="text-foreground font-bold text-lg mb-6 flex items-center gap-2"
                     >
                         <span class="w-8 h-0.5 bg-blue-500 rounded-full"></span>
                         Explore
@@ -103,7 +111,7 @@ const otherApps = [
                         <li>
                             <Link
                                 :href="routes.home"
-                                class="text-slate-400 hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
+                                class="text-muted hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
                             >
                                 Home</Link
                             >
@@ -111,7 +119,7 @@ const otherApps = [
                         <li>
                             <Link
                                 :href="routes.about"
-                                class="text-slate-400 hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
+                                class="text-muted hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
                             >
                                 About Us</Link
                             >
@@ -119,7 +127,7 @@ const otherApps = [
                         <li>
                             <Link
                                 :href="routes.support"
-                                class="text-slate-400 hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
+                                class="text-muted hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
                             >
                                 Help Center</Link
                             >
@@ -127,7 +135,7 @@ const otherApps = [
                         <li>
                             <Link
                                 :href="routes.pricing"
-                                class="text-slate-400 hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
+                                class="text-muted hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
                             >
                                 Pricing</Link
                             >
@@ -135,7 +143,7 @@ const otherApps = [
                         <li>
                             <Link
                                 :href="routes.services"
-                                class="text-slate-400 hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
+                                class="text-muted hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
                             >
                                 Services</Link
                             >
@@ -143,7 +151,7 @@ const otherApps = [
                         <li>
                             <Link
                                 :href="routes.contact"
-                                class="text-slate-400 hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
+                                class="text-muted hover:text-blue-400 hover:pl-2 transition-all duration-300 inline-block"
                             >
                                 Contact</Link
                             >
@@ -153,7 +161,7 @@ const otherApps = [
 
                 <div>
                     <h3
-                        class="text-white font-bold text-lg mb-6 flex items-center gap-2"
+                        class="text-foreground font-bold text-lg mb-6 flex items-center gap-2"
                     >
                         <span class="w-8 h-0.5 bg-cyan-500 rounded-full"></span>
                         Legal
@@ -162,14 +170,14 @@ const otherApps = [
                         <li>
                             <Link
                                 :href="routes.terms"
-                                class="text-slate-400 hover:text-white hover:underline transition-all"
+                                class="text-muted hover:text-foreground hover:underline transition-all"
                                 >Terms of Service
                             </Link>
                         </li>
                         <li>
                             <Link
                                 :href="routes.privacy"
-                                class="text-slate-400 hover:text-white hover:underline transition-all"
+                                class="text-muted hover:text-foreground hover:underline transition-all"
                                 >Privacy Policy
                             </Link>
                         </li>
@@ -178,7 +186,7 @@ const otherApps = [
 
                 <div>
                     <h3
-                        class="text-white font-bold text-lg mb-6 flex items-center gap-2"
+                        class="text-foreground font-bold text-lg mb-6 flex items-center gap-2"
                     >
                         <span class="w-8 h-0.5 bg-blue-400 rounded-full"></span>
                         Our Ecosystem
@@ -188,10 +196,10 @@ const otherApps = [
                             <a
                                 :href="app.url"
                                 target="_blank"
-                                class="group flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
+                                class="group flex items-center gap-2 text-muted hover:text-foreground transition-colors"
                             >
                                 <span
-                                    class="w-1.5 h-1.5 rounded-full bg-slate-600 group-hover:bg-blue-500 transition-colors"
+                                    class="w-1.5 h-1.5 rounded-full bg-muted-foreground group-hover:bg-blue-500 transition-colors"
                                 ></span>
                                 {{ app.name }}
                                 <svg
@@ -214,7 +222,7 @@ const otherApps = [
             </div>
 
             <div
-                class="border-t border-slate-800/50 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+                class="border-t border-border mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
             >
                 <div class="flex items-center gap-3">
                     <img
@@ -222,14 +230,16 @@ const otherApps = [
                         class="w-8 opacity-50 grayscale"
                         alt="logo small"
                     />
-                    <p class="text-slate-500 text-sm">
+                    <p class="text-muted-foreground text-sm">
                         &copy; {{ currentYear }}
-                        <span class="text-slate-300 font-medium">keyPerson</span
-                        >. All rights reserved.
+                        <span class="text-muted font-medium">keyPerson</span>.
+                        All rights reserved.
                     </p>
                 </div>
 
-                <div class="text-sm text-slate-500 flex items-center gap-1">
+                <div
+                    class="text-sm text-muted-foreground flex items-center gap-1"
+                >
                     <span>Produced by</span>
                     <a
                         href="#"

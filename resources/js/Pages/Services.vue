@@ -128,7 +128,7 @@ const testimonials = [
     <Head title="Services - Professional Guidance for Every Need" />
 
     <MainLayout>
-        <div>
+        <div class="bg-page-gradient text-foreground">
             <!-- Hero Section -->
             <HeroSection
                 badge="OUR SERVICES"
@@ -138,7 +138,7 @@ const testimonials = [
             />
 
             <!-- Services Grid Section -->
-            <section class="relative py-24 px-6 bg-slate-900">
+            <section class="relative py-24 px-6">
                 <div class="max-w-7xl mx-auto">
                     <div
                         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -181,7 +181,7 @@ const testimonials = [
             </section>
 
             <!-- Why Choose Us Section -->
-            <section class="relative py-24 px-6 bg-slate-950">
+            <section class="relative py-24 px-6">
                 <div
                     class="absolute inset-0 bg-glow-gradient opacity-30 -z-10"
                 ></div>
@@ -248,7 +248,7 @@ const testimonials = [
             </section>
 
             <!-- Testimonials Section -->
-            <section class="relative py-24 px-6 bg-slate-900">
+            <section class="relative py-24 px-6">
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <p
