@@ -44,7 +44,7 @@ const loadMore = () => {
             <!-- Back Navigation -->
             <div class="max-w-7xl mx-auto px-6 py-4 mt-5">
                 <Link
-                    :href="route('dashboard')"
+                    :href="route('dashboard.index')"
                     class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
                 >
                     <ChevronLeft class="w-5 h-5" />

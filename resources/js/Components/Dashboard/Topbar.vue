@@ -43,7 +43,7 @@ const pageTitle = computed(() => {
     const routeName = route().current();
     if (routeName === "dashboard.index") return "Dashboard Overview";
     if (routeName === "dashboard.appointments.index") return "Appointments";
-    if (routeName === "dashboard.calendar.index") return "Calendar";
+
     if (routeName === "dashboard.transactions.index") return "Transactions";
     if (routeName === "dashboard.expertises.index")
         return "Expertise Management";

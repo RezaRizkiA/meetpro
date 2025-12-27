@@ -80,7 +80,7 @@ const iconMap = {
                 <!-- Trusted By Section -->
                 <div class="mt-8">
                     <p
-                        class="text-sm font-medium text-slate-500 uppercase tracking-wider mb-6"
+                        class="text-sm font-medium text-slate-700 dark:text-slate-400 uppercase tracking-wider mb-6"
                     >
                         Trusted by leaders from
                     </p>
@@ -88,27 +88,27 @@ const iconMap = {
                         class="flex flex-wrap items-center justify-center gap-8 md:gap-12"
                     >
                         <div
-                            class="text-2xl font-bold text-slate-600 hover:text-slate-400 transition-colors"
+                            class="text-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                         >
                             Google
                         </div>
                         <div
-                            class="text-2xl font-bold text-slate-600 hover:text-slate-400 transition-colors"
+                            class="text-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                         >
                             Microsoft
                         </div>
                         <div
-                            class="text-2xl font-bold text-slate-600 hover:text-slate-400 transition-colors"
+                            class="text-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                         >
                             Tokopedia
                         </div>
                         <div
-                            class="text-2xl font-bold text-slate-600 hover:text-slate-400 transition-colors"
+                            class="text-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                         >
                             Gojek
                         </div>
                         <div
-                            class="text-2xl font-bold text-slate-600 hover:text-slate-400 transition-colors"
+                            class="text-2xl font-bold text-slate-600 dark:text-slate-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
                         >
                             Shopee
                         </div>
@@ -164,15 +164,17 @@ const iconMap = {
                             class="card-mock-ui rotate-1 hover:rotate-0 transition-transform duration-500 glow-blue-soft"
                         >
                             <div class="flex justify-between items-center mb-6">
-                                <div class="font-bold text-lg text-white">
+                                <div
+                                    class="font-bold text-lg text-slate-900 dark:text-white"
+                                >
                                     September 2025
                                 </div>
                                 <div class="flex gap-2">
                                     <div
-                                        class="w-8 h-8 rounded-full bg-slate-700"
+                                        class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700"
                                     ></div>
                                     <div
-                                        class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs border border-blue-500/30"
+                                        class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs border border-blue-500/30"
                                     >
                                         +3
                                     </div>
@@ -194,29 +196,31 @@ const iconMap = {
                                         n === 12
                                             ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
                                             : n > 12 && n < 16
-                                            ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                                            : 'text-slate-400 hover:bg-slate-700',
+                                            ? 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30'
+                                            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700',
                                     ]"
                                 >
                                     {{ n }}
                                 </div>
                             </div>
                             <div
-                                class="absolute -bottom-6 -left-6 bg-slate-700 p-4 rounded-xl shadow-lg border border-blue-500/30 flex items-center gap-3 animate-bounce glow-blue-soft"
+                                class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-700 p-4 rounded-xl shadow-lg border border-slate-200 dark:border-blue-500/30 flex items-center gap-3 animate-bounce glow-blue-soft"
                                 style="animation-duration: 3s"
                             >
                                 <div
-                                    class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 border border-blue-500/40"
+                                    class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-500/40"
                                 >
                                     <Video class="w-5 h-5" />
                                 </div>
                                 <div>
                                     <div
-                                        class="text-xs font-bold text-slate-400"
+                                        class="text-xs font-bold text-slate-500 dark:text-slate-400"
                                     >
                                         Next Meeting
                                     </div>
-                                    <div class="font-bold text-white">
+                                    <div
+                                        class="font-bold text-slate-900 dark:text-white"
+                                    >
                                         10:00 AM
                                     </div>
                                 </div>
@@ -225,18 +229,20 @@ const iconMap = {
 
                         <div
                             v-if="feature.image === 'dashboard_ui'"
-                            class="bg-slate-800 rounded-2xl shadow-xl border border-slate-700 p-6 -rotate-1 hover:rotate-0 transition-transform duration-500 glow-blue-soft"
+                            class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-6 -rotate-1 hover:rotate-0 transition-transform duration-500 glow-blue-soft"
                         >
                             <div class="flex gap-4 mb-6">
                                 <div
                                     class="flex-1 bg-blue-500/10 p-4 rounded-xl border border-blue-500/20"
                                 >
                                     <div
-                                        class="text-xs text-blue-400 font-bold uppercase"
+                                        class="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase"
                                     >
                                         Total Sesi
                                     </div>
-                                    <div class="text-2xl font-bold text-white">
+                                    <div
+                                        class="text-2xl font-bold text-slate-900 dark:text-white"
+                                    >
                                         1,240
                                     </div>
                                 </div>
@@ -244,25 +250,27 @@ const iconMap = {
                                     class="flex-1 bg-cyan-500/10 p-4 rounded-xl border border-cyan-500/20"
                                 >
                                     <div
-                                        class="text-xs text-cyan-400 font-bold uppercase"
+                                        class="text-xs text-cyan-600 dark:text-cyan-400 font-bold uppercase"
                                     >
                                         Kepuasan
                                     </div>
-                                    <div class="text-2xl font-bold text-white">
+                                    <div
+                                        class="text-2xl font-bold text-slate-900 dark:text-white"
+                                    >
                                         4.9/5
                                     </div>
                                 </div>
                             </div>
                             <div class="space-y-3">
                                 <div
-                                    class="h-2 bg-slate-700 rounded-full w-full overflow-hidden"
+                                    class="h-2 bg-slate-200 dark:bg-slate-700 rounded-full w-full overflow-hidden"
                                 >
                                     <div
                                         class="h-full bg-blue-500 w-3/4 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
                                     ></div>
                                 </div>
                                 <div
-                                    class="flex justify-between text-xs text-slate-400"
+                                    class="flex justify-between text-xs text-slate-500 dark:text-slate-400"
                                 >
                                     <span>Budget Utilization</span>
                                     <span>75%</span>
@@ -272,40 +280,41 @@ const iconMap = {
 
                         <div
                             v-if="feature.image === 'meeting_ui'"
-                            class="bg-slate-900 rounded-2xl shadow-2xl p-4 rotate-1 hover:rotate-0 transition-transform duration-500 text-white"
+                            class="bg-slate-100 dark:bg-slate-900 rounded-2xl shadow-2xl p-4 rotate-1 hover:rotate-0 transition-transform duration-500 text-slate-900 dark:text-white"
                         >
                             <div
-                                class="aspect-video bg-slate-800 rounded-xl mb-4 relative overflow-hidden"
+                                class="aspect-video bg-slate-200 dark:bg-slate-800 rounded-xl mb-4 relative overflow-hidden"
                             >
                                 <div
                                     class="absolute inset-0 flex items-center justify-center"
                                 >
                                     <div
-                                        class="w-20 h-20 rounded-full bg-slate-700 flex items-center justify-center"
+                                        class="w-20 h-20 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center"
                                     >
-                                        <span class="font-bold text-2xl"
+                                        <span
+                                            class="font-bold text-2xl text-slate-700 dark:text-white"
                                             >JS</span
                                         >
                                     </div>
                                 </div>
                                 <div
-                                    class="absolute bottom-4 left-4 bg-black/50 px-3 py-1 rounded-lg text-sm backdrop-blur-sm"
+                                    class="absolute bottom-4 left-4 bg-black/50 px-3 py-1 rounded-lg text-sm backdrop-blur-sm text-white"
                                 >
                                     Expert John
                                 </div>
                             </div>
                             <div class="flex gap-4">
                                 <div
-                                    class="flex-1 h-24 bg-slate-800 rounded-xl relative overflow-hidden"
+                                    class="flex-1 h-24 bg-slate-200 dark:bg-slate-800 rounded-xl relative overflow-hidden"
                                 >
                                     <div
-                                        class="absolute bottom-2 left-2 text-xs bg-black/50 px-2 py-0.5 rounded"
+                                        class="absolute bottom-2 left-2 text-xs bg-black/50 px-2 py-0.5 rounded text-white"
                                     >
                                         You
                                     </div>
                                 </div>
                                 <div
-                                    class="flex-1 h-24 bg-slate-800 rounded-xl flex items-center justify-center"
+                                    class="flex-1 h-24 bg-slate-200 dark:bg-slate-800 rounded-xl flex items-center justify-center"
                                 >
                                     <span class="text-slate-500 text-xs"
                                         >+2 Others</span

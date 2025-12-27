@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientPortalController;
 use App\Http\Controllers\ClientRegistrationController;
@@ -95,72 +94,80 @@ Route::middleware('auth')->group(function () {
         });
 
         
-        // Route::get('/calendar', [CalendarController::class, 'index'])->name('dashboard.calendar.index');
 
         Route::get('/transactions', [TransactionController::class, 'index'])->name('dashboard.transactions.index');
 
         Route::prefix('expertises')->name('dashboard.expertises.')->group(function () {
-            Route::get('/', [ExpertiseController::class, 'index'])->name('index');
-            Route::post('/categories', [ExpertiseController::class, 'storeCategory'])->name('categories.store');
-            Route::put('/categories/{id}', [ExpertiseController::class, 'updateCategory'])->name('categories.update');
-            Route::delete('/categories/{id}', [ExpertiseController::class, 'destroyCategory'])->name('categories.destroy');
-            Route::post('/sub-categories', [ExpertiseController::class, 'storeSubCategory'])->name('sub-categories.store');
-            Route::put('/sub-categories/{id}', [ExpertiseController::class, 'updateSubCategory'])->name('sub-categories.update');
-            Route::delete('/sub-categories/{id}', [ExpertiseController::class, 'destroySubCategory'])->name('sub-categories.destroy');
-            Route::post('/skills', [ExpertiseController::class, 'storeSkill'])->name('skills.store');
-            Route::put('/skills/{id}', [ExpertiseController::class, 'updateSkill'])->name('skills.update');
-            Route::delete('/skills/{id}', [ExpertiseController::class, 'destroySkill'])->name('skills.destroy');
+            Route::get('/', [ExpertiseController::class, 'index'])
+                  ->name('index');
+            Route::post('/categories', [ExpertiseController::class, 'storeCategory'])
+                  ->name('categories.store');
+            Route::put('/categories/{id}', [ExpertiseController::class, 'updateCategory'])
+                  ->name('categories.update');
+            Route::delete('/categories/{id}', [ExpertiseController::class, 'destroyCategory'])
+                  ->name('categories.destroy');
+            Route::post('/sub-categories', [ExpertiseController::class, 'storeSubCategory'])
+                  ->name('sub-categories.store');
+            Route::put('/sub-categories/{id}', [ExpertiseController::class, 'updateSubCategory'])
+                  ->name('sub-categories.update');
+            Route::delete('/sub-categories/{id}', [ExpertiseController::class, 'destroySubCategory'])
+                  ->name('sub-categories.destroy');
+            Route::post('/skills', [ExpertiseController::class, 'storeSkill'])
+                  ->name('skills.store');
+            Route::put('/skills/{id}', [ExpertiseController::class, 'updateSkill'])
+                  ->name('skills.update');
+            Route::delete('/skills/{id}', [ExpertiseController::class, 'destroySkill'])
+                  ->name('skills.destroy');
         });
 
-        Route::get('/settings', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::get('/settings', [ProfileController::class, 'edit'])
+              ->name('profile.edit');
     });
 
     Route::get('/booking/{expert}', [AppointmentController::class, 'create'])
-        ->name('booking.create');
+          ->name('booking.create');
     Route::post('/booking', [AppointmentController::class, 'store'])
-        ->name('booking.store');
+          ->name('booking.store');
 
     Route::get('/payment/{appointment}/checkout', [PaymentController::class, 'create'])
-        ->name('payment.create');
+          ->name('payment.create');
     Route::post('/payment/{appointment}/checkout', [PaymentController::class, 'store'])
-        ->name('payment.store');
+          ->name('payment.store');
     Route::get('/payment/transaction/{sid}', [PaymentController::class, 'transaction'])
-        ->name('payment.transaction');
+          ->name('payment.transaction');
     Route::post('/payment/notify', [PaymentController::class, 'notify'])
-        ->name('payment.notify');
+          ->name('payment.notify');
 
     Route::prefix('expert-onboarding')->group(function () {
         // Halaman Form Registrasi
         Route::get('/', [ExpertRegistrationController::class, 'create'])
-            ->name('expert_onboarding.create');
+              ->name('expert_onboarding.create');
 
         // Proses Simpan Data
         Route::post('/', [ExpertRegistrationController::class, 'store'])
-            ->name('expert_onboarding.store');
+              ->name('expert_onboarding.store');
     });
 
     Route::prefix('client-onboarding')->group(function () {
         // 1. Halaman Form Registrasi Client
         Route::get('/', [ClientRegistrationController::class, 'create'])
-            ->name('client_onboarding.create');
+              ->name('client_onboarding.create');
 
         // 2. Proses Simpan Data Client
         Route::post('/', [ClientRegistrationController::class, 'store'])
-            ->name('client_onboarding.store');
+              ->name('client_onboarding.store');
     });
 
-    // ---------------------------------------------------------------------
-    // 2. LEGACY ROUTES (Existing Functionality - Jangan Dihapus)
-    // ---------------------------------------------------------------------
-    // Auth & Profile Legacy
-    // Route::get('register-client', [AuthController::class, 'registerClient'])->name('register_client');
-    // Route::post('register-client', [AuthController::class, 'register_client_post'])->name('register_client_post');
 
     // Route ini bentrok secara konsep dengan 'profile.edit' di atas, tapi URL-nya beda jadi aman.
-    Route::get('update-profile', [AuthController::class, 'settings'])->name('update_profile');
-    Route::post('renew-picture', [AuthController::class, 'renew_picture'])->name('renew_picture');
-    Route::post('renew-password', [AuthController::class, 'renew_password'])->name('renew_password');
-    Route::post('renew-profile', [AuthController::class, 'renew_profile'])->name('renew_profile');
+    Route::get('update-profile', [AuthController::class, 'settings'])
+          ->name('update_profile');
+    Route::post('renew-picture', [AuthController::class, 'renew_picture'])
+          ->name('renew_picture');
+    Route::post('renew-password', [AuthController::class, 'renew_password'])
+          ->name('renew_password');
+    Route::post('renew-profile', [AuthController::class, 'renew_profile'])
+          ->name('renew_profile');
 
     // Route Dashboard LAMA (Controller LAMA)
     // Masih bisa diakses via URL /profile jika ada link lama yang mengarah ke sini

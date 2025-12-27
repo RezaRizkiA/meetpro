@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -13,10 +13,11 @@
     <script>
         (function() {
             const theme = localStorage.getItem('theme');
-            if (theme === 'light') {
-                document.documentElement.classList.remove('dark');
-            } else {
+            // Default to light mode if no preference saved
+            if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
             }
         })();
     </script>

@@ -22,7 +22,7 @@ const currentYear = new Date().getFullYear();
     <Head title="Choose Your Path" />
 
     <div
-        class="min-h-screen bg-dark-gradient-radial text-white font-sans flex flex-col"
+        class="min-h-screen bg-page-gradient text-foreground font-sans flex flex-col"
     >
         <!-- Navbar -->
         <nav class="w-full px-6 py-4 flex items-center justify-between">
@@ -87,7 +87,7 @@ const currentYear = new Date().getFullYear();
                             class="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
                         />
                         <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"
+                            class="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/50 to-transparent"
                         ></div>
 
                         <!-- Icon -->
@@ -134,7 +134,7 @@ const currentYear = new Date().getFullYear();
                             class="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
                         />
                         <div
-                            class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"
+                            class="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/50 to-transparent"
                         ></div>
 
                         <!-- Icon -->

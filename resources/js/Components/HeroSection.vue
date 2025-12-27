@@ -31,28 +31,11 @@ const alignClass = (align) => {
 
 <template>
     <section
-        class="relative pt-32 pb-20 px-6 overflow-hidden"
+        class="relative pt-32 pb-20 px-6 overflow-hidden bg-[#2563EB]/10 dark:bg-[#2563EB]/5"
         :class="alignClass(align)"
     >
-        <!-- Animated Glow Background -->
         <div
-            class="absolute inset-0 bg-glow-gradient-hero opacity-40 -z-10"
-        ></div>
-
-        <!-- Animated Glow Background -->
-        <div
-            class="absolute inset-0 bg-glow-gradient-hero opacity-40 -z-10"
-        ></div>
-        <div
-            class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-500/20 rounded-full blur-[150px] -z-10 animate-pulse-glow"
-        ></div>
-
-        <!-- Additional glow accents -->
-        <div
-            class="absolute top-20 right-0 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[120px] -z-10"
-        ></div>
-        <div
-            class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[120px] -z-10"
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-blue-600/10 dark:bg-blue-600/5 blur-[120px] rounded-full -z-10 pointer-events-none"
         ></div>
 
         <div class="max-w-7xl mx-auto flex flex-col" :class="alignClass(align)">
@@ -63,7 +46,7 @@ const alignClass = (align) => {
 
             <!-- Title -->
             <h1
-                class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1] text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-cyan-400 py-4"
+                class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1] text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 py-4"
             >
                 <template v-if="Array.isArray(title)">
                     <template v-for="(line, index) in title" :key="index">
