@@ -105,7 +105,7 @@ const faqItems = [
                             <div
                                 v-for="(method, index) in contactMethods"
                                 :key="index"
-                                class="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all"
+                                class="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all"
                             >
                                 <!-- Icon -->
                                 <div
@@ -113,25 +113,29 @@ const faqItems = [
                                 >
                                     <MessageCircle
                                         v-if="method.icon === 'message'"
-                                        class="w-6 h-6 text-blue-400"
+                                        class="w-6 h-6 text-blue-600 dark:text-blue-400"
                                     />
                                     <MapPin
                                         v-else-if="method.icon === 'map'"
-                                        class="w-6 h-6 text-blue-400"
+                                        class="w-6 h-6 text-blue-600 dark:text-blue-400"
                                     />
                                     <Phone
                                         v-else
-                                        class="w-6 h-6 text-blue-400"
+                                        class="w-6 h-6 text-blue-600 dark:text-blue-400"
                                     />
                                 </div>
 
                                 <!-- Title -->
-                                <h3 class="text-lg font-bold text-white mb-2">
+                                <h3
+                                    class="text-lg font-bold text-slate-900 dark:text-white mb-2"
+                                >
                                     {{ method.title }}
                                 </h3>
 
                                 <!-- Description -->
-                                <p class="text-sm text-slate-400 mb-4">
+                                <p
+                                    class="text-sm text-slate-600 dark:text-slate-400 mb-4"
+                                >
                                     {{ method.description }}
                                 </p>
 
@@ -139,21 +143,21 @@ const faqItems = [
                                 <div v-if="method.isEmail">
                                     <a
                                         :href="'mailto:' + method.link"
-                                        class="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                                        class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
                                     >
                                         {{ method.linkText }}
                                     </a>
                                 </div>
                                 <div
                                     v-else-if="method.address"
-                                    class="text-sm text-slate-300 whitespace-pre-line"
+                                    class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line"
                                 >
                                     {{ method.address }}
                                 </div>
                                 <div v-else>
                                     <a
                                         :href="method.link"
-                                        class="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                                        class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
                                     >
                                         {{ method.linkText }}
                                     </a>
@@ -167,12 +171,18 @@ const faqItems = [
                                 <div
                                     class="w-12 h-12 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center mb-4"
                                 >
-                                    <Briefcase class="w-6 h-6 text-blue-400" />
+                                    <Briefcase
+                                        class="w-6 h-6 text-blue-600 dark:text-blue-400"
+                                    />
                                 </div>
-                                <h3 class="text-lg font-bold text-white mb-2">
+                                <h3
+                                    class="text-lg font-bold text-slate-900 dark:text-white mb-2"
+                                >
                                     Apply as an Expert?
                                 </h3>
-                                <p class="text-sm text-slate-300 mb-4">
+                                <p
+                                    class="text-sm text-slate-700 dark:text-slate-300 mb-4"
+                                >
                                     Join our curated network of industry leaders
                                     and mentors.
                                 </p>
@@ -195,7 +205,7 @@ const faqItems = [
                                     class="grid grid-cols-1 md:grid-cols-2 gap-6"
                                 >
                                     <div>
-                                        <label class="label-text-dark"
+                                        <label class="label-text"
                                             >First name</label
                                         >
                                         <input
@@ -203,11 +213,11 @@ const faqItems = [
                                             type="text"
                                             placeholder="Jane"
                                             required
-                                            class="input-field-dark"
+                                            class="input-field"
                                         />
                                     </div>
                                     <div>
-                                        <label class="label-text-dark"
+                                        <label class="label-text"
                                             >Last name</label
                                         >
                                         <input
@@ -215,29 +225,29 @@ const faqItems = [
                                             type="text"
                                             placeholder="Doe"
                                             required
-                                            class="input-field-dark"
+                                            class="input-field"
                                         />
                                     </div>
                                 </div>
 
                                 <!-- Email -->
                                 <div>
-                                    <label class="label-text-dark">Email</label>
+                                    <label class="label-text">Email</label>
                                     <input
                                         v-model="form.email"
                                         type="email"
                                         placeholder="jane@company.com"
                                         required
-                                        class="input-field-dark"
+                                        class="input-field"
                                     />
                                 </div>
 
                                 <!-- Topic -->
                                 <div>
-                                    <label class="label-text-dark">Topic</label>
+                                    <label class="label-text">Topic</label>
                                     <select
                                         v-model="form.topic"
-                                        class="input-field-dark"
+                                        class="input-field"
                                     >
                                         <option value="general">
                                             General Inquiry
@@ -259,15 +269,13 @@ const faqItems = [
 
                                 <!-- Message -->
                                 <div>
-                                    <label class="label-text-dark"
-                                        >Message</label
-                                    >
+                                    <label class="label-text">Message</label>
                                     <textarea
                                         v-model="form.message"
                                         rows="6"
                                         placeholder="How can we help you?"
                                         required
-                                        class="input-field-dark resize-none"
+                                        class="input-field resize-none"
                                     ></textarea>
                                 </div>
 
@@ -292,12 +300,12 @@ const faqItems = [
                 <div class="max-w-4xl mx-auto">
                     <div class="text-center mb-12">
                         <p
-                            class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4"
+                            class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4"
                         >
                             SUPPORT
                         </p>
                         <h2
-                            class="text-3xl md:text-4xl font-bold text-white mb-4"
+                            class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4"
                         >
                             Frequently Asked Questions
                         </h2>

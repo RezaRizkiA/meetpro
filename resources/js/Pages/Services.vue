@@ -189,16 +189,18 @@ const testimonials = [
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <p
-                            class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4"
+                            class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4"
                         >
                             WHY CHOOSE US
                         </p>
                         <h2
-                            class="text-3xl md:text-5xl font-bold text-white mb-6"
+                            class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6"
                         >
                             More Than Just Scheduling
                         </h2>
-                        <p class="text-slate-400 leading-relaxed">
+                        <p
+                            class="text-slate-600 dark:text-slate-400 leading-relaxed"
+                        >
                             We built keyPerson because finding the right expert
                             shouldn't be harder than the challenge you're
                             facing.
@@ -220,26 +222,33 @@ const testimonials = [
                             >
                                 <Award
                                     v-if="benefit.icon === 'award'"
-                                    class="w-8 h-8 text-blue-400"
+                                    class="w-8 h-8 text-blue-600 dark:text-blue-400"
                                 />
                                 <Clock
                                     v-else-if="benefit.icon === 'clock'"
-                                    class="w-8 h-8 text-blue-400"
+                                    class="w-8 h-8 text-blue-600 dark:text-blue-400"
                                 />
                                 <Shield
                                     v-else-if="benefit.icon === 'shield'"
-                                    class="w-8 h-8 text-blue-400"
+                                    class="w-8 h-8 text-blue-600 dark:text-blue-400"
                                 />
-                                <Zap v-else class="w-8 h-8 text-blue-400" />
+                                <Zap
+                                    v-else
+                                    class="w-8 h-8 text-blue-600 dark:text-blue-400"
+                                />
                             </div>
 
                             <!-- Title -->
-                            <h3 class="text-lg font-bold text-white mb-3">
+                            <h3
+                                class="text-lg font-bold text-slate-900 dark:text-white mb-3"
+                            >
                                 {{ benefit.title }}
                             </h3>
 
                             <!-- Description -->
-                            <p class="text-sm text-slate-400 leading-relaxed">
+                            <p
+                                class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed"
+                            >
                                 {{ benefit.description }}
                             </p>
                         </div>
@@ -252,12 +261,12 @@ const testimonials = [
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <p
-                            class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-4"
+                            class="text-sm font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider mb-4"
                         >
                             TESTIMONIALS
                         </p>
                         <h2
-                            class="text-3xl md:text-5xl font-bold text-white mb-6"
+                            class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6"
                         >
                             What Our Users Say
                         </h2>
@@ -267,21 +276,21 @@ const testimonials = [
                         <div
                             v-for="(testimonial, index) in testimonials"
                             :key="index"
-                            class="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-3xl p-8 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] transition-all"
+                            class="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700/50 rounded-3xl p-8 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] transition-all"
                         >
                             <!-- Stars -->
                             <div class="flex gap-1 mb-6">
                                 <span
                                     v-for="i in 5"
                                     :key="i"
-                                    class="text-yellow-400"
+                                    class="text-yellow-500 dark:text-yellow-400"
                                     >⭐</span
                                 >
                             </div>
 
                             <!-- Quote -->
                             <p
-                                class="text-slate-300 text-lg leading-relaxed mb-6 italic"
+                                class="text-slate-700 dark:text-slate-300 text-lg leading-relaxed mb-6 italic"
                             >
                                 "{{ testimonial.quote }}"
                             </p>
@@ -294,10 +303,14 @@ const testimonials = [
                                     {{ testimonial.avatar }}
                                 </div>
                                 <div>
-                                    <div class="font-bold text-white">
+                                    <div
+                                        class="font-bold text-slate-900 dark:text-white"
+                                    >
                                         {{ testimonial.author }}
                                     </div>
-                                    <div class="text-sm text-slate-400">
+                                    <div
+                                        class="text-sm text-slate-600 dark:text-slate-400"
+                                    >
                                         {{ testimonial.role }}
                                     </div>
                                 </div>

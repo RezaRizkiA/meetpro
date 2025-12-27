@@ -120,11 +120,11 @@ const faqItems = [
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <h2
-                            class="text-3xl md:text-4xl font-bold text-white mb-4"
+                            class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4"
                         >
                             Browse Help Topics
                         </h2>
-                        <p class="text-slate-400">
+                        <p class="text-slate-600 dark:text-slate-400">
                             Quick access to the most common questions and
                             guides.
                         </p>
@@ -137,7 +137,7 @@ const faqItems = [
                             v-for="(category, index) in helpCategories"
                             :key="index"
                             :href="category.link"
-                            class="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] transition-all group"
+                            class="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)] transition-all group"
                         >
                             <!-- Icon -->
                             <div
@@ -145,36 +145,41 @@ const faqItems = [
                             >
                                 <BookOpen
                                     v-if="category.icon === 'book'"
-                                    class="w-6 h-6 text-blue-400"
+                                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
                                 />
                                 <MessageCircle
                                     v-else-if="category.icon === 'message'"
-                                    class="w-6 h-6 text-blue-400"
+                                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
                                 />
                                 <Video
                                     v-else-if="category.icon === 'video'"
-                                    class="w-6 h-6 text-blue-400"
+                                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
                                 />
                                 <CreditCard
                                     v-else-if="category.icon === 'card'"
-                                    class="w-6 h-6 text-blue-400"
+                                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
                                 />
                                 <Calendar
                                     v-else-if="category.icon === 'calendar'"
-                                    class="w-6 h-6 text-blue-400"
+                                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
                                 />
-                                <Users v-else class="w-6 h-6 text-blue-400" />
+                                <Users
+                                    v-else
+                                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
+                                />
                             </div>
 
                             <!-- Title -->
                             <h3
-                                class="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition-colors"
+                                class="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
                             >
                                 {{ category.title }}
                             </h3>
 
                             <!-- Description -->
-                            <p class="text-sm text-slate-400 leading-relaxed">
+                            <p
+                                class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed"
+                            >
                                 {{ category.description }}
                             </p>
                         </a>
@@ -191,16 +196,16 @@ const faqItems = [
                 <div class="max-w-4xl mx-auto">
                     <div class="text-center mb-12">
                         <p
-                            class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4"
+                            class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4"
                         >
                             SUPPORT
                         </p>
                         <h2
-                            class="text-3xl md:text-4xl font-bold text-white mb-4"
+                            class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4"
                         >
                             Frequently Asked Questions
                         </h2>
-                        <p class="text-slate-400">
+                        <p class="text-slate-600 dark:text-slate-400">
                             Can't find what you're looking for? Contact our
                             support team.
                         </p>

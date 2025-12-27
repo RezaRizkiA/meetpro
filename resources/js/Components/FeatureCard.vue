@@ -48,7 +48,7 @@ const iconColorClass = computed(() => {
 </script>
 
 <template>
-    <div class="card-feature-dark group">
+    <div class="card-feature group">
         <!-- Icon -->
         <div
             class="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 border"
@@ -61,12 +61,14 @@ const iconColorClass = computed(() => {
         </div>
 
         <!-- Title -->
-        <h3 class="text-xl font-bold text-white mb-3">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">
             {{ title }}
         </h3>
 
         <!-- Description -->
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+        <p
+            class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4"
+        >
             {{ description }}
         </p>
 
@@ -75,7 +77,7 @@ const iconColorClass = computed(() => {
             <li
                 v-for="(feature, index) in features"
                 :key="index"
-                class="flex items-center gap-2 text-sm text-slate-300"
+                class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300"
             >
                 <svg
                     class="w-4 h-4"

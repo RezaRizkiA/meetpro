@@ -124,7 +124,7 @@ const trustedCompanies = [
             >
                 <!-- Billing Toggle -->
                 <div
-                    class="inline-flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-full p-1.5 mb-8"
+                    class="inline-flex items-center gap-3 bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-full p-1.5 mb-8"
                 >
                     <button
                         @click="billingPeriod = 'monthly'"
@@ -132,7 +132,7 @@ const trustedCompanies = [
                         :class="
                             billingPeriod === 'monthly'
                                 ? 'bg-blue-600 text-white shadow-lg'
-                                : 'text-slate-400 hover:text-white'
+                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         "
                     >
                         Monthly
@@ -143,12 +143,12 @@ const trustedCompanies = [
                         :class="
                             billingPeriod === 'yearly'
                                 ? 'bg-blue-600 text-white shadow-lg'
-                                : 'text-slate-400 hover:text-white'
+                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                         "
                     >
                         Yearly
                         <span
-                            class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full border border-green-500/30"
+                            class="text-xs bg-green-500/20 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full border border-green-500/30"
                         >
                             Save 20%
                         </span>
@@ -168,8 +168,8 @@ const trustedCompanies = [
                             class="relative rounded-3xl p-8 transition-all duration-300"
                             :class="[
                                 tier.popular
-                                    ? 'bg-slate-800 border-2 border-blue-500 shadow-[0_0_60px_rgba(59,130,246,0.3)] scale-105 md:scale-110'
-                                    : 'bg-slate-800/50 border border-slate-700 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)]',
+                                    ? 'bg-white dark:bg-slate-800 border-2 border-blue-500 shadow-[0_0_60px_rgba(59,130,246,0.3)] scale-105 md:scale-110'
+                                    : 'bg-white/80 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.2)]',
                             ]"
                         >
                             <!-- Popular Badge -->
@@ -185,24 +185,31 @@ const trustedCompanies = [
                             </div>
 
                             <!-- Tier Name -->
-                            <h3 class="text-2xl font-bold text-white mb-2">
+                            <h3
+                                class="text-2xl font-bold text-slate-900 dark:text-white mb-2"
+                            >
                                 {{ tier.name }}
                             </h3>
-                            <p class="text-sm text-slate-400 mb-6">
+                            <p
+                                class="text-sm text-slate-600 dark:text-slate-400 mb-6"
+                            >
                                 {{ tier.description }}
                             </p>
 
                             <!-- Price -->
                             <div class="mb-6">
                                 <div class="flex items-baseline gap-2 mb-1">
-                                    <span class="text-5xl font-bold text-white">
+                                    <span
+                                        class="text-5xl font-bold text-slate-900 dark:text-white"
+                                    >
                                         ${{
                                             billingPeriod === "monthly"
                                                 ? tier.monthlyPrice
                                                 : tier.yearlyPrice
                                         }}
                                     </span>
-                                    <span class="text-slate-400"
+                                    <span
+                                        class="text-slate-500 dark:text-slate-400"
                                         >/{{
                                             billingPeriod === "monthly"
                                                 ? "month"
@@ -212,7 +219,7 @@ const trustedCompanies = [
                                 </div>
                                 <div
                                     v-if="billingPeriod === 'yearly'"
-                                    class="text-sm text-green-400 font-medium"
+                                    class="text-sm text-green-600 dark:text-green-400 font-medium"
                                 >
                                     {{ tier.savings }}
                                 </div>
@@ -225,7 +232,7 @@ const trustedCompanies = [
                                 :class="
                                     tier.popular
                                         ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20'
-                                        : 'bg-slate-700 text-white hover:bg-slate-600'
+                                        : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white hover:bg-slate-300 dark:hover:bg-slate-600'
                                 "
                             >
                                 {{ tier.cta }}
@@ -234,7 +241,7 @@ const trustedCompanies = [
                             <!-- Features List -->
                             <div class="space-y-3">
                                 <p
-                                    class="text-xs font-bold text-slate-400 uppercase tracking-wider"
+                                    class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
                                 >
                                     INCLUDES:
                                 </p>
@@ -246,11 +253,12 @@ const trustedCompanies = [
                                     class="flex items-start gap-3"
                                 >
                                     <Check
-                                        class="w-5 h-5 text-blue-400 shrink-0 mt-0.5"
+                                        class="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5"
                                     />
-                                    <span class="text-sm text-slate-300">{{
-                                        feature
-                                    }}</span>
+                                    <span
+                                        class="text-sm text-slate-700 dark:text-slate-300"
+                                        >{{ feature }}</span
+                                    >
                                 </div>
 
                                 <!-- Excluded Features (grayed out) -->
@@ -260,10 +268,10 @@ const trustedCompanies = [
                                     class="flex items-start gap-3 opacity-40"
                                 >
                                     <X
-                                        class="w-5 h-5 text-slate-500 shrink-0 mt-0.5"
+                                        class="w-5 h-5 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5"
                                     />
                                     <span
-                                        class="text-sm text-slate-500 line-through"
+                                        class="text-sm text-slate-400 dark:text-slate-500 line-through"
                                         >{{ feature }}</span
                                     >
                                 </div>
@@ -287,7 +295,7 @@ const trustedCompanies = [
                         <div
                             v-for="(company, index) in trustedCompanies"
                             :key="index"
-                            class="text-2xl font-bold text-slate-700 hover:text-slate-500 transition-colors"
+                            class="text-2xl font-bold text-slate-400 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-400 transition-colors"
                         >
                             {{ company }}
                         </div>
@@ -300,16 +308,16 @@ const trustedCompanies = [
                 <div class="max-w-4xl mx-auto">
                     <div class="text-center mb-12">
                         <p
-                            class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4"
+                            class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4"
                         >
                             SUPPORT
                         </p>
                         <h2
-                            class="text-3xl md:text-4xl font-bold text-white mb-4"
+                            class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4"
                         >
                             Frequently Asked Questions
                         </h2>
-                        <p class="text-slate-400">
+                        <p class="text-slate-600 dark:text-slate-400">
                             Have a question not answered here? Reach out to our
                             support team.
                         </p>

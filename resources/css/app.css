@@ -164,7 +164,7 @@
                transition-all duration-300;
     }
 
-    .card-feature-dark {
+    .card-feature {
         @apply bg-white/80 dark:bg-slate-800/60 p-8 rounded-3xl shadow-lg 
                border border-slate-200 dark:border-slate-700/60 
                hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] 
@@ -189,7 +189,16 @@
 
     /* Form & Input Helpers */
     .input-field {
-        @apply block w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 transition-all duration-200 text-sm py-2.5 px-4;
+        @apply block w-full 
+               bg-white dark:bg-slate-800/50 
+               border border-slate-200 dark:border-slate-600 
+               rounded-xl 
+               text-slate-900 dark:text-white 
+               placeholder-slate-400 
+               focus:bg-white dark:focus:bg-slate-800 
+               focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 
+               transition-all duration-200 text-sm py-2.5 px-4
+               backdrop-blur-sm;
     }
 
     .input-field-dark {
@@ -204,7 +213,7 @@
     }
 
     .label-text {
-        @apply block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2;
+        @apply block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2;
     }
 
     .label-text-dark {

@@ -114,16 +114,18 @@ const benefits = [
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <p
-                            class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4"
+                            class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4"
                         >
                             OUR EXPERTISE
                         </p>
                         <h2
-                            class="text-3xl md:text-5xl font-bold text-white mb-6"
+                            class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6"
                         >
                             Tailored Guidance for Every Path
                         </h2>
-                        <p class="text-slate-400 leading-relaxed">
+                        <p
+                            class="text-slate-600 dark:text-slate-400 leading-relaxed"
+                        >
                             Whether you're navigating career transitions,
                             seeking mental clarity, or optimizing performance,
                             our experts provide specialized support.
@@ -166,12 +168,12 @@ const benefits = [
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <p
-                            class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-4"
+                            class="text-sm font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider mb-4"
                         >
                             HOW IT WORKS
                         </p>
                         <h2
-                            class="text-3xl md:text-5xl font-bold text-white mb-6"
+                            class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6"
                         >
                             Connecting with an Expert
                         </h2>
@@ -189,18 +191,22 @@ const benefits = [
                                 class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-500/10 border-2 border-blue-500/30 mb-6"
                             >
                                 <span
-                                    class="text-3xl font-bold text-blue-400"
+                                    class="text-3xl font-bold text-blue-600 dark:text-blue-400"
                                     >{{ step.number }}</span
                                 >
                             </div>
 
                             <!-- Title -->
-                            <h3 class="text-2xl font-bold text-white mb-4">
+                            <h3
+                                class="text-2xl font-bold text-slate-900 dark:text-white mb-4"
+                            >
                                 {{ step.title }}
                             </h3>
 
                             <!-- Description -->
-                            <p class="text-slate-400 leading-relaxed">
+                            <p
+                                class="text-slate-600 dark:text-slate-400 leading-relaxed"
+                            >
                                 {{ step.description }}
                             </p>
 
@@ -219,16 +225,18 @@ const benefits = [
                 <div class="max-w-7xl mx-auto">
                     <div class="text-center max-w-2xl mx-auto mb-16">
                         <p
-                            class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4"
+                            class="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-4"
                         >
                             THE KEYPERSON ADVANTAGE
                         </p>
                         <h2
-                            class="text-3xl md:text-5xl font-bold text-white mb-6"
+                            class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6"
                         >
                             Why Top Professionals Choose Us
                         </h2>
-                        <p class="text-slate-400 leading-relaxed">
+                        <p
+                            class="text-slate-600 dark:text-slate-400 leading-relaxed"
+                        >
                             We didn't just build a platform—we built an
                             ecosystem that values trust, efficiency, and real
                             impact.
@@ -250,29 +258,33 @@ const benefits = [
                             >
                                 <CheckCircle
                                     v-if="benefit.icon === 'verified'"
-                                    class="w-8 h-8 text-blue-400"
+                                    class="w-8 h-8 text-blue-600 dark:text-blue-400"
                                 />
                                 <Search
                                     v-else-if="benefit.icon === 'calendar'"
-                                    class="w-8 h-8 text-blue-400"
+                                    class="w-8 h-8 text-blue-600 dark:text-blue-400"
                                 />
                                 <Handshake
                                     v-else-if="benefit.icon === 'shield'"
-                                    class="w-8 h-8 text-blue-400"
+                                    class="w-8 h-8 text-blue-600 dark:text-blue-400"
                                 />
                                 <Sparkles
                                     v-else
-                                    class="w-8 h-8 text-blue-400"
+                                    class="w-8 h-8 text-blue-600 dark:text-blue-400"
                                 />
                             </div>
 
                             <!-- Title -->
-                            <h3 class="text-lg font-bold text-white mb-3">
+                            <h3
+                                class="text-lg font-bold text-slate-900 dark:text-white mb-3"
+                            >
                                 {{ benefit.title }}
                             </h3>
 
                             <!-- Description -->
-                            <p class="text-sm text-slate-400 leading-relaxed">
+                            <p
+                                class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed"
+                            >
                                 {{ benefit.description }}
                             </p>
                         </div>
@@ -280,7 +292,7 @@ const benefits = [
 
                     <!-- Stats -->
                     <div
-                        class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 pt-16 border-t border-slate-800"
+                        class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 pt-16 border-t border-slate-200 dark:border-slate-800"
                     >
                         <div class="text-center">
                             <div
@@ -288,7 +300,9 @@ const benefits = [
                             >
                                 15,000+
                             </div>
-                            <div class="text-slate-400 font-medium">
+                            <div
+                                class="text-slate-600 dark:text-slate-400 font-medium"
+                            >
                                 Verified Experts
                             </div>
                         </div>
@@ -298,7 +312,9 @@ const benefits = [
                             >
                                 50,000+
                             </div>
-                            <div class="text-slate-400 font-medium">
+                            <div
+                                class="text-slate-600 dark:text-slate-400 font-medium"
+                            >
                                 Sessions Completed
                             </div>
                         </div>
@@ -308,7 +324,9 @@ const benefits = [
                             >
                                 4.9/5
                             </div>
-                            <div class="text-slate-400 font-medium">
+                            <div
+                                class="text-slate-600 dark:text-slate-400 font-medium"
+                            >
                                 Average Rating
                             </div>
                         </div>
@@ -318,7 +336,9 @@ const benefits = [
                             >
                                 98%
                             </div>
-                            <div class="text-slate-400 font-medium">
+                            <div
+                                class="text-slate-600 dark:text-slate-400 font-medium"
+                            >
                                 Satisfaction Rate
                             </div>
                         </div>

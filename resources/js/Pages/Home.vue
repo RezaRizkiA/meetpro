@@ -2,6 +2,7 @@
 import { Head, usePage, Link } from "@inertiajs/vue3";
 import MainLayout from "../Layouts/MainLayout.vue";
 import HeroSection from "../Components/HeroSection.vue";
+import CTASection from "../Components/CTASection.vue";
 import { route } from "ziggy-js";
 
 import {
@@ -229,7 +230,7 @@ const iconMap = {
 
                         <div
                             v-if="feature.image === 'dashboard_ui'"
-                            class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-6 -rotate-1 hover:rotate-0 transition-transform duration-500 glow-blue-soft"
+                            class="card-mock-ui -rotate-1 hover:rotate-0 transition-transform duration-500 glow-blue-soft"
                         >
                             <div class="flex gap-4 mb-6">
                                 <div
@@ -280,10 +281,10 @@ const iconMap = {
 
                         <div
                             v-if="feature.image === 'meeting_ui'"
-                            class="bg-slate-100 dark:bg-slate-900 rounded-2xl shadow-2xl p-4 rotate-1 hover:rotate-0 transition-transform duration-500 text-slate-900 dark:text-white"
+                            class="card-mock-ui rotate-1 hover:rotate-0 transition-transform duration-500 text-slate-900 dark:text-white glow-blue-soft"
                         >
                             <div
-                                class="aspect-video bg-slate-200 dark:bg-slate-800 rounded-xl mb-4 relative overflow-hidden"
+                                class="aspect-video bg-slate-200 dark:bg-slate-900 rounded-xl mb-4 relative overflow-hidden"
                             >
                                 <div
                                     class="absolute inset-0 flex items-center justify-center"
@@ -305,7 +306,7 @@ const iconMap = {
                             </div>
                             <div class="flex gap-4">
                                 <div
-                                    class="flex-1 h-24 bg-slate-200 dark:bg-slate-800 rounded-xl relative overflow-hidden"
+                                    class="flex-1 h-24 bg-slate-200 dark:bg-slate-900 rounded-xl relative overflow-hidden"
                                 >
                                     <div
                                         class="absolute bottom-2 left-2 text-xs bg-black/50 px-2 py-0.5 rounded text-white"
@@ -314,7 +315,7 @@ const iconMap = {
                                     </div>
                                 </div>
                                 <div
-                                    class="flex-1 h-24 bg-slate-200 dark:bg-slate-800 rounded-xl flex items-center justify-center"
+                                    class="flex-1 h-24 bg-slate-200 dark:bg-slate-900 rounded-xl flex items-center justify-center"
                                 >
                                     <span class="text-slate-500 text-xs"
                                         >+2 Others</span
@@ -352,7 +353,7 @@ const iconMap = {
                         <div
                             v-for="(bento, i) in bentoFeatures"
                             :key="i"
-                            class="card-feature-dark group"
+                            class="card-feature group"
                         >
                             <div
                                 class="w-12 h-12 rounded-2xl flex items-center justify-center mb-6 bg-blue-500/10 border border-blue-500/20 text-blue-400"
@@ -384,36 +385,12 @@ const iconMap = {
             </section>
 
             <!-- CTA Section -->
-            <section class="relative py-32 px-6 text-center overflow-hidden">
-                <!-- Glow effect background -->
-                <div
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px] -z-10"
-                ></div>
-
-                <div class="max-w-7xl mx-auto">
-                    <h2
-                        class="text-4xl md:text-6xl font-bold text-foreground mb-8 tracking-tight"
-                    >
-                        Unlock your
-                        <span
-                            class="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-cyan-400"
-                            >business potential.</span
-                        >
-                    </h2>
-                    <p class="text-xl text-muted mb-12">
-                        One platform, zero complexity. Join 15,000+
-                        professionals already growing their practice with us.
-                    </p>
-
-                    <Link
-                        :href="route('choose_path')"
-                        class="inline-flex items-center gap-3 px-10 py-5 bg-blue-600 text-white rounded-full font-bold text-xl hover:bg-blue-700 hover:scale-105 transition-all shadow-[0_0_40px_rgba(59,130,246,0.4)] hover:shadow-[0_0_60px_rgba(59,130,246,0.6)]"
-                    >
-                        Get Started - Free
-                        <ArrowRight class="w-6 h-6" />
-                    </Link>
-                </div>
-            </section>
+            <CTASection
+                title="Unlock your business potential."
+                description="One platform, zero complexity. Join 15,000+ professionals already growing their practice with us."
+                primary-button-text="Get Started - Free"
+                :primary-button-link="route('choose_path')"
+            />
         </div>
     </MainLayout>
 </template>
